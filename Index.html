@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ATMOS — Tableau de bord</title>
+  <meta name="color-scheme" content="dark">
+
+  <!-- Polices ATMOS -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{
+      /* Design tokens ATMOS */
+      --primary:#00eaff;           /* cyan néon */
+      --accent:#8a2be2;            /* violet néon */
+      --text:#e6f7ff;
+      --muted:#9fb3c8;
+
+      --bg-a:#05060d;              /* dégradé spatial */
+      --bg-b:#0b1430;
+      --bg-c:#00182a;
+      --space-img:url("https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=1920&auto=format&fit=crop");
+
+      --card:#0e1633;
+      --card-edge:rgba(138,43,226,.22);
+      --ring:rgba(0,234,255,.28);
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+
+    /* Reset léger */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text);
+      font-family: 'Outfit', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:
+        radial-gradient(1200px 700px at 10% -10%, rgba(138,43,226,.18), transparent 60%),
+        radial-gradient(1000px 600px at 90% 10%, rgba(0,234,255,.18), transparent 60%),
+        linear-gradient(160deg, var(--bg-a), var(--bg-b) 45%, var(--bg-c));
+      background-attachment: fixed;
+      overflow-y:auto;
+    }
+    body::before{
+      content:""; position:fixed; inset:0; pointer-events:none; opacity:.18;
+      background-image: var(--space-img);
+      background-size: cover; background-position:center;
+      mix-blend-mode: screen;
+      filter: saturate(1.2) contrast(1.05) brightness(.9);
+    }
+
+    /* Layout */
+    .shell{max-width:1300px; margin:0 auto; padding:24px 20px 56px}
+    header{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:16px; padding:14px 18px; border:1px solid rgba(255,255,255,.06);
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+      backdrop-filter: blur(6px);
+      border-radius: calc(var(--radius) + 6px);
+      box-shadow: var(--shadow);
+    }
+    .brand{
+      display:flex; align-items:center; gap:14px;
+      text-decoration:none; color:var(--text);
+    }
+    .brand-icon{
+      width:38px; height:38px; border-radius:12px;
+      background:
+        radial-gradient(180% 120% at 20% 15%, rgba(0,234,255,.6), transparent 50%),
+        radial-gradient(140% 110% at 80% 85%, rgba(138,43,226,.55), transparent 55%),
+        linear-gradient(145deg, #0b1430, #05060d 60%);
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:
+        0 0 0 2px rgba(0,234,255,.08),
+        inset 0 0 18px rgba(0,234,255,.12),
+        0 10px 24px rgba(0,0,0,.35);
+    }
+    .brand-title{
+      font-family:'Orbitron', sans-serif; font-weight:800; letter-spacing:.8px;
+      text-shadow: 0 0 12px rgba(0,234,255,.35);
+      display:flex; gap:10px; align-items:baseline;
+    }
+    .brand-title .accent{color:var(--primary)}
+    .header-actions{display:flex; gap:8px; align-items:center}
+    .btn{
+      appearance:none; border:1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      color:var(--text); padding:10px 14px; border-radius:12px;
+      font-weight:600; letter-spacing:.2px; cursor:pointer;
+      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(0,234,255,.4); box-shadow: 0 8px 24px rgba(0,234,255,.15)}
+    .btn-primary{
+      background:
+        radial-gradient(120% 140% at 20% 10%, rgba(0,234,255,.25), transparent 40%),
+        linear-gradient(180deg, rgba(0,234,255,.20), rgba(0,234,255,.06));
+      border-color: rgba(0,234,255,.45);
+      text-shadow: 0 0 10px rgba(0,234,255,.35);
+    }
+
+    /* Hero */
+    .hero{ margin:26px 2px 14px }
+    .hero h1{
+      font-family:'Orbitron', sans-serif; font-size: clamp(26px, 3.8vw, 36px);
+      margin:0 0 10px; letter-spacing:.6px;
+    }
+    .hero p{ margin:0; color:var(--muted) }
+
+    /* Dashboard grid */
+    .grid{
+      display:grid; gap:16px;
+      grid-template-columns: repeat(12, 1fr);
+      margin-top:18px;
+    }
+    .col-4{ grid-column: span 4 }
+    .col-8{ grid-column: span 8 }
+    @media (max-width: 1000px){
+      .col-8,.col-4{ grid-column: span 12 }
+    }
+
+    .card{
+      position:relative; border-radius: var(--radius); background: rgba(6,10,24,.55);
+      border:1px solid rgba(255,255,255,.07);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card::before{
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background: radial-gradient(120% 80% at 0% 0%, rgba(0,234,255,.10), transparent 60%);
+      mix-blend-mode: screen;
+    }
+    .card .head{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 16px 10px; border-bottom:1px solid rgba(255,255,255,.06)
+    }
+    .card .title{
+      display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.3px
+    }
+    .chip{
+      font-size:12px; color:var(--primary); border:1px solid rgba(0,234,255,.35);
+      padding:4px 8px; border-radius:999px; background:rgba(0,234,255,.08)
+    }
+    .card .body{ padding:16px }
+    .card .links{ display:flex; flex-wrap:wrap; gap:10px }
+    .link-tile{
+      flex: 1 1 220px; min-height:110px;
+      display:flex; flex-direction:column; justify-content:space-between;
+      padding:14px; border-radius:14px; text-decoration:none; color:var(--text);
+      border:1px solid rgba(255,255,255,.08);
+      background:
+        radial-gradient(160% 140% at 20% 15%, rgba(0,234,255,.10), transparent 45%),
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .link-tile:hover{
+      transform: translateY(-2px);
+      border-color: rgba(0,234,255,.35);
+      box-shadow: 0 12px 28px rgba(0,234,255,.12);
+    }
+    .tile-top{ display:flex; align-items:center; gap:10px }
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      box-shadow: 0 0 14px rgba(0,234,255,.6), inset 0 0 6px rgba(0,234,255,.6);
+      background: radial-gradient(circle at 40% 40%, var(--primary), #008a96);
+    }
+    .kpi{ font: 800 22px 'Orbitron', sans-serif; letter-spacing:.5px }
+
+    /* Footer */
+    footer{margin:28px 2px 0; color:var(--muted); font-size:14px; text-align:center; opacity:.9}
+    footer a{ color:var(--primary); text-decoration:none; border-bottom:1px dashed rgba(0,234,255,.35) }
+    footer a:hover{ border-bottom-color: rgba(0,234,255,.7) }
+
+    /* Accessibilité focus */
+    a,button{ outline:none }
+    a:focus-visible, .btn:focus-visible, .link-tile:focus-visible{
+      box-shadow: 0 0 0 3px var(--ring);
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <a class="brand" href="./">
+        <div class="brand-icon" aria-hidden="true"></div>
+        <div class="brand-title">
+          <span>ATMOS</span><span class="accent">Dashboard</span>
+        </div>
+      </a>
+      <div class="header-actions">
+        <!-- Pas de connexion ici : version nettoyée -->
+        <button class="btn" type="button" onclick="location.href='./docs.html'">Docs</button>
+        <button class="btn btn-primary" type="button" onclick="location.href='./settings.html'">Paramètres</button>
+      </div>
+    </header>
+
+    <section class="hero" aria-label="Présentation">
+      <h1>Bienvenue dans <span style="color:var(--primary)">ATMOS</span></h1>
+      <p>Le cœur de ton écosystème&nbsp;: accède à tes modules (mails, agenda, schéma) depuis un seul endroit.</p>
+    </section>
+
+    <section class="grid" aria-label="Modules">
+      <!-- Carte Modules -->
+      <div class="card col-8" role="region" aria-labelledby="modules-title">
+        <div class="head">
+          <div class="title" id="modules-title">
+            <span style="color:var(--primary)">●</span> Modules
+          </div>
+          <span class="chip">Version nettoyée (sans connexion)</span>
+        </div>
+        <div class="body">
+          <div class="links">
+            <!-- ORIS -->
+            <a class="link-tile" href="./oris/index.html">
+              <div class="tile-top">
+                <div class="dot" aria-hidden="true"></div>
+                <strong>ORIS — Agenda</strong>
+              </div>
+              <div class="kpi" aria-label="Accéder à ORIS">Ouvrir</div>
+            </a>
+            <!-- NEXUS -->
+            <a class="link-tile" href="./nexus/index.html">
+              <div class="tile-top">
+                <div class="dot" aria-hidden="true"></div>
+                <strong>NEXUS — Mails</strong>
+              </div>
+              <div class="kpi" aria-label="Accéder à NEXUS">Ouvrir</div>
+            </a>
+            <!-- SPHAIRA -->
+            <a class="link-tile" href="./sphaira/index.html">
+              <div class="tile-top">
+                <div class="dot" aria-hidden="true"></div>
+                <strong>SPHAIRA — Espace schématique</strong>
+              </div>
+              <div class="kpi" aria-label="Accéder à SPHAIRA">Ouvrir</div>
+            </a>
+            <!-- (Option) Tâches internes -->
+            <a class="link-tile" href="./tasks/index.html">
+              <div class="tile-top">
+                <div class="dot" aria-hidden="true"></div>
+                <strong>TÂCHES — Liste</strong>
+              </div>
+              <div class="kpi" aria-label="Accéder aux tâches">Ouvrir</div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Raccourcis -->
+      <div class="card col-4" role="region" aria-labelledby="shortcuts-title">
+        <div class="head">
+          <div class="title" id="shortcuts-title">
+            <span style="color:var(--accent)">●</span> Raccourcis
+          </div>
+        </div>
+        <div class="body" style="display:flex; flex-direction:column; gap:10px">
+          <button class="btn" type="button" onclick="location.href='./oris/index.html'">Créer un événement (ORIS)</button>
+          <button class="btn" type="button" onclick="location.href='./nexus/index.html'">Nouveau message (NEXUS)</button>
+          <button class="btn" type="button" onclick="location.href='./sphaira/index.html'">Ouvrir le schéma (SPHAIRA)</button>
+        </div>
+      </div>
+
+      <!-- Carte Aperçu (statique, sans data) -->
+      <div class="card col-4" role="region" aria-labelledby="overview-title">
+        <div class="head">
+          <div class="title" id="overview-title">
+            <span style="color:var(--primary)">●</span> Aperçu du jour
+          </div>
+        </div>
+        <div class="body">
+          <ul style="margin:0; padding-left:18px; line-height:1.8">
+            <li>09:00 — Stand-up équipe</li>
+            <li>11:00 — Appel partenaire</li>
+            <li>14:00 — Sprint SPHAIRA</li>
+            <li>16:30 — Revue NEXUS</li>
+          </ul>
+          <p style="color:var(--muted); margin-top:10px">*Aperçu statique pour la version sans connexion.</p>
+        </div>
+      </div>
+
+      <!-- Carte Notes (statique) -->
+      <div class="card col-8" role="region" aria-labelledby="notes-title">
+        <div class="head">
+          <div class="title" id="notes-title">
+            <span style="color:var(--accent)">●</span> Notes rapides
+          </div>
+        </div>
+        <div class="body">
+          <div contenteditable="true" spellcheck="false"
+               style="min-height:120px; border:1px dashed rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(255,255,255,.02)">
+            Écris ici des idées à la volée… (contenu non sauvegardé dans cette version)
+          </div>
+          <p style="color:var(--muted); margin-top:10px">*Pas de stockage local pour garder le code 100% neutre.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      ATMOS v1 — build « clean » sans dépendances ni connexion.<br/>
+      <span style="opacity:.85">Astuce&nbsp;: place tes modules dans <code>/oris</code>, <code>/nexus</code>, <code>/sphaira</code> avec chacun leur <code>index.html</code>.</span>
+    </footer>
+  </div>
+
+  <!--
+    ✅ Version NETTOYÉE : aucun script d’authentification, aucune redirection auto, aucune dépendance inter-module.
+    🔗 Tu peux changer les href si tu gardes tous les fichiers au même niveau (ex: href="./oris.html").
+    🧩 Étape suivante (quand tu voudras) : ré-intégrer une couche SSO au niveau ATMOS (ex: Google OAuth) + partage de session via Storage Access API/postMessage.
+  -->
+</body>
+</html>
