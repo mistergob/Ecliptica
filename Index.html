@@ -3,308 +3,237 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ATMOS — Tableau de bord</title>
-  <meta name="color-scheme" content="dark">
-
-  <!-- Polices ATMOS -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet"/>
-
+  <title>ATMOS</title>
+  <meta name="color-scheme" content="dark light">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
     :root{
-      /* Design tokens ATMOS */
-      --primary:#00eaff;           /* cyan néon */
-      --accent:#8a2be2;            /* violet néon */
-      --text:#e6f7ff;
-      --muted:#9fb3c8;
-
-      --bg-a:#05060d;              /* dégradé spatial */
-      --bg-b:#0b1430;
-      --bg-c:#00182a;
+      --primary:#00eaff; --primary-2:#8a2be2; --text:#e6f7ff; --muted:#9fb3c8;
       --space-img:url("https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=1920&auto=format&fit=crop");
-
-      --card:#0e1633;
-      --card-edge:rgba(138,43,226,.22);
-      --ring:rgba(0,234,255,.28);
-      --shadow:0 10px 30px rgba(0,0,0,.35);
-      --radius:18px;
+      --bg-a:#05060d; --bg-b:#0b1430; --bg-c:#00182a;
+      --glow: drop-shadow(0 0 8px rgba(0,234,255,.55)) drop-shadow(0 0 18px rgba(138,43,226,.35));
+      --ring: 0 0 0 3px rgba(0,234,255,.35), 0 0 24px rgba(0,234,255,.25);
     }
-
-    /* Reset léger */
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0; color:var(--text);
-      font-family: 'Outfit', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-family:Outfit, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       background:
-        radial-gradient(1200px 700px at 10% -10%, rgba(138,43,226,.18), transparent 60%),
-        radial-gradient(1000px 600px at 90% 10%, rgba(0,234,255,.18), transparent 60%),
-        linear-gradient(160deg, var(--bg-a), var(--bg-b) 45%, var(--bg-c));
-      background-attachment: fixed;
-      overflow-y:auto;
-    }
-    body::before{
-      content:""; position:fixed; inset:0; pointer-events:none; opacity:.18;
-      background-image: var(--space-img);
-      background-size: cover; background-position:center;
-      mix-blend-mode: screen;
-      filter: saturate(1.2) contrast(1.05) brightness(.9);
-    }
-
-    /* Layout */
-    .shell{max-width:1300px; margin:0 auto; padding:24px 20px 56px}
-    header{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:16px; padding:14px 18px; border:1px solid rgba(255,255,255,.06);
-      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
-      backdrop-filter: blur(6px);
-      border-radius: calc(var(--radius) + 6px);
-      box-shadow: var(--shadow);
-    }
-    .brand{
-      display:flex; align-items:center; gap:14px;
-      text-decoration:none; color:var(--text);
-    }
-    .brand-icon{
-      width:38px; height:38px; border-radius:12px;
-      background:
-        radial-gradient(180% 120% at 20% 15%, rgba(0,234,255,.6), transparent 50%),
-        radial-gradient(140% 110% at 80% 85%, rgba(138,43,226,.55), transparent 55%),
-        linear-gradient(145deg, #0b1430, #05060d 60%);
-      border:1px solid rgba(255,255,255,.08);
-      box-shadow:
-        0 0 0 2px rgba(0,234,255,.08),
-        inset 0 0 18px rgba(0,234,255,.12),
-        0 10px 24px rgba(0,0,0,.35);
-    }
-    .brand-title{
-      font-family:'Orbitron', sans-serif; font-weight:800; letter-spacing:.8px;
-      text-shadow: 0 0 12px rgba(0,234,255,.35);
-      display:flex; gap:10px; align-items:baseline;
-    }
-    .brand-title .accent{color:var(--primary)}
-    .header-actions{display:flex; gap:8px; align-items:center}
-    .btn{
-      appearance:none; border:1px solid rgba(255,255,255,.08);
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      color:var(--text); padding:10px 14px; border-radius:12px;
-      font-weight:600; letter-spacing:.2px; cursor:pointer;
-      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease, background .15s ease;
-    }
-    .btn:hover{ transform: translateY(-1px); border-color: rgba(0,234,255,.4); box-shadow: 0 8px 24px rgba(0,234,255,.15)}
-    .btn-primary{
-      background:
-        radial-gradient(120% 140% at 20% 10%, rgba(0,234,255,.25), transparent 40%),
-        linear-gradient(180deg, rgba(0,234,255,.20), rgba(0,234,255,.06));
-      border-color: rgba(0,234,255,.45);
-      text-shadow: 0 0 10px rgba(0,234,255,.35);
-    }
-
-    /* Hero */
-    .hero{ margin:26px 2px 14px }
-    .hero h1{
-      font-family:'Orbitron', sans-serif; font-size: clamp(26px, 3.8vw, 36px);
-      margin:0 0 10px; letter-spacing:.6px;
-    }
-    .hero p{ margin:0; color:var(--muted) }
-
-    /* Dashboard grid */
-    .grid{
-      display:grid; gap:16px;
-      grid-template-columns: repeat(12, 1fr);
-      margin-top:18px;
-    }
-    .col-4{ grid-column: span 4 }
-    .col-8{ grid-column: span 8 }
-    @media (max-width: 1000px){
-      .col-8,.col-4{ grid-column: span 12 }
-    }
-
-    .card{
-      position:relative; border-radius: var(--radius); background: rgba(6,10,24,.55);
-      border:1px solid rgba(255,255,255,.07);
-      box-shadow: var(--shadow);
+        radial-gradient(1200px 800px at 75% 10%, rgba(138,43,226,.18), transparent 60%),
+        radial-gradient(900px 700px at 15% 85%, rgba(0,234,255,.12), transparent 55%),
+        radial-gradient(700px 500px at 80% 80%, rgba(0,40,80,.35), transparent 60%),
+        linear-gradient(120deg, var(--bg-a), var(--bg-b) 40%, var(--bg-c));
       overflow:hidden;
     }
-    .card::before{
-      content:""; position:absolute; inset:0; pointer-events:none;
-      background: radial-gradient(120% 80% at 0% 0%, rgba(0,234,255,.10), transparent 60%);
-      mix-blend-mode: screen;
-    }
-    .card .head{
-      display:flex; align-items:center; justify-content:space-between;
-      padding:16px 16px 10px; border-bottom:1px solid rgba(255,255,255,.06)
-    }
-    .card .title{
-      display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.3px
-    }
-    .chip{
-      font-size:12px; color:var(--primary); border:1px solid rgba(0,234,255,.35);
-      padding:4px 8px; border-radius:999px; background:rgba(0,234,255,.08)
-    }
-    .card .body{ padding:16px }
-    .card .links{ display:flex; flex-wrap:wrap; gap:10px }
-    .link-tile{
-      flex: 1 1 220px; min-height:110px;
-      display:flex; flex-direction:column; justify-content:space-between;
-      padding:14px; border-radius:14px; text-decoration:none; color:var(--text);
-      border:1px solid rgba(255,255,255,.08);
+    body::before{
+      content:""; position:fixed; inset:0; pointer-events:none; mix-blend-mode:screen; opacity:.15;
       background:
-        radial-gradient(160% 140% at 20% 15%, rgba(0,234,255,.10), transparent 45%),
-        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
-      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease, background .15s ease;
+        var(--space-img) center/cover no-repeat,
+        radial-gradient(1px 1px at 10% 20%, #fff 40%, transparent 41%),
+        radial-gradient(1px 1px at 30% 80%, #fff 40%, transparent 41%),
+        radial-gradient(1px 1px at 70% 30%, #fff 40%, transparent 41%),
+        radial-gradient(1px 1px at 90% 60%, #fff 40%, transparent 41%);
+      animation: twinkle 14s linear infinite;
     }
-    .link-tile:hover{
-      transform: translateY(-2px);
-      border-color: rgba(0,234,255,.35);
-      box-shadow: 0 12px 28px rgba(0,234,255,.12);
+    @keyframes twinkle{0%,100%{opacity:.12}50%{opacity:.22}}
+    .wrap{position:relative; height:100dvh; display:grid; place-items:center; padding:32px; isolation:isolate}
+    .aura{position:absolute; inset:0; filter:blur(24px); pointer-events:none; z-index:0;
+      background:
+        radial-gradient(600px 320px at 50% 35%, rgba(0,234,255,.18), transparent 60%),
+        radial-gradient(900px 420px at 50% 70%, rgba(138,43,226,.18), transparent 65%);
+      animation: float 18s ease-in-out infinite alternate;
     }
-    .tile-top{ display:flex; align-items:center; gap:10px }
-    .dot{
-      width:10px; height:10px; border-radius:50%;
-      box-shadow: 0 0 14px rgba(0,234,255,.6), inset 0 0 6px rgba(0,234,255,.6);
-      background: radial-gradient(circle at 40% 40%, var(--primary), #008a96);
+    @keyframes float{from{transform:translateY(-1.5%)}to{transform:translateY(1.5%)}}
+    main{z-index:1; width:min(960px,92vw); text-align:center}
+    .title{font-family:Orbitron, sans-serif; font-weight:900; letter-spacing:.12em;
+      font-size:clamp(36px,6vw,84px); line-height:1; margin:0 0 18px; text-transform:uppercase; color:#eaffff;
+      text-shadow:0 0 10px rgba(0,234,255,.45), 0 0 28px rgba(138,43,226,.35), 0 0 64px rgba(0,234,255,.25);
     }
-    .kpi{ font: 800 22px 'Orbitron', sans-serif; letter-spacing:.5px }
-
-    /* Footer */
-    footer{margin:28px 2px 0; color:var(--muted); font-size:14px; text-align:center; opacity:.9}
-    footer a{ color:var(--primary); text-decoration:none; border-bottom:1px dashed rgba(0,234,255,.35) }
-    footer a:hover{ border-bottom-color: rgba(0,234,255,.7) }
-
-    /* Accessibilité focus */
-    a,button{ outline:none }
-    a:focus-visible, .btn:focus-visible, .link-tile:focus-visible{
-      box-shadow: 0 0 0 3px var(--ring);
+    .subtitle{margin:0 0 24px; color:var(--muted); font-size:clamp(16px,2.2vw,18px)}
+    .panel{
+      display:inline-flex; flex-direction:column; align-items:center; gap:18px;
+      padding:28px; border-radius:20px;
+      border:1px solid rgba(255,255,255,.06);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      backdrop-filter: blur(8px);
+      box-shadow:0 12px 40px rgba(0,0,0,.35);
+      max-width:min(680px,95vw); margin-inline:auto;
     }
+    .cta{
+      display:inline-flex; align-items:center; gap:12px; padding:14px 22px; border-radius:14px;
+      font-weight:600; letter-spacing:.04em; text-decoration:none; color:var(--text);
+      background: linear-gradient(#0c1327,#0b1120) padding-box,
+                 conic-gradient(from 180deg, rgba(0,234,255,.8), rgba(138,43,226,.8), rgba(0,234,255,.8)) border-box;
+      border:1px solid transparent; box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 8px 24px rgba(0,0,0,.45);
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    }
+    .cta .dot{width:10px; height:10px; border-radius:9999px; background:radial-gradient(circle at 30% 30%, #fff, var(--primary) 60%, transparent 65%); box-shadow:0 0 10px var(--primary), 0 0 18px var(--primary)}
+    .cta:hover{ transform:translateY(-2px); filter:var(--glow) }
+    .cta:focus-visible{ outline:none; box-shadow:var(--ring) }
+    .row{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px}
+    .small{font-size:12px; opacity:.85}
+    @media (prefers-reduced-motion: reduce){ *{animation:none!important; transition:none!important} }
   </style>
 </head>
 <body>
-  <div class="shell">
-    <header>
-      <a class="brand" href="./">
-        <div class="brand-icon" aria-hidden="true"></div>
-        <div class="brand-title">
-          <span>ATMOS</span><span class="accent">Dashboard</span>
+  <div class="wrap">
+    <div class="aura" aria-hidden="true"></div>
+    <main>
+      <h1 class="title">ATMOS</h1>
+      <p class="subtitle">Tableau de bord — Portail principal de votre espace de travail.</p>
+
+      <div class="panel" role="group" aria-label="Navigation principale">
+        <!-- Auth -->
+        <div class="row">
+          <button class="cta" id="loginGoogle">Se connecter avec Google</button>
+          <button class="cta" id="loginMicrosoft">Se connecter avec Microsoft</button>
+          <button class="cta" id="logout" style="display:none">Se déconnecter</button>
         </div>
-      </a>
-      <div class="header-actions">
-        <!-- Pas de connexion ici : version nettoyée -->
-        <button class="btn" type="button" onclick="location.href='./docs.html'">Docs</button>
-        <button class="btn btn-primary" type="button" onclick="location.href='./settings.html'">Paramètres</button>
+        <div class="small" id="who">Non connecté</div>
+
+        <!-- Liens modules (même origin => session partagée via localStorage) -->
+        <a class="cta" href="https://mistergob.github.io/sphaira/" target="_blank" rel="noopener noreferrer">
+          <span class="dot" aria-hidden="true"></span><span>Entrer dans SPHAIRA</span>
+        </a>
+        <a class="cta" href="https://mistergob.github.io/Oris/" target="_blank" rel="noopener noreferrer">
+          <span class="dot" aria-hidden="true"></span><span>Ouvrir ORIS — Agenda</span>
+        </a>
+        <a class="cta" href="https://mistergob.github.io/Nexus/" target="_blank" rel="noopener noreferrer">
+          <span class="dot" aria-hidden="true"></span><span>Ouvrir NEXUS — Mails</span>
+        </a>
       </div>
-    </header>
-
-    <section class="hero" aria-label="Présentation">
-      <h1>Bienvenue dans <span style="color:var(--primary)">ATMOS</span></h1>
-      <p>Le cœur de ton écosystème&nbsp;: accède à tes modules (mails, agenda, schéma) depuis un seul endroit.</p>
-    </section>
-
-    <section class="grid" aria-label="Modules">
-      <!-- Carte Modules -->
-      <div class="card col-8" role="region" aria-labelledby="modules-title">
-        <div class="head">
-          <div class="title" id="modules-title">
-            <span style="color:var(--primary)">●</span> Modules
-          </div>
-          <span class="chip">Version nettoyée (sans connexion)</span>
-        </div>
-        <div class="body">
-          <div class="links">
-            <!-- ORIS -->
-            <a class="link-tile" href="./oris/index.html">
-              <div class="tile-top">
-                <div class="dot" aria-hidden="true"></div>
-                <strong>ORIS — Agenda</strong>
-              </div>
-              <div class="kpi" aria-label="Accéder à ORIS">Ouvrir</div>
-            </a>
-            <!-- NEXUS -->
-            <a class="link-tile" href="./nexus/index.html">
-              <div class="tile-top">
-                <div class="dot" aria-hidden="true"></div>
-                <strong>NEXUS — Mails</strong>
-              </div>
-              <div class="kpi" aria-label="Accéder à NEXUS">Ouvrir</div>
-            </a>
-            <!-- SPHAIRA -->
-            <a class="link-tile" href="./sphaira/index.html">
-              <div class="tile-top">
-                <div class="dot" aria-hidden="true"></div>
-                <strong>SPHAIRA — Espace schématique</strong>
-              </div>
-              <div class="kpi" aria-label="Accéder à SPHAIRA">Ouvrir</div>
-            </a>
-            <!-- (Option) Tâches internes -->
-            <a class="link-tile" href="./tasks/index.html">
-              <div class="tile-top">
-                <div class="dot" aria-hidden="true"></div>
-                <strong>TÂCHES — Liste</strong>
-              </div>
-              <div class="kpi" aria-label="Accéder aux tâches">Ouvrir</div>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Carte Raccourcis -->
-      <div class="card col-4" role="region" aria-labelledby="shortcuts-title">
-        <div class="head">
-          <div class="title" id="shortcuts-title">
-            <span style="color:var(--accent)">●</span> Raccourcis
-          </div>
-        </div>
-        <div class="body" style="display:flex; flex-direction:column; gap:10px">
-          <button class="btn" type="button" onclick="location.href='./oris/index.html'">Créer un événement (ORIS)</button>
-          <button class="btn" type="button" onclick="location.href='./nexus/index.html'">Nouveau message (NEXUS)</button>
-          <button class="btn" type="button" onclick="location.href='./sphaira/index.html'">Ouvrir le schéma (SPHAIRA)</button>
-        </div>
-      </div>
-
-      <!-- Carte Aperçu (statique, sans data) -->
-      <div class="card col-4" role="region" aria-labelledby="overview-title">
-        <div class="head">
-          <div class="title" id="overview-title">
-            <span style="color:var(--primary)">●</span> Aperçu du jour
-          </div>
-        </div>
-        <div class="body">
-          <ul style="margin:0; padding-left:18px; line-height:1.8">
-            <li>09:00 — Stand-up équipe</li>
-            <li>11:00 — Appel partenaire</li>
-            <li>14:00 — Sprint SPHAIRA</li>
-            <li>16:30 — Revue NEXUS</li>
-          </ul>
-          <p style="color:var(--muted); margin-top:10px">*Aperçu statique pour la version sans connexion.</p>
-        </div>
-      </div>
-
-      <!-- Carte Notes (statique) -->
-      <div class="card col-8" role="region" aria-labelledby="notes-title">
-        <div class="head">
-          <div class="title" id="notes-title">
-            <span style="color:var(--accent)">●</span> Notes rapides
-          </div>
-        </div>
-        <div class="body">
-          <div contenteditable="true" spellcheck="false"
-               style="min-height:120px; border:1px dashed rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(255,255,255,.02)">
-            Écris ici des idées à la volée… (contenu non sauvegardé dans cette version)
-          </div>
-          <p style="color:var(--muted); margin-top:10px">*Pas de stockage local pour garder le code 100% neutre.</p>
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      ATMOS v1 — build « clean » sans dépendances ni connexion.<br/>
-      <span style="opacity:.85">Astuce&nbsp;: place tes modules dans <code>/oris</code>, <code>/nexus</code>, <code>/sphaira</code> avec chacun leur <code>index.html</code>.</span>
-    </footer>
+    </main>
   </div>
 
-  <!--
-    ✅ Version NETTOYÉE : aucun script d’authentification, aucune redirection auto, aucune dépendance inter-module.
-    🔗 Tu peux changer les href si tu gardes tous les fichiers au même niveau (ex: href="./oris.html").
-    🧩 Étape suivante (quand tu voudras) : ré-intégrer une couche SSO au niveau ATMOS (ex: Google OAuth) + partage de session via Storage Access API/postMessage.
-  -->
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    /* ========= SSO ATMOS (Supabase) =========
+       - Même storageKey partout -> même session sur le même origin
+       - Retour automatique vers ?r=... après connexion
+    ========================================= */
+
+    // Même REF/clé que dans NEXUS/ORIS/SPHAIRA
+    const PROJECT_REF = "jlfvbggzdkkwrmpsamvz";
+    const SUPABASE_URL = `https://${PROJECT_REF}.supabase.co`;
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsZnZiZ2d6ZGtrd3JtcHNhbXZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyNjUyNjMsImV4cCI6MjA3Mjg0MTI2M30.kDbtNVQfHEVxRbA8jsAfLu7-6kDioTCG-nWVQ91gJIs";
+
+    // IMPORTANT : storageKey identique dans tous les modules
+    const STORAGE_KEY = `sb-${PROJECT_REF}-auth-token`;
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        storage: window.localStorage,
+        storageKey: STORAGE_KEY
+      }
+    });
+
+    // UI
+    const loginGoogleBtn = document.getElementById('loginGoogle');
+    const loginMsBtn     = document.getElementById('loginMicrosoft');
+    const logoutBtn      = document.getElementById('logout');
+    const whoSpan        = document.getElementById('who');
+
+    function setAuthBusy(busy){ [loginGoogleBtn, loginMsBtn, logoutBtn].forEach(b=> b.disabled = !!busy); }
+
+    function show(session){
+      const user = session?.user || null;
+      if(user){
+        const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email || 'Connecté';
+        whoSpan.textContent = `Connecté : ${name}`;
+        loginGoogleBtn.style.display = 'none';
+        loginMsBtn.style.display     = 'none';
+        logoutBtn.style.display      = '';
+      }else{
+        whoSpan.textContent = 'Non connecté';
+        loginGoogleBtn.style.display = '';
+        loginMsBtn.style.display     = '';
+        logoutBtn.style.display      = 'none';
+      }
+    }
+
+    // URL de retour (si ATMOS appelé par un module avec ?r=...)
+    const SITE_URL = location.origin + location.pathname;
+    const RETURN_KEY = 'atmos:returnUrl';
+
+    // Capture ?r= au chargement (et garde la cible à travers la redirection OAuth)
+    (function storeReturnUrlFromQuery(){
+      const q = new URLSearchParams(location.search);
+      const r = q.get('r');
+      if(r){
+        try{ localStorage.setItem(RETURN_KEY, decodeURIComponent(r)); }catch{}
+      }
+    })();
+
+    async function signIn(provider, scopes){
+      try{
+        setAuthBusy(true);
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider,
+          options: {
+            redirectTo: SITE_URL,            // revient ici après OAuth
+            scopes: scopes || 'openid email profile'
+            // (facultatif) queryParams: { prompt:'consent' }
+          }
+        });
+        if(error){
+          alert('Connexion impossible : ' + error.message);
+          setAuthBusy(false);
+        }
+      }catch(err){
+        alert('Erreur inattendue : ' + (err?.message || err));
+        setAuthBusy(false);
+      }
+    }
+
+    loginGoogleBtn.onclick = ()=> signIn('google', 'openid email profile');
+    // Provider Microsoft côté Supabase = "azure"
+    loginMsBtn.onclick     = ()=> signIn('azure',  'openid email profile');
+
+    logoutBtn.onclick = async ()=>{
+      await supabase.auth.signOut();
+      show(null);
+    };
+
+    // Nettoie les paramètres OAuth (?code=...&state=...) une fois la session récupérée
+    function cleanOAuthParams(){
+      const q = new URLSearchParams(location.search);
+      if(q.has('code') || q.has('state') || q.has('error_description')){
+        history.replaceState({}, document.title, SITE_URL);
+      }
+    }
+
+    // Redirection automatique vers la cible demandée (?r=...) dès qu'on a une session
+    async function maybeRedirectToReturn(session){
+      if(!session) return;
+      const target = localStorage.getItem(RETURN_KEY);
+      if(target){
+        localStorage.removeItem(RETURN_KEY);
+        location.href = target;
+      }
+    }
+
+    // État initial + abonnement
+    supabase.auth.getSession().then(({ data }) => {
+      show(data.session);
+      cleanOAuthParams();
+      maybeRedirectToReturn(data.session);
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      show(session);
+      setAuthBusy(false);
+      cleanOAuthParams();
+      maybeRedirectToReturn(session);
+    });
+
+    if(location.protocol === 'file:'){
+      whoSpan.textContent = 'Ouvre via HTTPS (GitHub Pages, Netlify…) pour que la connexion fonctionne.';
+    }
+  </script>
 </body>
 </html>
