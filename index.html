@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ECLIPTICA — Objectifs SPHAIRA</title>
+  <title>ECLIPTICA</title>
 
-  <!-- Fonts -->
+  <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
 
   <style>
@@ -22,7 +22,6 @@
       --month: 8.333333%;
     }
 
-    /* --- Page reset --- */
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
@@ -36,7 +35,6 @@
       overflow-x:hidden;
     }
 
-    /* --- Subtle starfield --- */
     .stars, .stars::before, .stars::after{
       position:fixed; inset:0; pointer-events:none; z-index:0;
       background-image: radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.7) 40%, transparent 42%),
@@ -49,14 +47,12 @@
     .stars::after {content:""; animation: twinkle 13s linear infinite reverse; opacity:.25}
     @keyframes twinkle{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
 
-    /* --- Header / hero --- */
     header.hero{ position:relative; z-index:1; padding:48px 20px 24px; text-align:center; }
     .brand{font-family:"Orbitron", sans-serif; letter-spacing:.06em; font-weight:800; font-size:14px; color:var(--muted); text-transform:uppercase}
     h1{ margin:.25rem auto .5rem; max-width:900px; font-family:"Orbitron", sans-serif; font-size:clamp(28px, 4.6vw, 54px); font-weight:900; line-height:1.02; text-shadow:0 0 6px rgba(0,234,255,.35), 0 0 18px rgba(138,43,226,.25); }
     h1 .grad{background:linear-gradient(92deg, var(--primary), var(--accent)); -webkit-background-clip:text; background-clip:text; color:transparent;}
     .lead{max-width:840px; margin:0 auto; color:var(--muted)}
 
-    /* --- Controls --- */
     .controls{
       position:sticky; top:0; z-index:3;
       display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center;
@@ -110,10 +106,9 @@
 
     .view{display:flex; gap:10px; border-left:1px solid rgba(255,255,255,.08); padding-left:10px}
 
-    /* --- Shell --- */
     .wrap{position:relative; z-index:1; width:min(1200px, 92%); margin:28px auto 80px}
 
-    /* ---------- VUE 1 : Timeline verticale (existante) ---------- */
+    /* Vues */
     body.view-vertical #timelineVertical{display:block}
     body.view-vertical #roadmapHoriz{display:none}
     body.view-roadmap #timelineVertical{display:none}
@@ -176,7 +171,6 @@
     .ribbon{position:absolute; top:8px; right:-36px; transform:rotate(35deg); background:linear-gradient(90deg, var(--primary), var(--accent)); color:#001018;
       padding:4px 48px; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; box-shadow:0 0 18px rgba(0,234,255,.45)}
 
-    /* Responsive for vertical */
     @media (max-width:900px){
       .item{grid-template-columns:1fr;}
       .timeline::before{left:24px; transform:none}
@@ -186,7 +180,7 @@
       .task-row .done{justify-content:flex-start}
     }
 
-    /* ---------- VUE 2 : Roadmap horizontale en swimlanes ---------- */
+    /* Roadmap horizontale */
     .roadwrap{ width:min(1400px, 95%); margin:0 auto; }
     .roadscroll{ position:relative; overflow-x:auto; overflow-y:hidden; border:1px solid rgba(255,255,255,.08); border-radius:16px; backdrop-filter:blur(6px);
       background:
@@ -196,18 +190,14 @@
     }
     .roadmap{ position:relative; min-width:1200px; height:auto; padding-top:48px; }
 
-    /* Axe des mois (sticky) */
     .axis{ position:sticky; top:0; z-index:2; height:36px; display:flex; align-items:center; gap:0; background:linear-gradient(180deg, rgba(5,6,13,.75), rgba(5,6,13,.35));
       border-bottom:1px solid rgba(255,255,255,.08); }
     .axis .tick{ position:relative; width:calc(var(--month)); text-align:center; font-size:12px; color:var(--muted); padding:6px 0; }
     .axis .tick::after{ content:""; position:absolute; right:0; top:0; bottom:0; width:1px; background:rgba(255,255,255,.08) }
 
-    /* Lignes (swimlanes) */
     .lanes{ position:relative; }
     .lane{ position:relative; height:74px; border-bottom:1px dashed rgba(255,255,255,.08); }
     .lane.is-dim{ opacity:.35; filter:saturate(.6) }
-
-    /* Libellé de ligne (collant à gauche dans la zone scroll) */
     .lane .label{ position:sticky; left:0; z-index:1; height:100%; display:flex; align-items:center; gap:10px; padding:0 12px; width:210px;
       background:linear-gradient(90deg, rgba(5,6,13,.85), rgba(5,6,13,.0)); border-right:1px solid rgba(255,255,255,.08);
       font-size:13px; text-transform:capitalize; color:var(--text); }
@@ -218,7 +208,6 @@
     .lane[data-cat="operations"] .label .dot{ color:#5bd3ff }
     .lane[data-cat="lancement"] .label .dot{ color:#8a2be2 }
 
-    /* Zone des events (bars) */
     .lane .bars{ position:relative; height:100%; margin-left:210px; }
     .taskMarkers{ position:absolute; inset:0; pointer-events:none; z-index:2; }
     .taskMarker{ position:absolute; top:6px; width:14px; height:14px; border-radius:50%; border:1px solid rgba(255,255,255,.35); background:linear-gradient(130deg, rgba(0,234,255,.55), rgba(138,43,226,.45)); box-shadow:0 0 12px rgba(0,234,255,.45); pointer-events:auto; cursor:pointer; transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease; display:grid; place-items:center; color:#02121a; font-size:10px; font-weight:700; z-index:3; }
@@ -234,10 +223,8 @@
     .barItem .t{ font-weight:700; font-size:13px }
     .barItem .d{ font-size:12px; color:var(--muted) }
 
-    /* Ligne verticale "Aujourd'hui" */
     .todayLine{ position:absolute; top:36px; bottom:0; width:2px; background:linear-gradient(180deg, var(--primary), var(--accent)); box-shadow:0 0 14px rgba(0,234,255,.35); }
 
-    /* Tooltip simple */
     .barItem[data-hint]:hover::after,
     .taskMarker[data-hint]:hover::after,
     .taskMarker[data-hint]:focus-visible::after{
@@ -246,10 +233,9 @@
       box-shadow:0 6px 18px rgba(0,0,0,.35);
     }
 
-    /* Panneau de détail */
     .overlay{position:fixed; inset:0; background:rgba(1,4,12,.75); backdrop-filter:blur(6px); display:none; z-index:9;}
     .overlay[data-open="true"]{display:block}
-    .panel{position:fixed; right:0; top:0; bottom:0; width:min(480px, 92%); background:rgba(4,10,24,.96); border-left:1px solid rgba(0,234,255,.25);
+    .panel{position:fixed; right:0; top:0; bottom:0; width:min(520px, 92%); background:rgba(4,10,24,.96); border-left:1px solid rgba(0,234,255,.25);
       box-shadow:-20px 0 40px rgba(0,0,0,.45); transform:translateX(100%); transition:transform .3s ease; z-index:10; display:flex; flex-direction:column;}
     .panel[data-open="true"]{transform:translateX(0)}
     .panel header{display:flex; align-items:center; justify-content:space-between; padding:24px 24px 12px; border-bottom:1px solid rgba(255,255,255,.08);}
@@ -281,8 +267,8 @@
     .panel footer .secondary{background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.12); color:var(--muted);}
     .panel footer button:hover{filter:brightness(1.1)}
 
-    /* Footer */
     footer{color:var(--muted); text-align:center; margin:60px 0 50px}
+    .warn{color:#ffd166}
   </style>
 </head>
 <body class="view-roadmap">
@@ -338,19 +324,17 @@
   </header>
 
   <main class="wrap">
-    <!-- Vue 1: verticale -->
     <section id="timelineVertical" class="timeline" aria-label="Timeline 2025 (vertical)"></section>
 
-    <!-- Vue 2: roadmap horizontale -->
     <section id="roadmapHoriz" class="roadwrap" aria-label="Timeline 2025 (roadmap)">
       <div class="roadscroll" id="roadscroll">
         <div class="axis" id="axis"></div>
         <div class="roadmap" id="roadmap">
           <div class="lanes" id="lanes"></div>
-          <!-- Ligne "Aujourd'hui" -->
           <div class="todayLine" id="todayLine" hidden></div>
         </div>
       </div>
+      <p id="noWorkspaceHint" class="warn" style="display:none;margin:10px 6px 0 6px">⚠️ Aucun espace SPHAIRA détecté. Ouvrez d'abord <strong>SPHAIRA</strong> (l'onglet "SPHAIRA") pour créer le workspace, puis revenez ici.</p>
     </section>
   </main>
 
@@ -362,6 +346,10 @@
     </header>
     <form id="objectiveForm">
       <div class="field">
+        <label for="objectiveNode">Cercle (SPHAIRA)</label>
+        <select id="objectiveNode" required></select>
+      </div>
+      <div class="field">
         <label for="objectiveTitle">Titre de l'objectif</label>
         <input id="objectiveTitle" name="title" required placeholder="Ex : Stabiliser le noyau SPHAIRA">
       </div>
@@ -370,7 +358,7 @@
         <input id="objectiveDate" name="date" type="date" required>
       </div>
       <div class="field">
-        <label for="objectiveCategory">Piliers</label>
+        <label for="objectiveCategory">Piliers (cosmétique)</label>
         <select id="objectiveCategory" name="category" required>
           <option value="developpement">Développement</option>
           <option value="experience">Expérience</option>
@@ -380,11 +368,11 @@
         </select>
       </div>
       <div class="field">
-        <label for="objectiveLead">Pilote</label>
+        <label for="objectiveLead">Pilote (cosmétique)</label>
         <input id="objectiveLead" name="lead" placeholder="Nom du pilote">
       </div>
       <div class="field">
-        <label for="objectiveIcon">Icône</label>
+        <label for="objectiveIcon">Icône (cosmétique)</label>
         <input id="objectiveIcon" name="icon" maxlength="3" placeholder="🛠️">
       </div>
       <div class="field">
@@ -404,729 +392,532 @@
   </aside>
 
   <footer>
-    ECLIPTICA assure la cohérence des plans d'action : toute mise à jour est envoyée instantanément dans <strong>SPHAIRA</strong> et <strong>ORIS</strong> pour maintenir un pilotage unifié.
+    ECLIPTICA assure la cohérence des plans d'action : les mises à jour sont écrites dans <strong>SPHAIRA</strong> (localStorage) et visibles dans <strong>ORIS</strong>.
   </footer>
 
-  <script src="shared/sphaira-data.js"></script>
   <script>
-    const CATEGORY_META = {
-      developpement: { label: 'Développement', description: 'Livraisons produit SPHAIRA' },
-      experience: { label: 'Expérience', description: 'Confort des responsables et équipes' },
-      alignement: { label: 'Alignement', description: 'Synchronisation SPHAIRA ↔︎ ORIS' },
-      operations: { label: 'Opérations', description: 'Fiabilité et gouvernance' },
-      lancement: { label: 'Lancements', description: 'Adoption & diffusion' }
+  // ====== Catégories (UI) ======
+  const CATEGORY_META = {
+    developpement: { label: 'Développement', description: 'Livraisons produit SPHAIRA' },
+    experience: { label: 'Expérience', description: 'Confort des responsables et équipes' },
+    alignement: { label: 'Alignement', description: 'Synchronisation SPHAIRA ↔︎ ORIS' },
+    operations: { label: 'Opérations', description: 'Fiabilité et gouvernance' },
+    lancement: { label: 'Lancements', description: 'Adoption & diffusion' }
+  };
+  const CATEGORY_ORDER = Object.keys(CATEGORY_META);
+
+  // ====== SPHAIRA — lecture/écriture workspace ======
+  const STORAGE_KEYS = [
+    'sphaira:workspaceState:v2',
+    'sphaira:workspaceState:v1',
+    'workspaceState'
+  ];
+
+  let sphairaWorkspace = { json:null, storageKey:null };
+
+  function loadWorkspaceFromStorage(){
+    for(const key of STORAGE_KEYS){
+      try{
+        const raw = localStorage.getItem(key);
+        if(raw){ sphairaWorkspace = { json: JSON.parse(raw), storageKey: key }; return sphairaWorkspace; }
+      }catch(_){/* ignore */}
+    }
+    sphairaWorkspace = { json:null, storageKey:null };
+    return sphairaWorkspace;
+  }
+
+  function persistWorkspace(){
+    if(!sphairaWorkspace.json){ return false; }
+    try{
+      const str = JSON.stringify(sphairaWorkspace.json);
+      // 1) On réécrit sur la clé d'origine si connue
+      if(sphairaWorkspace.storageKey){ localStorage.setItem(sphairaWorkspace.storageKey, str); }
+      // 2) Compatibilité SPHAIRA/ORIS : miroirs (comme SPHAIRA)
+      try{ localStorage.setItem('workspaceState', str); }catch{}
+      try{ localStorage.setItem('sphaira:workspaceState:v1', str); }catch{}
+      // Hint pour déclencher des listeners génériques
+      try{ localStorage.setItem('sphaira:lastWriteAt', Date.now().toString()); }catch{}
+      return true;
+    }catch(e){ console.error('[ECLIPTICA] Persist échouée', e); return false; }
+  }
+
+  function getAllNodes(){ return Array.isArray(sphairaWorkspace.json?.nodes) ? sphairaWorkspace.json.nodes : []; }
+  function getNodeById(id){ return getAllNodes().find(n=>n.id===id); }
+
+  function ensureArraysOnNode(node){
+    if(!node) return;
+    if(!Array.isArray(node._tasks) && Array.isArray(node.tasks)) node._tasks = node.tasks; // compat si SPHAIRA n'a pas hydrater _tasks
+    if(!Array.isArray(node._objectives) && Array.isArray(node.objectives)) node._objectives = node.objectives;
+    if(!Array.isArray(node._tasks)) node._tasks = [];
+    if(!Array.isArray(node._objectives)) node._objectives = [];
+    node._tasks.forEach(t=>{ if(!Array.isArray(t.objectiveIds)) t.objectiveIds = []; t.start = t.start||''; t.end = t.end||''; t.done = !!t.done; });
+    node._objectives.forEach(o=>{ if(!Array.isArray(o.taskIds)) o.taskIds = []; o.due = o.due||''; o.completed = !!o.completed; o.completedAt = o.completedAt||null; });
+    // keep mirrors in sync for SPHAIRA persistence
+    node.tasks = node._tasks; node.objectives = node._objectives;
+  }
+
+  function qualifyTaskRef(nodeId, taskId){ return `${nodeId}::${taskId}`; }
+  function qualifyObjectiveRef(nodeId, objId){ return `${nodeId}::${objId}`; }
+
+  function resolveTaskRef(ref){
+    if(!ref) return null;
+    const hasQual = String(ref).includes('::');
+    let nodeId, taskId;
+    if(hasQual){ [nodeId, taskId] = String(ref).split('::'); }
+    const nodes = getAllNodes();
+    if(nodeId){
+      const node = getNodeById(nodeId); if(!node){ return null; }
+      ensureArraysOnNode(node);
+      const task = (node._tasks||[]).find(t=>t.id===taskId);
+      return task ? { node, task } : null;
+    }
+    // non qualifié : on cherche dans tous les nœuds
+    for(const node of nodes){ ensureArraysOnNode(node); const t=(node._tasks||[]).find(x=>x.id===ref); if(t) return { node, task:t }; }
+    return null;
+  }
+
+  function resolveObjectiveRef(ref){
+    if(!ref) return null;
+    const hasQual = String(ref).includes('::');
+    let nodeId, objId;
+    if(hasQual){ [nodeId, objId] = String(ref).split('::'); }
+    const nodes = getAllNodes();
+    if(nodeId){
+      const node = getNodeById(nodeId); if(!node){ return null; }
+      ensureArraysOnNode(node);
+      const objective = (node._objectives||[]).find(o=>o.id===objId);
+      return objective ? { node, objective } : null;
+    }
+    for(const node of nodes){ ensureArraysOnNode(node); const o=(node._objectives||[]).find(x=>x.id===ref); if(o) return { node, objective:o }; }
+    return null;
+  }
+
+  function linkTaskToObjective(taskRes, objectiveRes){
+    if(!taskRes||!objectiveRes) return;
+    const t = taskRes.task; const o = objectiveRes.objective; const nT = taskRes.node; const nO = objectiveRes.node;
+    ensureArraysOnNode(nT); ensureArraysOnNode(nO);
+    const oRef = qualifyObjectiveRef(nO.id, o.id);
+    const tRef = qualifyTaskRef(nT.id, t.id);
+    if(!t.objectiveIds.includes(oRef)) t.objectiveIds.push(oRef);
+    if(!o.taskIds.includes(tRef)) o.taskIds.push(tRef);
+  }
+
+  function unlinkTaskFromObjective(taskRes, objectiveRes){
+    if(!taskRes||!objectiveRes) return;
+    const t = taskRes.task; const o = objectiveRes.objective; const nT = taskRes.node; const nO = objectiveRes.node;
+    ensureArraysOnNode(nT); ensureArraysOnNode(nO);
+    const oRef = qualifyObjectiveRef(nO.id, o.id);
+    const tRef = qualifyTaskRef(nT.id, t.id);
+    t.objectiveIds = (t.objectiveIds||[]).filter(x=>x!==oRef);
+    o.taskIds = (o.taskIds||[]).filter(x=>x!==tRef);
+  }
+
+  function recomputeObjectiveCompletion(objectiveRes){
+    if(!objectiveRes) return;
+    const { node, objective } = objectiveRes; ensureArraysOnNode(node);
+    const ids = objective.taskIds||[];
+    if(ids.length===0){ return; }
+    const linked = ids.map(ref=>resolveTaskRef(ref)).filter(Boolean).map(x=>x.task);
+    const allDone = linked.length>0 && linked.every(t=>t.done===true);
+    if(allDone && !objective.completed){ objective.completed = true; objective.completedAt = new Date().toISOString().slice(0,10); }
+    if(!allDone && objective.completed){ objective.completed = false; objective.completedAt = null; }
+  }
+
+  // ====== Projection SPHAIRA -> ECLIPTICA (OBJECTIVES array) ======
+  const CATEGORY_DEFAULT = 'developpement';
+  let OBJECTIVES = []; // {id: "nodeId::objId", date, title, cat, icon, lead, desc, tasks:[{id:qualified, title, due, done}]}
+  let objectivesLoadingPromise = null;
+
+  function normalizeObjectiveForUI(node, obj){
+    ensureArraysOnNode(node);
+    const tasks = (obj.taskIds||[]).map(ref=>resolveTaskRef(ref)).filter(Boolean).map(({node:tn, task})=>({
+      id: qualifyTaskRef(tn.id, task.id),
+      title: task.title||'(Sans titre)',
+      owner: '',
+      due: task.end||task.start||'',
+      done: !!task.done
+    }));
+    return {
+      id: qualifyObjectiveRef(node.id, obj.id),
+      date: obj.due || '2025-01-01',
+      title: obj.title || 'Objectif sans titre',
+      cat: CATEGORY_DEFAULT,
+      icon: '🎯',
+      lead: '',
+      desc: obj.desc || '',
+      tasks
     };
-    const CATEGORY_ORDER = Object.keys(CATEGORY_META);
+  }
 
-    const SPHAIRA_API_BASE_URL = window.SPHAIRA_API_BASE || 'memory://sphaira';
-    const SPHAIRA_STORAGE_KEY = window.SPHAIRA_STORAGE_KEY || 'sphaira:objectives';
+  function buildObjectivesFromWorkspace(){
+    const nodes = getAllNodes();
+    const out = [];
+    nodes.forEach(n=>{
+      ensureArraysOnNode(n);
+      (n._objectives||[]).forEach(o=>{ out.push(normalizeObjectiveForUI(n,o)); });
+    });
+    out.sort((a,b)=> new Date(a.date) - new Date(b.date));
+    return out;
+  }
 
-    let OBJECTIVES = [];
-    let objectivesLoadingPromise = null;
-
-    const start = new Date('2025-01-01T00:00:00');
-    const end   = new Date('2025-12-31T23:59:59');
-    const isYear2025 = new Date().getFullYear() === 2025;
-
-    let currentFilter = 'tous';
-    let currentObjectiveId = null;
-
-    const overlay = document.getElementById('panelOverlay');
-    const panel = document.getElementById('detailPanel');
-    const panelHeading = document.getElementById('panelHeading');
-    const closePanelBtn = document.getElementById('closePanel');
-    const objectiveForm = document.getElementById('objectiveForm');
-    const tasksContainer = document.getElementById('tasksContainer');
-    const addTaskBtn = document.getElementById('addTaskBtn');
-    const deleteObjectiveBtn = document.getElementById('deleteObjective');
-    const createObjectiveBtn = document.getElementById('createObjective');
+  async function loadObjectives(){
+    if(objectivesLoadingPromise){ return objectivesLoadingPromise; }
     const syncStatus = document.getElementById('syncStatus');
     const syncStatusMessage = syncStatus.querySelector('span:last-child');
+    syncStatusMessage.textContent = 'Chargement depuis SPHAIRA…';
+    objectivesLoadingPromise = (async()=>{
+      try{
+        const ws = loadWorkspaceFromStorage();
+        const hint = document.getElementById('noWorkspaceHint');
+        hint.style.display = ws.json ? 'none' : '';
+        OBJECTIVES = ws.json ? buildObjectivesFromWorkspace() : [];
+        refreshTimelines();
+        const ts = new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+        syncStatusMessage.textContent = `Synchronisé avec SPHAIRA — ${ts}`;
+        populateNodeSelector();
+      }catch(e){
+        console.error(e);
+        syncStatusMessage.textContent = `Erreur de synchronisation SPHAIRA : ${e.message}`;
+      }finally{ objectivesLoadingPromise = null; }
+    })();
+    return objectivesLoadingPromise;
+  }
 
-    function uid(prefix){
-      return `${prefix}-${Math.random().toString(36).slice(2,8)}${Date.now().toString(36).slice(-2)}`;
-    }
+  // ====== UI helpers ======
+  function fmtDate(d, withYear = false){
+    const opts = { day:'2-digit', month:'short' };
+    if(withYear) opts.year = 'numeric';
+    return new Intl.DateTimeFormat('fr-FR', opts).format(d).replace('.', '');
+  }
+  const start = new Date('2025-01-01T00:00:00');
+  const end   = new Date('2025-12-31T23:59:59');
+  const isYear2025 = new Date().getFullYear() === 2025;
+  function pctOfYear(d){ return ((d - start) / (end - start)) * 100; }
+  function clamp(value, min, max){ return Math.min(max, Math.max(min, value)); }
+  function groupByMonth(items){
+    const map = new Map(Array.from({length:12}, (_,i)=>[(i+1).toString().padStart(2,'0'), []]));
+    for(const obj of items){ const d = new Date(obj.date); const key = (d.getMonth()+1).toString().padStart(2,'0'); const enriched = {...obj, d}; map.get(key)?.push(enriched); }
+    for(const [, arr] of map){ arr.sort((a,b)=>a.d-b.d); }
+    return map;
+  }
+  function groupByCat(items){
+    const map = new Map(CATEGORY_ORDER.map(cat => [cat, []]));
+    for(const obj of items){ const d = new Date(obj.date); if(map.has(obj.cat)){ map.get(obj.cat).push({...obj, d}); } }
+    for(const [, arr] of map){ arr.sort((a,b)=>a.d-b.d); }
+    return map;
+  }
+  function computeTaskSummary(obj){
+    const total = obj.tasks?.length ?? 0;
+    const done = obj.tasks?.filter(t => t.done).length ?? 0;
+    const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+    return { total, done, pct };
+  }
+  function buildTaskList(tasks){
+    if(!tasks || tasks.length === 0){ const empty = document.createElement('div'); empty.className = 'tasks empty'; empty.textContent = 'Aucune tâche renseignée'; return empty; }
+    const list = document.createElement('ul'); list.className = 'tasks'; list.setAttribute('role', 'list');
+    tasks.forEach(task => {
+      const item = document.createElement('li'); item.className = 'task' + (task.done ? ' is-done' : '');
+      const check = document.createElement('span'); check.className = 'check'; check.textContent = task.done ? '✓' : ''; check.setAttribute('aria-hidden', 'true'); item.appendChild(check);
+      const details = document.createElement('div');
+      const title = document.createElement('span'); title.className = 'task-title'; title.textContent = task.title; const rawDue = task.due ? new Date(task.due) : null; const hasValidDue = rawDue && !Number.isNaN(rawDue.valueOf()); const badge = document.createElement('small'); badge.textContent = hasValidDue ? fmtDate(rawDue, true) : 'Sans échéance'; title.appendChild(badge); details.appendChild(title);
+      const metaBits = []; metaBits.push(task.done ? '✓ Terminé' : '• À suivre'); if(metaBits.length){ const meta = document.createElement('span'); meta.className = 'task-meta'; meta.textContent = metaBits.join(' • '); details.appendChild(meta); }
+      item.appendChild(details); list.appendChild(item);
+    });
+    return list;
+  }
 
-    function normalizeObjective(obj){
-      if(!obj || typeof obj !== 'object') return null;
-      const tasks = Array.isArray(obj.tasks) ? obj.tasks.map(task => {
-        if(!task || typeof task !== 'object') return null;
-        return {
-          id: task.id || uid('task'),
-          title: String(task.title ?? '').trim(),
-          owner: String(task.owner ?? '').trim(),
-          due: task.due ? String(task.due) : '',
-          done: Boolean(task.done)
-        };
-      }).filter(Boolean) : [];
-      return {
-        id: obj.id || uid('obj'),
-        date: obj.date ? String(obj.date) : new Date().toISOString().slice(0,10),
-        title: String(obj.title ?? '').trim() || 'Objectif sans titre',
-        cat: String(obj.cat ?? 'developpement'),
-        icon: obj.icon ? String(obj.icon) : '🗂️',
-        lead: obj.lead ? String(obj.lead) : '',
-        desc: obj.desc ? String(obj.desc) : '',
-        tasks
-      };
-    }
-
-    async function loadObjectivesFromSphaira(){
-      if(objectivesLoadingPromise){
-        return objectivesLoadingPromise;
-      }
-
-      syncStatusMessage.textContent = 'Chargement depuis SPHAIRA…';
-      objectivesLoadingPromise = (async () => {
-        try {
-          const response = await fetch(`${SPHAIRA_API_BASE_URL}/objectives`);
-          let payload;
-          if(response.ok){
-            payload = await response.json();
-          } else {
-            let message = response.statusText || `Code ${response.status}`;
-            try {
-              const errorPayload = await response.json();
-              if(errorPayload && errorPayload.error){
-                message = errorPayload.error;
-              }
-            } catch(_){}
-            throw new Error(message);
-          }
-
-          const normalized = Array.isArray(payload) ? payload.map(normalizeObjective).filter(Boolean) : [];
-          normalized.sort((a, b) => new Date(a.date) - new Date(b.date));
-          OBJECTIVES = normalized;
-          refreshTimelines();
-          const ts = new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
-          syncStatusMessage.textContent = `Synchronisé avec SPHAIRA — ${ts}`;
-        } catch(error){
-          console.error('Erreur lors du chargement des objectifs SPHAIRA', error);
-          syncStatusMessage.textContent = `Erreur de synchronisation SPHAIRA : ${error.message}`;
-        } finally {
-          objectivesLoadingPromise = null;
-        }
-      })();
-
-      return objectivesLoadingPromise;
-    }
-
-    async function persistObjectiveToSphaira(objective, isUpdate){
-      const url = isUpdate
-        ? `${SPHAIRA_API_BASE_URL}/objectives/${encodeURIComponent(objective.id)}`
-        : `${SPHAIRA_API_BASE_URL}/objectives`;
-      const response = await fetch(url, {
-        method: isUpdate ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(objective)
-      });
-      if(!response.ok){
-        let message = response.statusText || `Code ${response.status}`;
-        try {
-          const errorPayload = await response.json();
-          if(errorPayload && errorPayload.error){
-            message = errorPayload.error;
-          }
-        } catch(_){}
-        throw new Error(message);
-      }
-      return response.json();
-    }
-
-    async function deleteObjectiveFromSphaira(id){
-      const response = await fetch(`${SPHAIRA_API_BASE_URL}/objectives/${encodeURIComponent(id)}`, { method: 'DELETE' });
-      if(!response.ok){
-        let message = response.statusText || `Code ${response.status}`;
-        try {
-          const errorPayload = await response.json();
-          if(errorPayload && errorPayload.error){
-            message = errorPayload.error;
-          }
-        } catch(_){}
-        throw new Error(message);
-      }
-    }
-
-    function fmtDate(d, withYear = false){
-      const opts = { day:'2-digit', month:'short' };
-      if(withYear) opts.year = 'numeric';
-      return new Intl.DateTimeFormat('fr-FR', opts).format(d).replace('.', '');
-    }
-
-    function getCategoryLabel(cat){
-      return CATEGORY_META[cat]?.label ?? cat;
-    }
-
-    function pctOfYear(d){
-      return ((d - start) / (end - start)) * 100;
-    }
-
-    function clamp(value, min, max){
-      return Math.min(max, Math.max(min, value));
-    }
-
-    function groupByMonth(items){
-      const map = new Map(Array.from({length:12}, (_,i)=>[(i+1).toString().padStart(2,'0'), []]));
-      for(const obj of items){
-        const d = new Date(obj.date);
-        const key = (d.getMonth()+1).toString().padStart(2,'0');
-        const enriched = {...obj, d};
-        map.get(key)?.push(enriched);
-      }
-      for(const [, arr] of map){
-        arr.sort((a,b)=>a.d-b.d);
-      }
-      return map;
-    }
-
-    function groupByCat(items){
-      const map = new Map(CATEGORY_ORDER.map(cat => [cat, []]));
-      for(const obj of items){
-        const d = new Date(obj.date);
-        if(map.has(obj.cat)){
-          map.get(obj.cat).push({...obj, d});
-        }
-      }
-      for(const [, arr] of map){
-        arr.sort((a,b)=>a.d-b.d);
-      }
-      return map;
-    }
-
-    function computeTaskSummary(obj){
-      const total = obj.tasks?.length ?? 0;
-      const done = obj.tasks?.filter(t => t.done).length ?? 0;
-      const pct = total === 0 ? 0 : Math.round((done / total) * 100);
-      return { total, done, pct };
-    }
-
-    function buildTaskList(tasks){
-      if(!tasks || tasks.length === 0){
-        const empty = document.createElement('div');
-        empty.className = 'tasks empty';
-        empty.textContent = 'Aucune tâche renseignée';
-        return empty;
-      }
-
-      const list = document.createElement('ul');
-      list.className = 'tasks';
-      list.setAttribute('role', 'list');
-
-      tasks.forEach(task => {
-        const item = document.createElement('li');
-        item.className = 'task' + (task.done ? ' is-done' : '');
-
-        const check = document.createElement('span');
-        check.className = 'check';
-        check.textContent = task.done ? '✓' : '';
-        check.setAttribute('aria-hidden', 'true');
-        item.appendChild(check);
-
-        const details = document.createElement('div');
-
-        const title = document.createElement('span');
-        title.className = 'task-title';
-        title.textContent = task.title;
-        const rawDue = task.due ? new Date(task.due) : null;
-        const hasValidDue = rawDue && !Number.isNaN(rawDue.valueOf());
-        const badge = document.createElement('small');
-        badge.textContent = hasValidDue ? fmtDate(rawDue, true) : 'Sans échéance';
-        title.appendChild(badge);
-        details.appendChild(title);
-
-        const metaBits = [];
-        if(task.owner){
-          metaBits.push(`👤 ${task.owner}`);
-        }
-        metaBits.push(task.done ? '✓ Terminé' : '• À suivre');
-        if(metaBits.length){
-          const meta = document.createElement('span');
-          meta.className = 'task-meta';
-          meta.textContent = metaBits.join(' • ');
-          details.appendChild(meta);
-        }
-
-        item.appendChild(details);
-        list.appendChild(item);
-      });
-
-      return list;
-    }
-
-    function renderVertical(){
-      const container = document.getElementById('timelineVertical');
-      const byMonth = groupByMonth(OBJECTIVES);
-      const today = new Date();
-      const todayKey = isYear2025 ? (today.getMonth()+1).toString().padStart(2,'0') : null;
-
-      container.innerHTML = '';
-      for(let i=1;i<=12;i++){
-        const key = i.toString().padStart(2,'0');
-        const section = document.createElement('section');
-        section.className = 'month' + (todayKey === key ? ' is-today' : '');
-        section.id = `m${key}`;
-
-        const heading = document.createElement('h2');
-        heading.textContent = new Date(`2025-${key}-01`).toLocaleDateString('fr-FR', {month:'long'});
-        section.appendChild(heading);
-
-        const monthObjectives = byMonth.get(key) ?? [];
-        if(monthObjectives.length === 0){
-          const empty = document.createElement('div');
-          empty.className = 'item is-empty';
-          empty.dataset.placeholder = 'true';
-          empty.innerHTML = `<span class="node" aria-hidden="true"></span><div class="card"><div class="meta">Aucun objectif planifié</div></div>`;
-          section.appendChild(empty);
-        } else {
-          monthObjectives.forEach(obj => {
-            const summary = computeTaskSummary(obj);
-            const progressText = summary.total ? `${summary.done}/${summary.total} tâches` : 'Aucune tâche';
-            const item = document.createElement('article');
-            item.className = 'item';
-            item.dataset.cat = obj.cat;
-            item.dataset.id = obj.id;
-
-            const isTodayObjective = isYear2025 && obj.d.toDateString() === today.toDateString();
-            item.innerHTML = `
-              <span class="node" aria-hidden="true"></span>
-              <div class="card" role="button" tabindex="0" aria-label="${obj.title}">
-                ${isTodayObjective ? '<div class="ribbon">Aujourd\'hui</div>' : ''}
-                <div class="top">
-                  <div class="icon">${obj.icon || '🗂️'}</div>
-                  <div>
-                    <div class="title">${obj.title}</div>
-                    <div class="meta">
-                      <span>${fmtDate(obj.d)}</span>
-                      <span class="badge" data-cat="${obj.cat}">${getCategoryLabel(obj.cat)}</span>
-                      <span>${progressText}</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="meta">
-                  ${obj.lead ? `<span>👤 ${obj.lead}</span>` : ''}
-                  <span>Synchronisé SPHAIRA • ORIS</span>
-                </div>
-                <p class="desc">${obj.desc || ''}</p>
-              </div>
-            `;
-            section.appendChild(item);
-
-            const card = item.querySelector('.card');
-            card.appendChild(buildTaskList(obj.tasks));
-            card.addEventListener('click', () => openPanel(obj.id));
-            card.addEventListener('keydown', (ev) => {
-              if(ev.key === 'Enter' || ev.key === ' '){
-                ev.preventDefault();
-                openPanel(obj.id);
-              }
-            });
-          });
-        }
-
-        container.appendChild(section);
-      }
-    }
-
-    function renderRoadmap(){
-      const axis = document.getElementById('axis');
-      const lanesWrap = document.getElementById('lanes');
-      const todayLine = document.getElementById('todayLine');
-
-      axis.innerHTML = '';
-      for(let i=0;i<12;i++){
-        const tick = document.createElement('div');
-        tick.className = 'tick';
-        tick.style.width = 'calc(var(--month))';
-        tick.textContent = new Date(2025, i, 1).toLocaleDateString('fr-FR', {month:'short'}).replace('.', '');
-        axis.appendChild(tick);
-      }
-
-      lanesWrap.innerHTML = '';
-      const byCat = groupByCat(OBJECTIVES);
-      for(const [cat, arr] of byCat){
-        if(arr.length === 0) continue;
-        const lane = document.createElement('div');
-        lane.className = 'lane';
-        lane.dataset.cat = cat;
-
-        const label = document.createElement('div');
-        label.className = 'label';
-        label.innerHTML = `<span class="dot"></span> ${getCategoryLabel(cat)}`;
-        lane.appendChild(label);
-
-        const bars = document.createElement('div');
-        bars.className = 'bars';
-        const markers = document.createElement('div');
-        markers.className = 'taskMarkers';
-        bars.appendChild(markers);
-
-        arr.forEach(obj => {
-          const left = pctOfYear(obj.d);
-          const bar = document.createElement('div');
-          bar.className = 'barItem';
-          bar.dataset.cat = obj.cat;
-          bar.dataset.id = obj.id;
-          bar.style.left = `calc(${left}% - 80px)`;
-          bar.style.width = 'max(2%, 140px)';
+  // ====== RENDERERS ======
+  function renderVertical(){
+    const container = document.getElementById('timelineVertical');
+    const byMonth = groupByMonth(OBJECTIVES);
+    const today = new Date(); const todayKey = isYear2025 ? (today.getMonth()+1).toString().padStart(2,'0') : null;
+    container.innerHTML = '';
+    for(let i=1;i<=12;i++){
+      const key = i.toString().padStart(2,'0');
+      const section = document.createElement('section'); section.className = 'month' + (todayKey === key ? ' is-today' : ''); section.id = `m${key}`;
+      const heading = document.createElement('h2'); heading.textContent = new Date(`2025-${key}-01`).toLocaleDateString('fr-FR', {month:'long'}); section.appendChild(heading);
+      const monthObjectives = byMonth.get(key) ?? [];
+      if(monthObjectives.length === 0){ const empty = document.createElement('div'); empty.className = 'item is-empty'; empty.dataset.placeholder = 'true'; empty.innerHTML = `<span class="node" aria-hidden="true"></span><div class="card"><div class="meta">Aucun objectif planifié</div></div>`; section.appendChild(empty); }
+      else {
+        monthObjectives.forEach(obj => {
           const summary = computeTaskSummary(obj);
           const progressText = summary.total ? `${summary.done}/${summary.total} tâches` : 'Aucune tâche';
-          bar.setAttribute('data-hint', `${fmtDate(obj.d, true)} — ${progressText}`);
-          bar.innerHTML = `<span class="ic">${obj.icon || '🗂️'}</span><span class="t">${obj.title}</span><span class="d">• ${fmtDate(obj.d)}</span>`;
-          bar.setAttribute('role', 'button');
-          bar.setAttribute('tabindex', '0');
-          bars.appendChild(bar);
-
-          if(Array.isArray(obj.tasks)){
-            obj.tasks.forEach(task => {
-              const rawDue = task.due ? new Date(task.due) : null;
-              const hasValidDue = rawDue && !Number.isNaN(rawDue.valueOf());
-              const dueDate = hasValidDue ? rawDue : obj.d;
-              if(!dueDate || Number.isNaN(dueDate.valueOf())){
-                return;
-              }
-              const marker = document.createElement('span');
-              marker.className = 'taskMarker' + (task.done ? ' is-done' : '');
-              marker.dataset.cat = obj.cat;
-              marker.dataset.taskId = task.id || '';
-              marker.dataset.objectiveId = obj.id;
-              const pct = clamp(pctOfYear(dueDate), 0, 100);
-              marker.style.left = `calc(${pct}% - 7px)`;
-              const statusLabel = task.done ? 'Terminé' : 'À suivre';
-              const ownerLabel = task.owner ? ` • ${task.owner}` : '';
-              marker.setAttribute('data-hint', `${task.title} — ${statusLabel}${ownerLabel} • ${fmtDate(dueDate, true)}`);
-              marker.setAttribute('role', 'button');
-              marker.setAttribute('tabindex', '0');
-              marker.addEventListener('click', () => openPanel(obj.id));
-              marker.addEventListener('keydown', (ev) => {
-                if(ev.key === 'Enter' || ev.key === ' '){
-                  ev.preventDefault();
-                  openPanel(obj.id);
-                }
-              });
-              markers.appendChild(marker);
-            });
-          }
-
-          bar.addEventListener('click', () => openPanel(obj.id));
-          bar.addEventListener('keydown', (ev) => {
-            if(ev.key === 'Enter' || ev.key === ' '){
-              ev.preventDefault();
-              openPanel(obj.id);
-            }
-          });
+          const item = document.createElement('article'); item.className = 'item'; item.dataset.cat = obj.cat; item.dataset.id = obj.id;
+          const isTodayObjective = isYear2025 && obj.d.toDateString() === today.toDateString();
+          item.innerHTML = `
+            <span class="node" aria-hidden="true"></span>
+            <div class="card" role="button" tabindex="0" aria-label="${obj.title}">
+              ${isTodayObjective ? '<div class="ribbon">Aujourd\'hui</div>' : ''}
+              <div class="top">
+                <div class="icon">${obj.icon || '🗂️'}</div>
+                <div>
+                  <div class="title">${obj.title}</div>
+                  <div class="meta">
+                    <span>${fmtDate(obj.d)}</span>
+                    <span class="badge" data-cat="${obj.cat}">${CATEGORY_META[obj.cat]?.label||obj.cat}</span>
+                    <span>${progressText}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="meta">
+                ${obj.lead ? `<span>👤 ${obj.lead}</span>` : ''}
+                <span>Synchronisé SPHAIRA • ORIS</span>
+              </div>
+              <p class="desc">${obj.desc || ''}</p>
+            </div>`;
+          section.appendChild(item);
+          const card = item.querySelector('.card'); card.appendChild(buildTaskList(obj.tasks)); card.addEventListener('click', () => openPanel(obj.id)); card.addEventListener('keydown', (ev) => { if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); openPanel(obj.id); } });
         });
-
-        lane.appendChild(bars);
-        lanesWrap.appendChild(lane);
       }
+      container.appendChild(section);
+    }
+  }
 
-      if(isYear2025){
-        const position = pctOfYear(new Date());
-        todayLine.style.left = `calc(${position}% + 210px)`;
-        todayLine.hidden = false;
+  function renderRoadmap(){
+    const axis = document.getElementById('axis');
+    const lanesWrap = document.getElementById('lanes');
+    const todayLine = document.getElementById('todayLine');
+    axis.innerHTML = '';
+    for(let i=0;i<12;i++){ const tick = document.createElement('div'); tick.className = 'tick'; tick.style.width = 'calc(var(--month))'; tick.textContent = new Date(2025, i, 1).toLocaleDateString('fr-FR', {month:'short'}).replace('.', ''); axis.appendChild(tick); }
+    lanesWrap.innerHTML = '';
+    const byCat = groupByCat(OBJECTIVES);
+    for(const [cat, arr] of byCat){ if(arr.length === 0) continue; const lane = document.createElement('div'); lane.className = 'lane'; lane.dataset.cat = cat; const label = document.createElement('div'); label.className = 'label'; label.innerHTML = `<span class="dot"></span> ${CATEGORY_META[cat]?.label||cat}`; lane.appendChild(label); const bars = document.createElement('div'); bars.className = 'bars'; const markers = document.createElement('div'); markers.className = 'taskMarkers'; bars.appendChild(markers);
+      arr.forEach(obj => {
+        const left = pctOfYear(obj.d);
+        const bar = document.createElement('div'); bar.className = 'barItem'; bar.dataset.cat = obj.cat; bar.dataset.id = obj.id; bar.style.left = `calc(${left}% - 80px)`; bar.style.width = 'max(2%, 140px)'; const summary = computeTaskSummary(obj); const progressText = summary.total ? `${summary.done}/${summary.total} tâches` : 'Aucune tâche'; bar.setAttribute('data-hint', `${fmtDate(obj.d, true)} — ${progressText}`); bar.innerHTML = `<span class="ic">${obj.icon || '🗂️'}</span><span class="t">${obj.title}</span><span class="d">• ${fmtDate(obj.d)}</span>`; bar.setAttribute('role', 'button'); bar.setAttribute('tabindex', '0'); bars.appendChild(bar);
+        if(Array.isArray(obj.tasks)){
+          obj.tasks.forEach(task => { const rawDue = task.due ? new Date(task.due) : null; const hasValidDue = rawDue && !Number.isNaN(rawDue.valueOf()); const dueDate = hasValidDue ? rawDue : obj.d; if(!dueDate || Number.isNaN(dueDate.valueOf())) return; const marker = document.createElement('span'); marker.className = 'taskMarker' + (task.done ? ' is-done' : ''); marker.dataset.cat = obj.cat; marker.dataset.taskId = task.id || ''; marker.dataset.objectiveId = obj.id; const pct = clamp(pctOfYear(dueDate), 0, 100); marker.style.left = `calc(${pct}% - 7px)`; const statusLabel = task.done ? 'Terminé' : 'À suivre'; marker.setAttribute('data-hint', `${task.title} — ${statusLabel} • ${fmtDate(dueDate, true)}`); marker.setAttribute('role', 'button'); marker.setAttribute('tabindex', '0'); marker.addEventListener('click', () => openPanel(obj.id)); marker.addEventListener('keydown', (ev) => { if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); openPanel(obj.id); } }); markers.appendChild(marker); });
+        }
+        bar.addEventListener('click', () => openPanel(obj.id)); bar.addEventListener('keydown', (ev) => { if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); openPanel(obj.id); } });
+      });
+      lane.appendChild(bars); lanesWrap.appendChild(lane);
+    }
+    if(isYear2025){ const position = pctOfYear(new Date()); todayLine.style.left = `calc(${position}% + 210px)`; todayLine.hidden = false; } else { todayLine.hidden = true; }
+  }
+
+  // ====== Filters & controls ======
+  let currentFilter = 'tous';
+  function applyFilter(cat){
+    currentFilter = cat;
+    document.querySelectorAll('#timelineVertical .item').forEach(item => {
+      if(item.dataset.placeholder === 'true'){ item.style.display = cat === 'tous' ? '' : 'none'; return; }
+      if(cat === 'tous'){ item.style.display = ''; } else { item.style.display = item.dataset.cat === cat ? '' : 'none'; }
+    });
+    document.querySelectorAll('#timelineVertical .month').forEach(section => { const hasVisible = Array.from(section.querySelectorAll('.item')).some(it => it.style.display !== 'none'); section.style.display = hasVisible ? '' : 'none'; });
+    document.querySelectorAll('#lanes .lane').forEach(lane => {
+      if(cat === 'tous'){
+        lane.style.display = ''; lane.classList.remove('is-dim'); lane.querySelectorAll('.barItem').forEach(bar => { bar.style.opacity = 1; bar.style.pointerEvents = 'auto'; }); lane.querySelectorAll('.taskMarker').forEach(marker => { marker.style.opacity = 1; marker.style.pointerEvents = 'auto'; marker.setAttribute('tabindex', '0'); });
       } else {
-        todayLine.hidden = true;
-      }
-    }
-
-    function applyFilter(cat){
-      currentFilter = cat;
-      document.querySelectorAll('#timelineVertical .item').forEach(item => {
-        if(item.dataset.placeholder === 'true'){
-          item.style.display = cat === 'tous' ? '' : 'none';
-          return;
-        }
-        if(cat === 'tous'){
-          item.style.display = '';
-        } else {
-          item.style.display = item.dataset.cat === cat ? '' : 'none';
-        }
-      });
-
-      document.querySelectorAll('#timelineVertical .month').forEach(section => {
-        const hasVisible = Array.from(section.querySelectorAll('.item')).some(it => it.style.display !== 'none');
-        section.style.display = hasVisible ? '' : 'none';
-      });
-
-      document.querySelectorAll('#lanes .lane').forEach(lane => {
-        if(cat === 'tous'){
-          lane.style.display = '';
-          lane.classList.remove('is-dim');
-          lane.querySelectorAll('.barItem').forEach(bar => {
-            bar.style.opacity = 1;
-            bar.style.pointerEvents = 'auto';
-          });
-          lane.querySelectorAll('.taskMarker').forEach(marker => {
-            marker.style.opacity = 1;
-            marker.style.pointerEvents = 'auto';
-            marker.setAttribute('tabindex', '0');
-          });
-        } else {
-          const match = lane.dataset.cat === cat;
-          lane.style.display = '';
-          lane.classList.toggle('is-dim', !match);
-          lane.querySelectorAll('.barItem').forEach(bar => {
-            bar.style.opacity = match ? 1 : 0.2;
-            bar.style.pointerEvents = match ? 'auto' : 'none';
-          });
-          lane.querySelectorAll('.taskMarker').forEach(marker => {
-            marker.style.opacity = match ? 1 : 0.2;
-            marker.style.pointerEvents = match ? 'auto' : 'none';
-            marker.setAttribute('tabindex', match ? '0' : '-1');
-          });
-        }
-      });
-    }
-
-    function attachMonthNav(){
-      document.querySelectorAll('.months button').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const key = btn.dataset.go;
-          if(document.body.classList.contains('view-vertical')){
-            document.getElementById(`m${key}`)?.scrollIntoView({behavior:'smooth', block:'start'});
-          } else {
-            const scroll = document.getElementById('roadscroll');
-            const ratio = (parseInt(key, 10) - 1) / 12;
-            const target = ratio * (scroll.scrollWidth - scroll.clientWidth);
-            scroll.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
-          }
-        });
-      });
-    }
-
-    function setYearProgress(){
-      const now = new Date();
-      let pct = 0;
-      if(now < start) pct = 0;
-      else if(now > end) pct = 100;
-      else pct = ((now - start) / (end - start)) * 100;
-      document.getElementById('yearProgress').style.setProperty('--p', pct.toFixed(2) + '%');
-      document.getElementById('yearPct').textContent = Math.round(pct) + '%';
-    }
-
-    function attachViewSwitch(){
-      const chips = document.querySelectorAll('.chip-view');
-      chips.forEach(chip => {
-        chip.addEventListener('click', () => {
-          chips.forEach(c => c.dataset.active = 'false');
-          chip.dataset.active = 'true';
-          const view = chip.dataset.view;
-          document.body.classList.toggle('view-vertical', view === 'vertical');
-          document.body.classList.toggle('view-roadmap', view === 'roadmap');
-        });
-      });
-    }
-
-    function attachFilters(){
-      const chips = [...document.querySelectorAll('.controls > .chip[data-cat]')];
-      chips.forEach(chip => {
-        chip.addEventListener('click', () => {
-          chips.forEach(c => c.dataset.active = 'false');
-          chip.dataset.active = 'true';
-          applyFilter(chip.dataset.cat);
-        });
-      });
-    }
-
-    function showEmptyTaskMessage(){
-      tasksContainer.innerHTML = '<p class="empty">Aucune tâche définie pour le moment.</p>';
-    }
-
-    function buildTaskRow(task = {}){
-      const row = document.createElement('div');
-      row.className = 'task-row';
-      const rowId = task.id || uid('task');
-      row.dataset.id = rowId;
-      row.innerHTML = `
-        <input type="text" class="task-title" placeholder="Titre de la tâche" value="${task.title ?? ''}" required>
-        <input type="text" class="task-owner" placeholder="Pilote" value="${task.owner ?? ''}">
-        <input type="date" class="task-due" value="${task.due ?? ''}">
-        <label class="done"><input type="checkbox" class="task-done" ${task.done ? 'checked' : ''}> Terminé</label>
-        <button type="button" class="remove" title="Supprimer la tâche">×</button>
-      `;
-      row.querySelector('.remove').addEventListener('click', () => {
-        row.remove();
-        ensureTaskEmptyState();
-      });
-      return row;
-    }
-
-    function ensureTaskEmptyState(){
-      if(!tasksContainer.querySelector('.task-row')){
-        showEmptyTaskMessage();
-      }
-    }
-
-    function renderTaskRows(tasks){
-      tasksContainer.innerHTML = '';
-      if(!tasks || tasks.length === 0){
-        showEmptyTaskMessage();
-        return;
-      }
-      tasks.forEach(task => {
-        tasksContainer.appendChild(buildTaskRow(task));
-      });
-    }
-
-    function addTaskRow(task = {}){
-      if(tasksContainer.querySelector('.empty')){
-        tasksContainer.innerHTML = '';
-      }
-      tasksContainer.appendChild(buildTaskRow(task));
-    }
-
-    function openPanel(id = null){
-      currentObjectiveId = id;
-      overlay.dataset.open = 'true';
-      overlay.setAttribute('aria-hidden', 'false');
-      panel.dataset.open = 'true';
-      panel.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-
-      objectiveForm.reset();
-
-      if(id){
-        const obj = OBJECTIVES.find(item => item.id === id);
-        if(!obj){
-          showEmptyTaskMessage();
-          return;
-        }
-        panelHeading.textContent = obj.title;
-        document.getElementById('objectiveTitle').value = obj.title;
-        document.getElementById('objectiveDate').value = obj.date;
-        document.getElementById('objectiveCategory').value = obj.cat;
-        document.getElementById('objectiveLead').value = obj.lead || '';
-        document.getElementById('objectiveIcon').value = obj.icon || '';
-        document.getElementById('objectiveDesc').value = obj.desc || '';
-        renderTaskRows(obj.tasks || []);
-        deleteObjectiveBtn.hidden = false;
-      } else {
-        panelHeading.textContent = 'Nouvel objectif';
-        const today = new Date();
-        const defaultDate = today.getFullYear() === 2025 ? today.toISOString().slice(0,10) : '2025-01-01';
-        document.getElementById('objectiveDate').value = defaultDate;
-        document.getElementById('objectiveIcon').value = '🗂️';
-        renderTaskRows([]);
-        deleteObjectiveBtn.hidden = true;
-      }
-    }
-
-    function closePanel(){
-      panel.dataset.open = 'false';
-      panel.setAttribute('aria-hidden', 'true');
-      overlay.dataset.open = 'false';
-      overlay.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-      objectiveForm.reset();
-      showEmptyTaskMessage();
-      currentObjectiveId = null;
-    }
-
-    function syncWithSystems(action, objective){
-      const ts = new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
-      let message = '';
-      if(action === 'création'){
-        message = `Création synchronisée pour « ${objective.title} » — SPHAIRA & ORIS mis à jour (${ts}).`;
-      } else if(action === 'suppression'){
-        message = `Suppression synchronisée pour « ${objective.title} » (${ts}).`;
-      } else {
-        message = `Mise à jour synchronisée pour « ${objective.title} » — SPHAIRA & ORIS alignés (${ts}).`;
-      }
-      syncStatusMessage.textContent = message;
-    }
-
-    function refreshTimelines(){
-      renderVertical();
-      renderRoadmap();
-      applyFilter(currentFilter);
-    }
-
-    objectiveForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const formData = new FormData(objectiveForm);
-      const baseId = currentObjectiveId ?? uid('obj');
-
-      const tasks = Array.from(tasksContainer.querySelectorAll('.task-row')).map(row => {
-        const title = row.querySelector('.task-title').value.trim();
-        if(!title){
-          return null;
-        }
-        return {
-          id: row.dataset.id || uid('task'),
-          title,
-          owner: row.querySelector('.task-owner').value.trim(),
-          due: row.querySelector('.task-due').value,
-          done: row.querySelector('.task-done').checked
-        };
-      }).filter(Boolean);
-
-      const objective = {
-        id: baseId,
-        date: formData.get('date'),
-        title: formData.get('title').trim(),
-        cat: formData.get('category'),
-        lead: formData.get('lead').trim(),
-        icon: (formData.get('icon') || '🗂️').trim() || '🗂️',
-        desc: formData.get('desc').trim(),
-        tasks
-      };
-
-      const existingIndex = OBJECTIVES.findIndex(obj => obj.id === baseId);
-      const action = existingIndex > -1 ? 'mise à jour' : 'création';
-      try {
-        await persistObjectiveToSphaira(objective, existingIndex > -1);
-        syncWithSystems(action, objective);
-        closePanel();
-        await loadObjectivesFromSphaira();
-      } catch(error){
-        console.error('Impossible de synchroniser l\'objectif avec SPHAIRA', error);
-        syncStatusMessage.textContent = `Erreur de synchronisation SPHAIRA : ${error.message}`;
+        const match = lane.dataset.cat === cat; lane.style.display = ''; lane.classList.toggle('is-dim', !match); lane.querySelectorAll('.barItem').forEach(bar => { bar.style.opacity = match ? 1 : 0.2; bar.style.pointerEvents = match ? 'auto' : 'none'; }); lane.querySelectorAll('.taskMarker').forEach(marker => { marker.style.opacity = match ? 1 : 0.2; marker.style.pointerEvents = match ? 'auto' : 'none'; marker.setAttribute('tabindex', match ? '0' : '-1'); });
       }
     });
+  }
 
-    deleteObjectiveBtn.addEventListener('click', async () => {
-      if(!currentObjectiveId) return;
-      const target = OBJECTIVES.find(obj => obj.id === currentObjectiveId);
-      if(!target) return;
-      const confirmation = window.confirm(`Supprimer l'objectif « ${target.title} » ?`);
-      if(!confirmation) return;
-      try {
-        await deleteObjectiveFromSphaira(currentObjectiveId);
-        syncWithSystems('suppression', target);
-        closePanel();
-        await loadObjectivesFromSphaira();
-      } catch(error){
-        console.error('Impossible de supprimer l\'objectif dans SPHAIRA', error);
-        syncStatusMessage.textContent = `Erreur de synchronisation SPHAIRA : ${error.message}`;
+  function attachMonthNav(){ document.querySelectorAll('.months button').forEach(btn => { btn.addEventListener('click', () => { const key = btn.dataset.go; if(document.body.classList.contains('view-vertical')){ document.getElementById(`m${key}`)?.scrollIntoView({behavior:'smooth', block:'start'}); } else { const scroll = document.getElementById('roadscroll'); const ratio = (parseInt(key, 10) - 1) / 12; const target = ratio * (scroll.scrollWidth - scroll.clientWidth); scroll.scrollTo({ left: Math.max(0, target), behavior: 'smooth' }); } }); }); }
+  function setYearProgress(){ const now = new Date(); let pct = 0; if(now < start) pct = 0; else if(now > end) pct = 100; else pct = ((now - start) / (end - start)) * 100; document.getElementById('yearProgress').style.setProperty('--p', pct.toFixed(2) + '%'); document.getElementById('yearPct').textContent = Math.round(pct) + '%'; }
+  function attachViewSwitch(){ const chips = document.querySelectorAll('.chip-view'); chips.forEach(chip => { chip.addEventListener('click', () => { chips.forEach(c => c.dataset.active = 'false'); chip.dataset.active = 'true'; const view = chip.dataset.view; document.body.classList.toggle('view-vertical', view === 'vertical'); document.body.classList.toggle('view-roadmap', view === 'roadmap'); }); }); }
+  function attachFilters(){ const chips = [...document.querySelectorAll('.controls > .chip[data-cat]')]; chips.forEach(chip => { chip.addEventListener('click', () => { chips.forEach(c => c.dataset.active = 'false'); chip.dataset.active = 'true'; applyFilter(chip.dataset.cat); }); }); }
+
+  // ====== Panel (CRUD) ======
+  const overlay = document.getElementById('panelOverlay');
+  const panel = document.getElementById('detailPanel');
+  const panelHeading = document.getElementById('panelHeading');
+  const closePanelBtn = document.getElementById('closePanel');
+  const objectiveForm = document.getElementById('objectiveForm');
+  const tasksContainer = document.getElementById('tasksContainer');
+  const addTaskBtn = document.getElementById('addTaskBtn');
+  const deleteObjectiveBtn = document.getElementById('deleteObjective');
+  const createObjectiveBtn = document.getElementById('createObjective');
+  const syncStatus = document.getElementById('syncStatus');
+  const syncStatusMessage = syncStatus.querySelector('span:last-child');
+  const objectiveNodeSelect = document.getElementById('objectiveNode');
+
+  let currentObjectiveId = null; // qualified "nodeId::objId" ou null
+
+  function showEmptyTaskMessage(){ tasksContainer.innerHTML = '<p class="empty">Aucune tâche définie pour le moment.</p>'; }
+  function buildTaskRow(task = {}){
+    const row = document.createElement('div'); row.className = 'task-row'; const rowId = task.id || `t${Date.now()}${Math.random().toString(36).slice(2,5)}`; row.dataset.id = rowId;
+    row.innerHTML = `
+      <input type="text" class="task-title" placeholder="Titre de la tâche" value="${task.title ?? ''}" required>
+      <input type="text" class="task-owner" placeholder="Pilote (non lié SPHAIRA)" value="${task.owner ?? ''}">
+      <input type="date" class="task-due" value="${task.due ?? ''}">
+      <label class="done"><input type="checkbox" class="task-done" ${task.done ? 'checked' : ''}> Terminé</label>
+      <button type="button" class="remove" title="Supprimer la tâche">×</button>`;
+    row.querySelector('.remove').addEventListener('click', () => { row.remove(); ensureTaskEmptyState(); });
+    return row;
+  }
+  function ensureTaskEmptyState(){ if(!tasksContainer.querySelector('.task-row')){ showEmptyTaskMessage(); } }
+  function renderTaskRows(tasks){ tasksContainer.innerHTML=''; if(!tasks || tasks.length===0){ showEmptyTaskMessage(); return; } tasks.forEach(task => tasksContainer.appendChild(buildTaskRow(task))); }
+  function addTaskRow(task = {}){ if(tasksContainer.querySelector('.empty')) tasksContainer.innerHTML=''; tasksContainer.appendChild(buildTaskRow(task)); }
+
+  function populateNodeSelector(){
+    const ws = sphairaWorkspace.json; if(!ws){ objectiveNodeSelect.innerHTML = '<option value="">—</option>'; return; }
+    const nodes = getAllNodes();
+    const items = nodes.map(n=>({ id:n.id, name: (n.text||n.label||'').trim() || n.id }));
+    objectiveNodeSelect.innerHTML = items.map(it=>`<option value="${it.id}">${it.name}</option>`).join('');
+  }
+
+  function openPanel(id = null){
+    currentObjectiveId = id;
+    overlay.dataset.open = 'true'; overlay.setAttribute('aria-hidden', 'false'); panel.dataset.open = 'true'; panel.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; objectiveForm.reset();
+    if(id){
+      const res = resolveObjectiveRef(id); if(!res){ showEmptyTaskMessage(); deleteObjectiveBtn.hidden = true; return; }
+      const { node, objective } = res; ensureArraysOnNode(node);
+      panelHeading.textContent = objective.title||'Objectif';
+      objectiveNodeSelect.value = node.id; // verrouille dans ce cercle
+      document.getElementById('objectiveTitle').value = objective.title||'';
+      document.getElementById('objectiveDate').value = objective.due||'';
+      document.getElementById('objectiveCategory').value = CATEGORY_DEFAULT;
+      document.getElementById('objectiveLead').value = '';
+      document.getElementById('objectiveIcon').value = '🎯';
+      document.getElementById('objectiveDesc').value = objective.desc||'';
+      const uiObj = normalizeObjectiveForUI(node, objective);
+      renderTaskRows(uiObj.tasks||[]);
+      deleteObjectiveBtn.hidden = false;
+    } else {
+      panelHeading.textContent = 'Nouvel objectif';
+      const today = new Date();
+      const defaultDate = today.getFullYear() === 2025 ? today.toISOString().slice(0,10) : '2025-01-01';
+      document.getElementById('objectiveDate').value = defaultDate;
+      document.getElementById('objectiveIcon').value = '🎯';
+      renderTaskRows([]);
+      deleteObjectiveBtn.hidden = true;
+    }
+  }
+
+  function closePanel(){ panel.dataset.open = 'false'; panel.setAttribute('aria-hidden', 'true'); overlay.dataset.open = 'false'; overlay.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; objectiveForm.reset(); showEmptyTaskMessage(); currentObjectiveId = null; }
+
+  function syncWithSystems(action, title){ const ts = new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' }); const msg = action==='suppression' ? `Suppression synchronisée pour « ${title} » (${ts}).` : `${action==='création'?'Création':'Mise à jour'} synchronisée pour « ${title} » — SPHAIRA & ORIS alignés (${ts}).`; syncStatusMessage.textContent = msg; }
+
+  function refreshTimelines(){ renderVertical(); renderRoadmap(); applyFilter(currentFilter); }
+
+  // ====== SAVE objective (create/update) ======
+  objectiveForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if(!sphairaWorkspace.json){ alert('Workspace SPHAIRA introuvable. Ouvrez SPHAIRA d\'abord.'); return; }
+    const formData = new FormData(objectiveForm);
+    const nodeId = String(document.getElementById('objectiveNode').value||'');
+    const node = getNodeById(nodeId);
+    if(!node){ alert('Sélectionnez un cercle SPHAIRA.'); return; }
+    ensureArraysOnNode(node);
+
+    const title = (formData.get('title')||'').toString().trim();
+    const due = (formData.get('date')||'').toString();
+    const desc = (formData.get('desc')||'').toString();
+
+    // Lire les lignes de tâches (UI)
+    const rows = Array.from(tasksContainer.querySelectorAll('.task-row'));
+    const uiTasks = rows.map(row=>({
+      id: row.dataset.id, // peut être qualifié (nodeId::taskId) ou juste un id temporaire
+      title: row.querySelector('.task-title').value.trim(),
+      due: row.querySelector('.task-due').value,
+      done: row.querySelector('.task-done').checked
+    })).filter(t=>t.title);
+
+    let action = 'création';
+
+    if(currentObjectiveId){
+      // UPDATE
+      const res = resolveObjectiveRef(currentObjectiveId); if(!res){ alert('Objectif introuvable.'); return; }
+      const { node: curNode, objective } = res; ensureArraysOnNode(curNode);
+      // Si l'utilisateur a changé de cercle on migre l'objectif (rare)
+      let targetNode = curNode;
+      if(curNode.id !== node.id){
+        // retirer de l'ancien
+        curNode._objectives = curNode._objectives.filter(o=>o.id!==objective.id);
+        targetNode = node; ensureArraysOnNode(targetNode);
+        targetNode._objectives.push(objective);
       }
-    });
+      objective.title = title; objective.due = due; objective.desc = desc;
 
-    addTaskBtn.addEventListener('click', () => addTaskRow({}));
-    createObjectiveBtn.addEventListener('click', () => openPanel());
-    closePanelBtn.addEventListener('click', closePanel);
-    overlay.addEventListener('click', closePanel);
-    document.addEventListener('keydown', (event) => {
-      if(event.key === 'Escape' && panel.dataset.open === 'true'){
-        closePanel();
-      }
-    });
+      // Synchroniser les liens tâche <-> objectif à partir de la liste UI
+      const objectiveRef = qualifyObjectiveRef(targetNode.id, objective.id);
 
-    window.addEventListener('sphaira:objectives', () => {
-      loadObjectivesFromSphaira();
-    });
+      // Ensemble actuel des tâches liées (résolues)
+      const beforeSet = new Set((objective.taskIds||[]));
 
-    window.addEventListener('storage', (event) => {
-      if(event.key === SPHAIRA_STORAGE_KEY){
-        loadObjectivesFromSphaira();
-      }
-    });
+      // 1) pour chaque ligne UI : créer/mettre à jour la tâche et lier
+      uiTasks.forEach(tu=>{
+        let resTask = resolveTaskRef(tu.id);
+        if(!resTask){
+          // nouvelle tâche : on la crée dans le node cible de l'objectif
+          const newId = 't'+Date.now()+Math.random().toString(36).slice(2,5);
+          const task = { id:newId, title: tu.title, desc:'', start:'', end: tu.due||'', done: !!tu.done, objectiveIds:[] };
+          targetNode._tasks.push(task); resTask = { node: targetNode, task };
+        }else{
+          // mise à jour
+          resTask.task.title = tu.title; resTask.task.end = tu.due||''; resTask.task.done = !!tu.done;
+        }
+        // Lier
+        linkTaskToObjective(resTask, { node: targetNode, objective });
+      });
 
-    loadObjectivesFromSphaira();
-    attachFilters();
-    attachMonthNav();
-    attachViewSwitch();
-    setYearProgress();
-    setInterval(setYearProgress, 60*60*1000);
+      // 2) Délier ce qui a été retiré dans l'UI
+      const nowIds = new Set(uiTasks.map(t=>{ const r = resolveTaskRef(t.id); if(r) return qualifyTaskRef(r.node.id, r.task.id); return null; }).filter(Boolean));
+      for(const ref of beforeSet){ if(!nowIds.has(ref)){ const resT = resolveTaskRef(ref); if(resT){ unlinkTaskFromObjective(resT, { node: targetNode, objective }); } } }
+
+      recomputeObjectiveCompletion({ node: targetNode, objective });
+      action = 'mise à jour';
+    } else {
+      // CREATE
+      const newObjId = 'o'+Date.now()+Math.random().toString(36).slice(2,5);
+      const objective = { id:newObjId, title, desc, due, taskIds:[], completed:false, completedAt:null };
+      node._objectives.push(objective);
+      // Créer/lier les tâches
+      uiTasks.forEach(tu=>{
+        const newId = 't'+Date.now()+Math.random().toString(36).slice(2,5);
+        const task = { id:newId, title: tu.title, desc:'', start:'', end: tu.due||'', done: !!tu.done, objectiveIds:[] };
+        node._tasks.push(task);
+        linkTaskToObjective({ node, task }, { node, objective });
+      });
+      recomputeObjectiveCompletion({ node, objective });
+      currentObjectiveId = qualifyObjectiveRef(node.id, newObjId);
+    }
+
+    if(!persistWorkspace()){ alert('Impossible d\'enregistrer SPHAIRA.'); return; }
+    syncWithSystems(action, title);
+    closePanel();
+    loadObjectives();
+  });
+
+  // ====== DELETE objective ======
+  deleteObjectiveBtn.addEventListener('click', () => {
+    if(!currentObjectiveId) return;
+    const res = resolveObjectiveRef(currentObjectiveId); if(!res) return;
+    const { node, objective } = res; ensureArraysOnNode(node);
+    if(!confirm(`Supprimer l'objectif « ${objective.title} » ?`)) return;
+    // Délier toutes les tâches
+    (objective.taskIds||[]).forEach(ref=>{ const r = resolveTaskRef(ref); if(r){ unlinkTaskFromObjective(r, res); } });
+    // Supprimer l'objectif
+    node._objectives = node._objectives.filter(o=>o.id!==objective.id);
+    if(!persistWorkspace()){ alert('Impossible d\'enregistrer SPHAIRA.'); return; }
+    syncWithSystems('suppression', objective.title||'Objectif');
+    closePanel();
+    loadObjectives();
+  });
+
+  addTaskBtn.addEventListener('click', () => addTaskRow({}));
+  createObjectiveBtn.addEventListener('click', () => openPanel());
+  closePanelBtn.addEventListener('click', closePanel);
+  overlay.addEventListener('click', closePanel);
+  document.addEventListener('keydown', (event) => { if(event.key === 'Escape' && panel.dataset.open === 'true'){ closePanel(); } });
+
+  // ====== Storage sync ======
+  window.addEventListener('storage', (event) => {
+    if(STORAGE_KEYS.includes(event.key) || event.key==='sphaira:lastWriteAt'){
+      loadObjectives();
+    }
+  });
+
+  // ====== Startup ======
+  function attachMonthNavInit(){ attachMonthNav(); }
+  loadObjectives();
+  attachFilters();
+  attachMonthNavInit();
+  attachViewSwitch();
+  setYearProgress();
+  setInterval(setYearProgress, 60*60*1000);
+
   </script>
 </body>
 </html>
