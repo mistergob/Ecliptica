@@ -60,7 +60,7 @@
       border:1px solid rgba(255,255,255,.06); border-radius:16px; width:min(1100px, 92%);
       box-shadow:0 10px 30px rgba(0,0,0,.25);
     }
-    /* Chips dynamiques cercles */
+    /* Chips dynamiques = cercles principaux de SPHAIRA */
     .chips{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
     .chip{
       --dot:#00eaff;
@@ -370,6 +370,7 @@
   /* ====== Accès workspace SPHAIRA (localStorage) ====== */
   const STORAGE_KEYS = ['sphaira:workspaceState:v2','sphaira:workspaceState:v1','workspaceState'];
   const FALLBACK_COLORS = ['#00eaff','#ff6ec7','#ffd166','#5bd3ff','#8a2be2','#8cffd2','#ffa3a3','#a3c4ff'];
+
   let sphairaWorkspace = { json:null, storageKey:null };
 
   function loadWorkspaceFromStorage(){
@@ -435,43 +436,87 @@
     return null;
   }
 
-  /* ====== Cercles principaux (filtres dynamiques) ====== */
-  function computeRootNodes(){
-    const nodes = getAllNodes(); if(nodes.length===0) return [];
-    const childSet = new Set();
+  /* ====== Graphe parent/enfants + cercles principaux ====== */
+  let PARENT_OF = new Map(); // childId -> parentId
+  function buildParentMap(){
+    PARENT_OF = new Map();
+    const nodes = getAllNodes();
     for(const n of nodes){
+      if(n.parentId){ PARENT_OF.set(n.id, n.parentId); }
       const children = Array.isArray(n.children) ? n.children
-                      : Array.isArray(n.childIds) ? n.childIds
-                      : [];
+                     : Array.isArray(n.childIds) ? n.childIds
+                     : [];
       for(const c of children){
-        if(typeof c==='string') childSet.add(c);
-        else if(c && typeof c==='object' && c.id) childSet.add(c.id);
+        if(typeof c==='string') PARENT_OF.set(c, n.id);
+        else if(c && typeof c==='object' && c.id) PARENT_OF.set(c.id, n.id);
       }
-      if(n.parentId) childSet.add(n.id); // si parentId présent, ce n’est pas une racine
     }
-    // heuristique: racines = non présents dans childSet OU depth/level === 0
-    const roots = nodes.filter(n =>
-      !childSet.has(n.id) ||
-      n.depth === 0 || n.level === 0 || n.isMain === true || n.root === true
-    );
-    // Dédupliquer
-    const seen = new Set(); const out = [];
-    for(const r of roots){ if(!seen.has(r.id)){ seen.add(r.id); out.push(r); } }
-    // tri par nom pour stabilité
-    out.sort((a,b)=> (a.text||a.label||a.id).localeCompare(b.text||b.label||b.id,'fr'));
-    return out;
   }
+
+  function isExplicitMain(n){
+    // indicateurs possibles côté SPHAIRA
+    if(n.isMain === true || n.main === true || n.primary === true || n.isPrimary === true) return true;
+    if(typeof n.type === 'string' && /main|primary/i.test(n.type)) return true;
+    if(typeof n.kind === 'string' && /main|primary/i.test(n.kind)) return true;
+    if(Array.isArray(n.tags) && n.tags.some(t=>/main|principal/i.test(String(t)))) return true;
+    if(n.level === 0 || n.depth === 0 || n.root === true) return true;
+    return false;
+  }
+
+  let MAINS = [];         // liste des cercles principaux (objets node)
+  let MAINS_SET = new Set(); // ids principaux pour accès rapide
+
+  function computeMainCircles(){
+    const nodes = getAllNodes();
+    if(nodes.length===0){ MAINS=[]; MAINS_SET=new Set(); return; }
+    buildParentMap();
+
+    // 1) Si des cercles ont un marquage explicite "principal", on ne prend QUE ceux-là
+    const explicit = nodes.filter(isExplicitMain);
+    let mains = [];
+    if(explicit.length>0){
+      mains = explicit;
+    } else {
+      // 2) Sinon: principaux = sommets (sans parent)
+      mains = nodes.filter(n => !PARENT_OF.has(n.id));
+    }
+
+    // tri: par champ order si disponible, sinon par nom
+    mains.sort((a,b)=>{
+      const ao = (a.order??a.index??a.position??9999), bo = (b.order??b.index??b.position??9999);
+      if(ao!==bo) return ao-bo;
+      const an = (a.text||a.label||a.id); const bn=(b.text||b.label||b.id);
+      return String(an).localeCompare(String(bn),'fr');
+    });
+
+    // dédup
+    const seen=new Set(); const out=[];
+    for(const m of mains){ if(!seen.has(m.id)){ seen.add(m.id); out.push(m); } }
+
+    MAINS = out;
+    MAINS_SET = new Set(out.map(n=>n.id));
+  }
+
   function nodeLabel(n){ return (n.text||n.label||'').trim() || n.id; }
   function nodeColor(n, idx){
-    const c = (n.color||n.colour||n.col||'').trim();
+    const c = (n.color||n.colour||n.col||'').trim?.() || '';
     if(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(c)) return c;
     return FALLBACK_COLORS[idx % FALLBACK_COLORS.length];
   }
 
-  /* ====== Projection SPHAIRA -> UI OBJECTIVES (avec union des tâches) ====== */
-  let OBJECTIVES = []; // {id, nodeId, nodeName, nodeColor, date, title, icon, desc, tasks:[{id,title,due,done}]}
-  let ROOTS = []; // cercles racines pour filtres
+  function findTopMainId(nodeId){
+    if(!nodeId) return null;
+    let cur = nodeId; let guard=0;
+    while(guard++ < 50){
+      if(MAINS_SET.has(cur)) return cur;
+      const p = PARENT_OF.get(cur);
+      if(!p) return cur; // racine si aucun "main" explicite
+      cur = p;
+    }
+    return nodeId;
+  }
 
+  /* ====== Union des tâches liées à un objectif (bidirectionnel) ====== */
   function tasksLinkedToObjectiveAcrossWorkspace(objectiveRef){
     const nodes = getAllNodes(); const results = [];
     for(const n of nodes){
@@ -485,16 +530,18 @@
     return results;
   }
 
+  /* ====== Projection SPHAIRA -> OBJECTIVES UI ====== */
+  let OBJECTIVES = []; // {id, nodeId, mainId, mainName, mainColor, date, title, icon, desc, tasks:[...]}
   function normalizeObjectiveForUI(node, obj){
     ensureArraysOnNode(node);
     const objectiveRef = qualifyObjectiveRef(node.id, obj.id);
 
-    // A) via objective.taskIds (qualifiées ou non)
+    // A) via objective.taskIds
     const viaObj = (obj.taskIds||[])
       .map(ref => resolveTaskRef(ref))
       .filter(Boolean);
 
-    // B) via toutes les tâches qui pointent sur objectiveRef
+    // B) via toutes les tâches qui pointent sur l'objectif
     const viaTask = tasksLinkedToObjectiveAcrossWorkspace(objectiveRef);
 
     // Union par clé qualifiée
@@ -511,11 +558,16 @@
       done: !!task.done
     }));
 
+    const mainId  = findTopMainId(node.id);
+    const main    = getNodeById(mainId) || node;
+    const mainIdx = MAINS.findIndex(m=>m.id===main.id);
+
     return {
       id: objectiveRef,
       nodeId: node.id,
-      nodeName: nodeLabel(node),
-      nodeColor: nodeColor(node, 0),
+      mainId: main.id,
+      mainName: nodeLabel(main),
+      mainColor: nodeColor(main, Math.max(0, mainIdx)),
       date: obj.due || '2025-01-01',
       title: obj.title || 'Objectif sans titre',
       icon: '🎯',
@@ -546,16 +598,12 @@
     for(const [,arr] of map){ arr.sort((a,b)=>a.d-b.d); }
     return map;
   }
-  function groupByCircle(items){
-    const map = new Map();
-    for(const root of ROOTS){ map.set(root.id, []); }
+  function groupByMain(items){
+    const map = new Map(MAINS.map(m=>[m.id, []]));
     for(const obj of items){
       const d = new Date(obj.date);
-      if(map.has(obj.nodeId)) map.get(obj.nodeId).push({...obj, d});
-      else { // si l'objectif est dans un cercle non racine, ranger par son cercle quand même
-        if(!map.has(obj.nodeId)) map.set(obj.nodeId, []);
-        map.get(obj.nodeId).push({...obj, d});
-      }
+      if(!map.has(obj.mainId)) map.set(obj.mainId, []);
+      map.get(obj.mainId).push({...obj, d});
     }
     for(const [,arr] of map){ arr.sort((a,b)=>a.d-b.d); }
     return map;
@@ -603,7 +651,7 @@
         monthObjectives.forEach(obj=>{
           const summary = computeTaskSummary(obj);
           const progressText = summary.total ? `${summary.done}/${summary.total} tâches` : 'Aucune tâche';
-          const item = document.createElement('article'); item.className='item'; item.dataset.cat=obj.nodeId; item.dataset.id=obj.id;
+          const item = document.createElement('article'); item.className='item'; item.dataset.cat=obj.mainId; item.dataset.id=obj.id;
           const isTodayObjective = isYear2025 && obj.d.toDateString()===today.toDateString();
           item.innerHTML = `
             <span class="node" aria-hidden="true"></span>
@@ -615,7 +663,7 @@
                   <div class="title">${obj.title}</div>
                   <div class="meta">
                     <span>${fmtDate(obj.d)}</span>
-                    <span class="badge" style="color:${obj.nodeColor}"><span class="dot"></span>${obj.nodeName}</span>
+                    <span class="badge" style="color:${obj.mainColor}"><span class="dot"></span>${obj.mainName}</span>
                     <span>${progressText}</span>
                   </div>
                 </div>
@@ -641,12 +689,13 @@
     axis.innerHTML=''; for(let i=0;i<12;i++){ const t=document.createElement('div'); t.className='tick'; t.style.width='calc(var(--month))'; t.textContent=new Date(2025,i,1).toLocaleDateString('fr-FR',{month:'short'}).replace('.',''); axis.appendChild(t); }
 
     lanesWrap.innerHTML='';
-    const byCircle = groupByCircle(OBJECTIVES);
-    for(const root of ROOTS){
-      const arr = byCircle.get(root.id) || [];
-      if(arr.length===0) continue;
+    const byMain = groupByMain(OBJECTIVES);
+    MAINS.forEach((root,idx)=>{
+      const arr = byMain.get(root.id) || [];
+      if(arr.length===0) return;
       const lane=document.createElement('div'); lane.className='lane'; lane.dataset.cat=root.id;
-      const label=document.createElement('div'); label.className='label'; label.style.color=nodeColor(root,0); label.innerHTML=`<span class="dot"></span>${nodeLabel(root)}`;
+      const color=nodeColor(root,idx);
+      const label=document.createElement('div'); label.className='label'; label.style.color=color; label.innerHTML=`<span class="dot"></span>${nodeLabel(root)}`;
       lane.appendChild(label);
 
       const bars=document.createElement('div'); bars.className='bars';
@@ -654,7 +703,7 @@
 
       arr.forEach(obj=>{
         const left=pctOfYear(obj.d);
-        const bar=document.createElement('div'); bar.className='barItem'; bar.dataset.cat=obj.nodeId; bar.dataset.id=obj.id;
+        const bar=document.createElement('div'); bar.className='barItem'; bar.dataset.cat=obj.mainId; bar.dataset.id=obj.id;
         bar.style.left=`calc(${left}% - 80px)`; bar.style.width='max(2%, 140px)';
         const summary=computeTaskSummary(obj); const progressText=summary.total?`${summary.done}/${summary.total} tâches`:'Aucune tâche';
         bar.setAttribute('data-hint', `${fmtDate(obj.d,true)} — ${progressText}`);
@@ -666,7 +715,7 @@
           const rawDue = task.due?new Date(task.due):null; const dueDate = rawDue && !Number.isNaN(rawDue.valueOf()) ? rawDue : obj.d;
           if(!dueDate || Number.isNaN(dueDate.valueOf())) return;
           const m=document.createElement('span'); m.className='taskMarker'+(task.done?' is-done':'');
-          m.dataset.cat=obj.nodeId; m.dataset.taskId=task.id||''; m.dataset.objectiveId=obj.id;
+          m.dataset.cat=obj.mainId; m.dataset.taskId=task.id||''; m.dataset.objectiveId=obj.id;
           m.style.left=`calc(${clamp(pctOfYear(dueDate),0,100)}% - 7px)`;
           m.setAttribute('data-hint', `${task.title} — ${task.done?'Terminé':'À suivre'} • ${fmtDate(dueDate,true)}`);
           m.setAttribute('role','button'); m.setAttribute('tabindex','0');
@@ -680,14 +729,14 @@
       });
 
       lane.appendChild(bars); lanesWrap.appendChild(lane);
-    }
+    });
 
     if(isYear2025){ const position=pctOfYear(new Date()); todayLine.style.left=`calc(${position}% + 210px)`; todayLine.hidden=false; } else { todayLine.hidden=true; }
   }
 
   function refreshTimelines(){ renderVertical(); renderRoadmap(); applyFilter(currentFilter); }
 
-  /* ====== Chips filtres cercles ====== */
+  /* ====== Chips filtres (UNIQUEMENT cercles principaux) ====== */
   const chipsContainer = document.getElementById('chipsContainer');
   let currentFilter = 'tous';
   function renderCircleChips(){
@@ -704,7 +753,7 @@
       return b;
     };
     chipsContainer.appendChild(makeChip('tous','Tous','#00eaff', true));
-    ROOTS.forEach((r,idx)=> chipsContainer.appendChild(makeChip(r.id, nodeLabel(r), nodeColor(r,idx), false)));
+    MAINS.forEach((r,idx)=> chipsContainer.appendChild(makeChip(r.id, nodeLabel(r), nodeColor(r,idx), false)));
   }
   function applyFilter(cat){
     currentFilter = cat;
@@ -830,9 +879,9 @@
     const ws = loadWorkspaceFromStorage();
     const hint = document.getElementById('noWorkspaceHint');
     hint.style.display = ws.json ? 'none' : '';
-    ROOTS = ws.json ? computeRootNodes() : [];
+    computeMainCircles();
     OBJECTIVES = ws.json ? buildObjectivesFromWorkspace() : [];
-    renderCircleChips();
+    renderCircleChips();          // n’affiche que MAINS
     populateNodeSelector();
     refreshTimelines();
     const ts=new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
