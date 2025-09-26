@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>SPHAIRA — Console de synchronisation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root{
+      color-scheme: dark;
+      --bg:#040810;
+      --panel:#0d1625;
+      --accent:#5bd8ff;
+      --accent-strong:#89f1ff;
+      --muted:#7f8ba3;
+      --text:#f5faff;
+      --border:rgba(255,255,255,.08);
+    }
+    *{box-sizing:border-box;font-family:"Inter",system-ui,sans-serif;}
+    body{
+      margin:0;
+      min-height:100vh;
+      background:radial-gradient(circle at top, rgba(22,70,130,.5), transparent 55%), #030712;
+      color:var(--text);
+      padding:40px 20px 80px;
+      display:flex;
+      justify-content:center;
+    }
+    main{
+      width:min(960px, 100%);
+      display:flex;
+      flex-direction:column;
+      gap:32px;
+    }
+    header h1{
+      margin:0;
+      font-size:28px;
+      font-weight:700;
+      letter-spacing:.04em;
+    }
+    header p{
+      margin:12px 0 0;
+      max-width:720px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+    section{
+      padding:24px;
+      border-radius:16px;
+      background:linear-gradient(180deg, rgba(13,22,37,.92), rgba(4,10,20,.92));
+      border:1px solid var(--border);
+      box-shadow:0 20px 50px rgba(0,0,0,.35);
+    }
+    h2{
+      margin:0 0 16px;
+      font-size:18px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--accent-strong);
+    }
+    #statusBar{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-size:14px;
+      color:var(--muted);
+    }
+    #statusBar .pulse{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      background:var(--accent);
+      box-shadow:0 0 18px rgba(91,216,255,.6);
+      animation:pulse 2.4s ease-in-out infinite;
+    }
+    #statusMessage[data-tone="error"]{color:#ff9d9d;}
+    #statusMessage[data-tone="success"]{color:#8fffd2;}
+    @keyframes pulse{
+      0%,100%{transform:scale(.9); opacity:.5;}
+      50%{transform:scale(1.15); opacity:1;}
+    }
+    .objective-card{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:16px;
+      margin-bottom:16px;
+      background:rgba(5,12,22,.85);
+    }
+    .objective-card:last-child{margin-bottom:0;}
+    .objective-card h3{
+      margin:0 0 8px;
+      font-size:18px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .objective-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:12px;
+    }
+    .objective-card ul{
+      margin:0;
+      padding-left:20px;
+      display:grid;
+      gap:6px;
+    }
+    .objective-card li{
+      font-size:13px;
+      color:var(--text);
+    }
+    .empty{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      text-align:center;
+    }
+    form{
+      display:grid;
+      gap:14px;
+    }
+    label{
+      display:grid;
+      gap:6px;
+      font-size:13px;
+      color:var(--muted);
+    }
+    input, select, textarea{
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:rgba(4,12,22,.9);
+      color:var(--text);
+      font-size:14px;
+    }
+    textarea{min-height:80px;}
+    .actions{
+      display:flex;
+      justify-content:flex-end;
+    }
+    button{
+      padding:10px 18px;
+      border-radius:999px;
+      border:1px solid rgba(91,216,255,.45);
+      background:linear-gradient(90deg, rgba(91,216,255,.25), rgba(91,216,255,.05));
+      color:var(--text);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-weight:600;
+      cursor:pointer;
+      transition:transform .2s ease, border-color .2s ease;
+    }
+    button[disabled]{
+      opacity:.5;
+      cursor:not-allowed;
+    }
+    button:not([disabled]):hover{
+      transform:translateY(-1px);
+      border-color:rgba(137,241,255,.85);
+    }
+    @media(max-width:640px){
+      section{padding:20px;}
+      header h1{font-size:24px;}
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>SPHAIRA — Console de synchronisation</h1>
+      <p>Cette console expose les objectifs partagés entre SPHAIRA et ECLIPTICA. Toute création de tâche est immédiatement persistée dans la source commune puis récupérée par ECLIPTICA.</p>
+    </header>
+
+    <section id="statusBar">
+      <span class="pulse" aria-hidden="true"></span>
+      <span id="statusMessage">Initialisation de la synchronisation…</span>
+    </section>
+
+    <section>
+      <h2>Objectifs actifs</h2>
+      <div id="objectivesContainer"></div>
+    </section>
+
+    <section>
+      <h2>Créer une tâche</h2>
+      <form id="taskForm">
+        <label>
+          Objectif
+          <select id="objectiveSelect" name="objectiveId" required></select>
+        </label>
+        <label>
+          Titre de la tâche
+          <input type="text" id="taskTitle" name="title" placeholder="Ex : Déployer les APIs ORIS" required>
+        </label>
+        <label>
+          Responsable
+          <input type="text" id="taskOwner" name="owner" placeholder="Ex : Ops Produit">
+        </label>
+        <label>
+          Échéance
+          <input type="date" id="taskDue" name="due">
+        </label>
+        <label>
+          Statut
+          <select id="taskStatus" name="status">
+            <option value="todo">À planifier</option>
+            <option value="done">Terminé</option>
+          </select>
+        </label>
+        <div class="actions">
+          <button type="submit">Créer la tâche</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="../shared/sphaira-data.js"></script>
+  <script>
+    const API_BASE = window.SPHAIRA_API_BASE || 'memory://sphaira';
+    const STORAGE_KEY = window.SPHAIRA_STORAGE_KEY || 'sphaira:objectives';
+
+    const statusMessage = document.getElementById('statusMessage');
+    const objectivesContainer = document.getElementById('objectivesContainer');
+    const objectiveSelect = document.getElementById('objectiveSelect');
+    const taskForm = document.getElementById('taskForm');
+    const submitButton = taskForm.querySelector('button[type="submit"]');
+
+    let loadPromise = null;
+
+    function setStatus(message, tone = 'info'){
+      statusMessage.textContent = message;
+      statusMessage.dataset.tone = tone;
+    }
+
+    function taskSummary(tasks){
+      if(!Array.isArray(tasks) || tasks.length === 0){
+        return 'Aucune tâche';
+      }
+      const done = tasks.filter(task => task.done).length;
+      return `${done}/${tasks.length} tâche${tasks.length > 1 ? 's' : ''} complétée${tasks.length > 1 ? 's' : ''}`;
+    }
+
+    function renderObjectives(objectives){
+      objectivesContainer.innerHTML = '';
+      if(!objectives.length){
+        const empty = document.createElement('p');
+        empty.className = 'empty';
+        empty.textContent = 'Aucun objectif disponible.';
+        objectivesContainer.appendChild(empty);
+        return;
+      }
+
+      const sorted = [...objectives].sort((a, b) => new Date(a.date) - new Date(b.date));
+      sorted.forEach(obj => {
+        const card = document.createElement('article');
+        card.className = 'objective-card';
+        card.innerHTML = `
+          <h3>${obj.icon || '🗂️'} ${obj.title}</h3>
+          <div class="objective-meta">
+            <span>${new Date(obj.date).toLocaleDateString('fr-FR')}</span>
+            ${obj.lead ? `<span>👤 ${obj.lead}</span>` : ''}
+            <span>${taskSummary(obj.tasks)}</span>
+          </div>
+        `;
+        const list = document.createElement('ul');
+        if(Array.isArray(obj.tasks) && obj.tasks.length){
+          obj.tasks.forEach(task => {
+            const item = document.createElement('li');
+            const status = task.done ? '✓' : '•';
+            const due = task.due ? ` — ${new Date(task.due).toLocaleDateString('fr-FR')}` : '';
+            const owner = task.owner ? ` (${task.owner})` : '';
+            item.textContent = `${status} ${task.title}${owner}${due}`;
+            list.appendChild(item);
+          });
+        } else {
+          const none = document.createElement('li');
+          none.textContent = 'Aucune tâche associée';
+          list.appendChild(none);
+        }
+        card.appendChild(list);
+        objectivesContainer.appendChild(card);
+      });
+    }
+
+    function populateObjectiveSelect(objectives){
+      objectiveSelect.innerHTML = '';
+      const sorted = [...objectives].sort((a, b) => new Date(a.date) - new Date(b.date));
+      if(!sorted.length){
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'Aucun objectif disponible';
+        objectiveSelect.appendChild(option);
+        objectiveSelect.disabled = true;
+        submitButton.disabled = true;
+        return;
+      }
+
+      objectiveSelect.disabled = false;
+      submitButton.disabled = false;
+      sorted.forEach(obj => {
+        const option = document.createElement('option');
+        option.value = obj.id;
+        const date = new Date(obj.date);
+        option.textContent = `${date.toLocaleDateString('fr-FR')} — ${obj.title}`;
+        objectiveSelect.appendChild(option);
+      });
+    }
+
+    async function loadObjectives(){
+      if(loadPromise){
+        return loadPromise;
+      }
+      setStatus('Chargement des objectifs…', 'info');
+      loadPromise = (async () => {
+        try {
+          const response = await fetch(`${API_BASE}/objectives`);
+          let payload;
+          if(response.ok){
+            payload = await response.json();
+          } else {
+            let message = response.statusText || `Code ${response.status}`;
+            try {
+              const errorPayload = await response.json();
+              if(errorPayload && errorPayload.error){
+                message = errorPayload.error;
+              }
+            } catch(_){}
+            throw new Error(message);
+          }
+          const objectives = Array.isArray(payload) ? payload : [];
+          renderObjectives(objectives);
+          populateObjectiveSelect(objectives);
+          const ts = new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+          setStatus(`Objectifs synchronisés (${ts})`, 'success');
+        } catch(error){
+          console.error('SPHAIRA — chargement impossible', error);
+          setStatus(`Erreur : ${error.message}`, 'error');
+        } finally {
+          loadPromise = null;
+        }
+      })();
+      return loadPromise;
+    }
+
+    async function submitTask(event){
+      event.preventDefault();
+      if(submitButton.disabled) return;
+
+      const formData = new FormData(taskForm);
+      const objectiveId = formData.get('objectiveId');
+      const title = formData.get('title').trim();
+      if(!objectiveId || !title){
+        setStatus('Sélectionnez un objectif et renseignez un titre de tâche.', 'error');
+        return;
+      }
+
+      submitButton.disabled = true;
+      const previousLabel = submitButton.textContent;
+      submitButton.textContent = 'Enregistrement…';
+
+      try {
+        const response = await fetch(`${API_BASE}/objectives`);
+        let payload;
+        if(response.ok){
+          payload = await response.json();
+        } else {
+          let message = response.statusText || `Code ${response.status}`;
+          try {
+            const errorPayload = await response.json();
+            if(errorPayload && errorPayload.error){
+              message = errorPayload.error;
+            }
+          } catch(_){}
+          throw new Error(message);
+        }
+
+        const objectives = Array.isArray(payload) ? payload : [];
+        const target = objectives.find(obj => obj.id === objectiveId);
+        if(!target){
+          throw new Error('Objectif introuvable dans la source partagée.');
+        }
+
+        const newTask = {
+          id: `task-${Math.random().toString(36).slice(2,8)}${Date.now().toString(36).slice(-2)}`,
+          title,
+          owner: formData.get('owner').trim(),
+          due: formData.get('due'),
+          done: formData.get('status') === 'done'
+        };
+
+        if(!Array.isArray(target.tasks)){
+          target.tasks = [];
+        }
+        target.tasks.push(newTask);
+
+        const updateResponse = await fetch(`${API_BASE}/objectives/${encodeURIComponent(target.id)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(target)
+        });
+        if(!updateResponse.ok){
+          let message = updateResponse.statusText || `Code ${updateResponse.status}`;
+          try {
+            const errorPayload = await updateResponse.json();
+            if(errorPayload && errorPayload.error){
+              message = errorPayload.error;
+            }
+          } catch(_){}
+          throw new Error(message);
+        }
+
+        taskForm.reset();
+        setStatus(`Tâche ajoutée à « ${target.title} ».`, 'success');
+        await loadObjectives();
+      } catch(error){
+        console.error('SPHAIRA — création de tâche impossible', error);
+        setStatus(`Erreur lors de la création de la tâche : ${error.message}`, 'error');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = previousLabel;
+      }
+    }
+
+    taskForm.addEventListener('submit', submitTask);
+    window.addEventListener('sphaira:objectives', () => { loadObjectives(); });
+    window.addEventListener('storage', (event) => {
+      if(event.key === STORAGE_KEY){
+        loadObjectives();
+      }
+    });
+
+    loadObjectives();
+  </script>
+</body>
+</html>
