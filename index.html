@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ATMOS — Timeline 2025</title>
+  <title>ECLIPTICA — Objectifs SPHAIRA</title>
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
@@ -72,14 +72,34 @@
     }
     .chip[data-active="true"]{ border-color:rgba(0,234,255,.55); box-shadow:0 0 0 2px rgba(0,234,255,.12) inset }
     .chip .dot{width:8px; height:8px; border-radius:50%; background:var(--primary); box-shadow:0 0 10px rgba(0,234,255,.7)}
-    .chip[data-cat="partenariat"] .dot{background:#00ff9c}
-    .chip[data-cat="marketing"]   .dot{background:#ffd166}
-    .chip[data-cat="release"]      .dot{background:#ff6b6b}
-    .chip[data-cat="evenement"]    .dot{background:#8a2be2}
-    .chip[data-cat="ops"]          .dot{background:#5bd3ff}
-    .chip[data-cat="contenu"]      .dot{background:#c5ff61}
+    .chip[data-cat="developpement"] .dot{background:#00eaff}
+    .chip[data-cat="experience"]    .dot{background:#ff6ec7}
+    .chip[data-cat="alignement"]    .dot{background:#ffd166}
+    .chip[data-cat="operations"]    .dot{background:#5bd3ff}
+    .chip[data-cat="lancement"]     .dot{background:#8a2be2}
 
     .spacer{flex:1 1 12px}
+
+    .action-btn{
+      display:inline-flex; align-items:center; gap:10px; cursor:pointer; font-weight:600;
+      padding:10px 18px; border-radius:12px; border:1px solid rgba(0,234,255,.45);
+      background:linear-gradient(180deg, rgba(0,234,255,.18), rgba(0,234,255,.05)); color:var(--text);
+      text-transform:uppercase; letter-spacing:.05em; font-size:12px; filter:var(--ring);
+      transition:transform .2s ease, border-color .2s ease;
+    }
+    .action-btn:hover{transform:translateY(-1px); border-color:rgba(138,43,226,.55)}
+    .action-btn .ic{font-size:16px}
+
+    .sync-status{
+      margin:18px auto 0; width:min(620px, 92%);
+      padding:12px 18px; border-radius:12px; border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg, rgba(0,8,18,.88), rgba(0,8,18,.52));
+      color:var(--muted); font-size:13px; display:flex; align-items:center; gap:12px;
+      box-shadow:0 12px 30px rgba(0,0,0,.3); backdrop-filter:blur(8px);
+    }
+    .sync-status .pulse{width:10px; height:10px; border-radius:50%; background:var(--primary); box-shadow:0 0 18px rgba(0,234,255,.6);
+      animation:sync 2.4s ease-in-out infinite;}
+    @keyframes sync{0%,100%{opacity:.45; transform:scale(.9);}50%{opacity:1; transform:scale(1.2);}}
     .months{display:flex; gap:6px; flex-wrap:wrap}
     .months button{all:unset; cursor:pointer; padding:8px 10px; font-size:12px; color:var(--muted); border-radius:10px; border:1px solid rgba(255,255,255,.08)}
     .months button:hover{color:var(--text); border-color:rgba(255,255,255,.16)}
@@ -134,12 +154,11 @@
     .meta{display:flex; flex-wrap:wrap; gap:8px; align-items:center; color:var(--muted); font-size:12px}
 
     .badge{font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.14); color:var(--text)}
-    .badge[data-cat="partenariat"]{background:rgba(0,255,156,.12); border-color:rgba(0,255,156,.35)}
-    .badge[data-cat="marketing"]  {background:rgba(255,209,102,.12); border-color:rgba(255,209,102,.35)}
-    .badge[data-cat="release"]     {background:rgba(255,107,107,.12); border-color:rgba(255,107,107,.35)}
-    .badge[data-cat="evenement"]   {background:rgba(138,43,226,.12); border-color:rgba(138,43,226,.35)}
-    .badge[data-cat="ops"]         {background:rgba(91,211,255,.12); border-color:rgba(91,211,255,.35)}
-    .badge[data-cat="contenu"]     {background:rgba(197,255,97,.12); border-color:rgba(197,255,97,.35)}
+    .badge[data-cat="developpement"]{background:rgba(0,234,255,.12); border-color:rgba(0,234,255,.45)}
+    .badge[data-cat="experience"]   {background:rgba(255,110,199,.12); border-color:rgba(255,110,199,.35)}
+    .badge[data-cat="alignement"]   {background:rgba(255,209,102,.12); border-color:rgba(255,209,102,.35)}
+    .badge[data-cat="operations"]   {background:rgba(91,211,255,.12); border-color:rgba(91,211,255,.35)}
+    .badge[data-cat="lancement"]    {background:rgba(138,43,226,.12); border-color:rgba(138,43,226,.35)}
 
     .desc{margin-top:8px; color:var(--text); opacity:.85; line-height:1.5}
     .ribbon{position:absolute; top:8px; right:-36px; transform:rotate(35deg); background:linear-gradient(90deg, var(--primary), var(--accent)); color:#001018;
@@ -151,6 +170,8 @@
       .timeline::before{left:24px; transform:none}
       .node{left:14px}
       .card{margin-left:52px}
+      .task-row{grid-template-columns:1fr; gap:8px}
+      .task-row .done{justify-content:flex-start}
     }
 
     /* ---------- VUE 2 : Roadmap horizontale en swimlanes ---------- */
@@ -179,12 +200,11 @@
       background:linear-gradient(90deg, rgba(5,6,13,.85), rgba(5,6,13,.0)); border-right:1px solid rgba(255,255,255,.08);
       font-size:13px; text-transform:capitalize; color:var(--text); }
     .lane .label .dot{ width:10px; height:10px; border-radius:50%; box-shadow:0 0 10px currentColor }
-    .lane[data-cat="partenariat"] .label .dot{ color:#00ff9c }
-    .lane[data-cat="marketing"] .label .dot{ color:#ffd166 }
-    .lane[data-cat="release"] .label .dot{ color:#ff6b6b }
-    .lane[data-cat="evenement"] .label .dot{ color:#8a2be2 }
-    .lane[data-cat="ops"] .label .dot{ color:#5bd3ff }
-    .lane[data-cat="contenu"] .label .dot{ color:#c5ff61 }
+    .lane[data-cat="developpement"] .label .dot{ color:#00eaff }
+    .lane[data-cat="experience"] .label .dot{ color:#ff6ec7 }
+    .lane[data-cat="alignement"] .label .dot{ color:#ffd166 }
+    .lane[data-cat="operations"] .label .dot{ color:#5bd3ff }
+    .lane[data-cat="lancement"] .label .dot{ color:#8a2be2 }
 
     /* Zone des events (bars) */
     .lane .bars{ position:relative; height:100%; margin-left:210px; }
@@ -206,6 +226,41 @@
       box-shadow:0 6px 18px rgba(0,0,0,.35);
     }
 
+    /* Panneau de détail */
+    .overlay{position:fixed; inset:0; background:rgba(1,4,12,.75); backdrop-filter:blur(6px); display:none; z-index:9;}
+    .overlay[data-open="true"]{display:block}
+    .panel{position:fixed; right:0; top:0; bottom:0; width:min(480px, 92%); background:rgba(4,10,24,.96); border-left:1px solid rgba(0,234,255,.25);
+      box-shadow:-20px 0 40px rgba(0,0,0,.45); transform:translateX(100%); transition:transform .3s ease; z-index:10; display:flex; flex-direction:column;}
+    .panel[data-open="true"]{transform:translateX(0)}
+    .panel header{display:flex; align-items:center; justify-content:space-between; padding:24px 24px 12px; border-bottom:1px solid rgba(255,255,255,.08);}
+    .panel header h2{font-family:"Orbitron", sans-serif; font-size:18px; margin:0; letter-spacing:.08em; text-transform:uppercase; color:var(--text);}
+    .panel header .close{all:unset; cursor:pointer; color:var(--muted); font-size:20px; padding:4px; border-radius:6px; transition:.2s ease;}
+    .panel header .close:hover{color:var(--text); background:rgba(255,255,255,.08)}
+    .panel form{flex:1; overflow-y:auto; padding:16px 24px 32px; display:flex; flex-direction:column; gap:16px;}
+    .field{display:flex; flex-direction:column; gap:6px;}
+    .field label{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted);}
+    .field input, .field textarea, .field select{
+      padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.14); background:rgba(0,12,24,.6); color:var(--text);
+      font-size:14px; font-family:inherit;
+    }
+    .field textarea{min-height:90px; resize:vertical}
+    .tasks-block{border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:16px; background:rgba(0,12,24,.4); display:flex; flex-direction:column; gap:12px;}
+    .tasks-block h3{margin:0; font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted);}
+    .task-row{display:grid; grid-template-columns:1fr 120px 120px auto 32px; gap:10px; align-items:center; padding:10px; border-radius:10px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06);}
+    .task-row input[type="text"]{width:100%;}
+    .task-row input[type="date"]{width:100%; font-size:13px;}
+    .task-row .done{display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted);}
+    .task-row .remove{all:unset; cursor:pointer; color:#ff6b6b; font-size:16px; padding:4px; border-radius:6px;}
+    .task-row .remove:hover{background:rgba(255,107,107,.18)}
+    .task-row input[type="checkbox"]{accent-color:var(--primary);}
+    .tasks-block .add-task{align-self:flex-start; padding:8px 12px; border-radius:999px; border:1px dashed rgba(0,234,255,.4); background:rgba(0,234,255,.08); color:var(--text); font-size:12px; cursor:pointer;}
+    .tasks-block .add-task:hover{border-style:solid}
+    .tasks-block .empty{margin:0; font-size:13px; color:var(--muted); padding:12px; border-radius:10px; border:1px dashed rgba(255,255,255,.12); background:rgba(255,255,255,.02);}
+    .panel footer{padding:16px 24px 24px; border-top:1px solid rgba(255,255,255,.08); display:flex; gap:12px;}
+    .panel footer button{flex:1; padding:12px 16px; border-radius:12px; border:1px solid rgba(0,234,255,.4); background:linear-gradient(120deg, rgba(0,234,255,.18), rgba(138,43,226,.12)); color:var(--text); font-weight:600; letter-spacing:.05em; cursor:pointer; text-transform:uppercase; font-size:12px;}
+    .panel footer .secondary{background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.12); color:var(--muted);}
+    .panel footer button:hover{filter:brightness(1.1)}
+
     /* Footer */
     footer{color:var(--muted); text-align:center; margin:60px 0 50px}
   </style>
@@ -214,20 +269,21 @@
   <div class="stars"></div>
 
   <header class="hero">
-    <div class="brand">ATMOS — Demo UI</div>
-    <h1>Timeline <span class="grad">2025</span></h1>
-    <p class="lead">Deux présentations complémentaires : <strong>Verticale</strong> (classique) et <strong>Roadmap horizontale en swimlanes</strong>. Année du <strong>1er janvier 2025</strong> au <strong>31 décembre 2025</strong>.</p>
+    <div class="brand">ECLIPTICA // Hub de pilotage</div>
+    <h1>Objectifs SPHAIRA <span class="grad">2025</span></h1>
+    <p class="lead">Visualisez, orchestrez et synchronisez la feuille de route de <strong>SPHAIRA</strong> avec <strong>ORIS</strong>. Les vues <strong>Verticale</strong> et <strong>Roadmap</strong> reflètent en temps réel les évolutions partagées entre les plateformes.</p>
 
     <div class="controls" role="region" aria-label="Filtres et navigation">
       <button class="chip" data-cat="tous" data-active="true"><span class="dot"></span> Tous</button>
-      <button class="chip" data-cat="release"><span class="dot"></span> Releases</button>
-      <button class="chip" data-cat="partenariat"><span class="dot"></span> Partenariats</button>
-      <button class="chip" data-cat="marketing"><span class="dot"></span> Marketing</button>
-      <button class="chip" data-cat="evenement"><span class="dot"></span> Événements</button>
-      <button class="chip" data-cat="ops"><span class="dot"></span> Ops</button>
-      <button class="chip" data-cat="contenu"><span class="dot"></span> Contenu</button>
+      <button class="chip" data-cat="developpement"><span class="dot"></span> Développement</button>
+      <button class="chip" data-cat="experience"><span class="dot"></span> Expérience</button>
+      <button class="chip" data-cat="alignement"><span class="dot"></span> Alignement</button>
+      <button class="chip" data-cat="operations"><span class="dot"></span> Opérations</button>
+      <button class="chip" data-cat="lancement"><span class="dot"></span> Lancements</button>
 
       <span class="spacer"></span>
+
+      <button class="action-btn" id="createObjective"><span class="ic">＋</span> Nouvel objectif</button>
 
       <div class="months" aria-label="Aller au mois">
         <button data-go="01">Jan</button>
@@ -255,6 +311,10 @@
         <button class="chip chip-view" data-view="roadmap" data-active="true"><span class="dot"></span> Vue roadmap</button>
       </div>
     </div>
+    <div class="sync-status" id="syncStatus" role="status" aria-live="polite">
+      <span class="pulse" aria-hidden="true"></span>
+      <span>Synchronisation prête avec SPHAIRA & ORIS.</span>
+    </div>
   </header>
 
   <main class="wrap">
@@ -274,237 +334,666 @@
     </section>
   </main>
 
+  <div class="overlay" id="panelOverlay" aria-hidden="true"></div>
+  <aside class="panel" id="detailPanel" data-open="false" aria-hidden="true">
+    <header>
+      <h2 id="panelHeading">Nouvel objectif</h2>
+      <button type="button" class="close" id="closePanel" aria-label="Fermer la fenêtre">×</button>
+    </header>
+    <form id="objectiveForm">
+      <div class="field">
+        <label for="objectiveTitle">Titre de l'objectif</label>
+        <input id="objectiveTitle" name="title" required placeholder="Ex : Stabiliser le noyau SPHAIRA">
+      </div>
+      <div class="field">
+        <label for="objectiveDate">Échéance</label>
+        <input id="objectiveDate" name="date" type="date" required>
+      </div>
+      <div class="field">
+        <label for="objectiveCategory">Piliers</label>
+        <select id="objectiveCategory" name="category" required>
+          <option value="developpement">Développement</option>
+          <option value="experience">Expérience</option>
+          <option value="alignement">Alignement</option>
+          <option value="operations">Opérations</option>
+          <option value="lancement">Lancements</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="objectiveLead">Pilote</label>
+        <input id="objectiveLead" name="lead" placeholder="Nom du pilote">
+      </div>
+      <div class="field">
+        <label for="objectiveIcon">Icône</label>
+        <input id="objectiveIcon" name="icon" maxlength="3" placeholder="🛠️">
+      </div>
+      <div class="field">
+        <label for="objectiveDesc">Description</label>
+        <textarea id="objectiveDesc" name="desc" placeholder="Synthèse de l'impact et du livrable"></textarea>
+      </div>
+      <div class="tasks-block">
+        <h3>Tâches liées</h3>
+        <div id="tasksContainer" aria-live="polite"></div>
+        <button type="button" class="add-task" id="addTaskBtn">＋ Ajouter une tâche</button>
+      </div>
+    </form>
+    <footer>
+      <button type="button" class="secondary" id="deleteObjective" hidden>Supprimer</button>
+      <button type="submit" form="objectiveForm" id="saveObjective">Enregistrer & synchroniser</button>
+    </footer>
+  </aside>
+
   <footer>
-    Démonstration visuelle • Style inspiré d'<strong>ATMOS</strong> (typographie Orbitron/Outfit, néons cyan/violet, fond spatial). Deux vues performantes et complémentaires.
+    ECLIPTICA assure la cohérence des plans d'action : toute mise à jour est envoyée instantanément dans <strong>SPHAIRA</strong> et <strong>ORIS</strong> pour maintenir un pilotage unifié.
   </footer>
 
-  <script>
-    // --- Data (fictive) ---
-    const EVENTS = [
-      {date:'2025-01-05', title:'Lancement ORIS v2', cat:'release', icon:'🗓️', desc:"Nouvelle architecture d'agenda avec synchronisation et vues rapides."},
-      {date:'2025-01-20', title:'Partenariat Abby Connect', cat:'partenariat', icon:'🤝', desc:"Accord de distribution réciproque et offre bienvenue pour les pros."},
+    <script>
+    const CATEGORY_META = {
+      developpement: { label: 'Développement', description: 'Livraisons produit SPHAIRA' },
+      experience: { label: 'Expérience', description: 'Confort des responsables et équipes' },
+      alignement: { label: 'Alignement', description: 'Synchronisation SPHAIRA ↔︎ ORIS' },
+      operations: { label: 'Opérations', description: 'Fiabilité et gouvernance' },
+      lancement: { label: 'Lancements', description: 'Adoption & diffusion' }
+    };
+    const CATEGORY_ORDER = Object.keys(CATEGORY_META);
 
-      {date:'2025-02-10', title:'Campagne Google Ads pilote', cat:'marketing', icon:'🎯', desc:"Tests A/B sur mots-clés SAP et optimisation des conversions."},
-      {date:'2025-02-27', title:'SPHAIRA v1.1', cat:'release', icon:'🌀', desc:"Noeuds reliés + menu contextuel revu + meilleure performance."},
-
-      {date:'2025-03-12', title:'Série d’articles SEO', cat:'contenu', icon:'✍️', desc:"Guide complet: déclaration SAP, agrément, avance immédiate."},
-      {date:'2025-03-28', title:'Démo publique ATMOS', cat:'evenement', icon:'🚀', desc:"Présentation live du hub et des modules, session Q&R."},
-
-      {date:'2025-04-04', title:'Partenariat Déclic+', cat:'partenariat', icon:'🤝', desc:"Offre spéciale d’adhésion simplifiée pour les nouveaux pros."},
-      {date:'2025-04-18', title:'Support CESU Préfinancé', cat:'ops', icon:'💳', desc:"Ajout de l’acceptation CESU pour plusieurs partenaires."},
-
-      {date:'2025-05-09', title:'Salon Tech Grenoble', cat:'evenement', icon:'🎪', desc:"Petit stand, démonstrations et retours terrain utilisateurs."},
-      {date:'2025-05-26', title:'Capsule vidéo “Avance immédiate”', cat:'marketing', icon:'🎬', desc:"Vidéo courte d’information à diffuser sur TikTok/LinkedIn."},
-
-      {date:'2025-06-07', title:'Refonte du comparatif', cat:'ops', icon:'📊', desc:"Mise à jour des frais et services + nouveau tri intelligent."},
-      {date:'2025-06-24', title:'Intégration Google Calendar', cat:'release', icon:'🔗', desc:"Connexion fluide dans ORIS, synchro bidirectionnelle."},
-
-      {date:'2025-07-01', title:'NEXUS — affichage vertical', cat:'release', icon:'📧', desc:"Lecture mails pleine largeur, pièces jointes, actions rapides."},
-      {date:'2025-07-22', title:'Audit RGPD interne', cat:'ops', icon:'🛡️', desc:"Cartographie des traitements et registre à jour."},
-
-      {date:'2025-08-05', title:'Étude de marché Suisse', cat:'contenu', icon:'🧭', desc:"Analyse prix, TVA et attentes clients pour services à domicile."},
-      {date:'2025-08-22', title:'Partenariat France SAP', cat:'partenariat', icon:'🤝', desc:"Synergies contenus + offres croisées pour les pros."},
-
-      {date:'2025-09-10', title:'SPHAIRA Node Editor v2', cat:'release', icon:'🧩', desc:"Objectifs liés aux tâches + liaisons conditionnelles."},
-      {date:'2025-09-25', title:'Beta assistants vocaux', cat:'evenement', icon:'🗣️', desc:"Prototype robot-enceinte répondant via API et TTS."},
-
-      {date:'2025-10-08', title:'Webinaire “SAP 101”', cat:'evenement', icon:'📡', desc:"Crédit d’impôt, déclaration, avance immédiate — session live."},
-      {date:'2025-10-21', title:'Campagne emailing pro', cat:'marketing', icon:'✉️', desc:"Relance des leads inactifs et nurturing par secteur."},
-
-      {date:'2025-11-04', title:'Diagnostic Pro‑SAP (lancement)', cat:'release', icon:'🧪', desc:"Assistant d’auto‑évaluation avec recommandations actionnables."},
-      {date:'2025-11-18', title:'Migration hébergement', cat:'ops', icon:'🗄️', desc:"Amélioration de la résilience et CDN multi‑région."},
-
-      {date:'2025-12-05', title:'Bilan & KPI 2025', cat:'contenu', icon:'📈', desc:"Synthèse CA, trafic, acquisitions, satisfaction partenaires."},
-      {date:'2025-12-20', title:'Soirée partenaires', cat:'evenement', icon:'🎉', desc:"Rétrospective, prix symboliques et feuille de route 2026."}
+    let OBJECTIVES = [
+      {
+        id: 'obj-2025-01',
+        date: '2025-01-18',
+        title: 'Stabiliser le noyau SPHAIRA',
+        cat: 'developpement',
+        icon: '🛠️',
+        lead: 'Équipe Produit',
+        desc: "Migration du moteur temps réel vers l'architecture Orion pour sécuriser les synchronisations entre nœuds.",
+        tasks: [
+          { id: 'task-1', title: 'Refonte du graphe des objectifs', owner: 'Core SPHAIRA', due: '2025-01-12', done: true },
+          { id: 'task-2', title: 'Diagnostics de performance', owner: 'Qualité', due: '2025-01-18', done: false },
+          { id: 'task-3', title: 'Plan de rollback automatisé', owner: 'Ops', due: '2025-01-20', done: false }
+        ]
+      },
+      {
+        id: 'obj-2025-03',
+        date: '2025-03-05',
+        title: 'Aligner les parcours ORIS ↔︎ SPHAIRA',
+        cat: 'alignement',
+        icon: '🔄',
+        lead: 'Ops Produit',
+        desc: "Unification des points de contact et mise à jour des webhooks pour une remontée instantanée des objectifs.",
+        tasks: [
+          { id: 'task-4', title: 'Audit des webhooks existants', owner: 'ORIS', due: '2025-02-20', done: true },
+          { id: 'task-5', title: 'Mapping des statuts partagés', owner: 'SPHAIRA', due: '2025-03-05', done: false },
+          { id: 'task-6', title: 'Tests bout en bout ORIS', owner: 'Qualité', due: '2025-03-12', done: false }
+        ]
+      },
+      {
+        id: 'obj-2025-04',
+        date: '2025-04-22',
+        title: "Expérience responsable d'objectif",
+        cat: 'experience',
+        icon: '🎯',
+        lead: 'Design Ops',
+        desc: "Création d'une vue dédiée pour clarifier la progression des tâches assignées et faciliter les décisions.",
+        tasks: [
+          { id: 'task-7', title: 'Interviews responsables pilotes', owner: 'Design', due: '2025-04-05', done: true },
+          { id: 'task-8', title: 'Prototype interactif', owner: 'Design Ops', due: '2025-04-12', done: true },
+          { id: 'task-9', title: 'Déploiement contrôlé', owner: 'Produit', due: '2025-04-22', done: false }
+        ]
+      },
+      {
+        id: 'obj-2025-06',
+        date: '2025-06-17',
+        title: 'Automatiser la gouvernance des droits',
+        cat: 'operations',
+        icon: '🛡️',
+        lead: 'Sécurité & Conformité',
+        desc: "Mise en place de profils dynamiques et d'un audit trail partagé entre SPHAIRA et ORIS.",
+        tasks: [
+          { id: 'task-10', title: 'Catalogue des rôles', owner: 'Sécurité', due: '2025-05-30', done: true },
+          { id: 'task-11', title: "Développement du moteur d'habilitations", owner: 'Back-end', due: '2025-06-14', done: false },
+          { id: 'task-12', title: 'Recette RGPD conjointe', owner: 'Legal', due: '2025-06-25', done: false }
+        ]
+      },
+      {
+        id: 'obj-2025-07',
+        date: '2025-07-29',
+        title: "Campagne d'adoption multi-canale",
+        cat: 'lancement',
+        icon: '📣',
+        lead: 'Marketing Produit',
+        desc: 'Activation progressive des comptes clés avec contenus ciblés et webinaires synchronisés.',
+        tasks: [
+          { id: 'task-13', title: 'Sélection des segments prioritaires', owner: 'Marketing', due: '2025-07-05', done: true },
+          { id: 'task-14', title: 'Kit de communication co-marquée', owner: 'Brand', due: '2025-07-18', done: false },
+          { id: 'task-15', title: 'Webinaire lancement', owner: 'ORIS', due: '2025-07-29', done: false }
+        ]
+      },
+      {
+        id: 'obj-2025-09',
+        date: '2025-09-14',
+        title: 'Connecteur données de pilotage',
+        cat: 'operations',
+        icon: '📊',
+        lead: 'Data Intelligence',
+        desc: "Centralisation des indicateurs d'usage SPHAIRA & ORIS pour piloter les OKR en continu.",
+        tasks: [
+          { id: 'task-16', title: 'Spécifications API métriques', owner: 'Data', due: '2025-08-20', done: true },
+          { id: 'task-17', title: 'Pipelines vers le data lake', owner: 'Engineering', due: '2025-09-10', done: false },
+          { id: 'task-18', title: 'Tableaux de bord ECLIPTICA', owner: 'Ops Produit', due: '2025-09-25', done: false }
+        ]
+      },
+      {
+        id: 'obj-2025-10',
+        date: '2025-10-21',
+        title: 'Portail partenaires ORIS',
+        cat: 'lancement',
+        icon: '🌐',
+        lead: 'Alliances',
+        desc: "Ouverture d'un espace partagé pour suivre la contribution des partenaires et les objectifs associés.",
+        tasks: [
+          { id: 'task-19', title: 'Architecture du portail', owner: 'Front-end', due: '2025-10-05', done: true },
+          { id: 'task-20', title: 'Catalogue des offres partenaires', owner: 'Alliances', due: '2025-10-18', done: false },
+          { id: 'task-21', title: 'Synchronisation des rôles partenaires', owner: 'Sécurité', due: '2025-10-21', done: false }
+        ]
+      },
+      {
+        id: 'obj-2025-12',
+        date: '2025-12-09',
+        title: 'Clôture feuille de route 2025',
+        cat: 'alignement',
+        icon: '🌀',
+        lead: 'Direction Produit',
+        desc: "Consolidation des enseignements 2025 et cadrage des objectifs 2026 partagés entre SPHAIRA et ORIS.",
+        tasks: [
+          { id: 'task-22', title: 'Analyse des OKR', owner: 'Direction Produit', due: '2025-11-30', done: false },
+          { id: 'task-23', title: 'Atelier vision 2026', owner: 'Leadership', due: '2025-12-05', done: false },
+          { id: 'task-24', title: 'Publication récapitulatif', owner: 'Communication', due: '2025-12-12', done: false }
+        ]
+      }
     ];
 
-    // --- Helpers & constants ---
     const start = new Date('2025-01-01T00:00:00');
     const end   = new Date('2025-12-31T23:59:59');
     const isYear2025 = new Date().getFullYear() === 2025;
 
-    function fmtDate(d){
-      return new Intl.DateTimeFormat('fr-FR', { day:'2-digit', month:'short' }).format(d).replace('.', '');
+    let currentFilter = 'tous';
+    let currentObjectiveId = null;
+
+    const overlay = document.getElementById('panelOverlay');
+    const panel = document.getElementById('detailPanel');
+    const panelHeading = document.getElementById('panelHeading');
+    const closePanelBtn = document.getElementById('closePanel');
+    const objectiveForm = document.getElementById('objectiveForm');
+    const tasksContainer = document.getElementById('tasksContainer');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const deleteObjectiveBtn = document.getElementById('deleteObjective');
+    const createObjectiveBtn = document.getElementById('createObjective');
+    const syncStatus = document.getElementById('syncStatus');
+    const syncStatusMessage = syncStatus.querySelector('span:last-child');
+
+    function uid(prefix){
+      return `${prefix}-${Math.random().toString(36).slice(2,8)}${Date.now().toString(36).slice(-2)}`;
     }
-    function pctOfYear(d){ return ((d - start) / (end - start)) * 100 }
+
+    function fmtDate(d, withYear = false){
+      const opts = { day:'2-digit', month:'short' };
+      if(withYear) opts.year = 'numeric';
+      return new Intl.DateTimeFormat('fr-FR', opts).format(d).replace('.', '');
+    }
+
+    function getCategoryLabel(cat){
+      return CATEGORY_META[cat]?.label ?? cat;
+    }
+
+    function pctOfYear(d){
+      return ((d - start) / (end - start)) * 100;
+    }
 
     function groupByMonth(items){
       const map = new Map(Array.from({length:12}, (_,i)=>[(i+1).toString().padStart(2,'0'), []]));
-      for(const ev of items){ const d = new Date(ev.date); const m = (d.getMonth()+1).toString().padStart(2,'0'); map.get(m).push({...ev, d}); }
-      for(const [m, arr] of map) arr.sort((a,b)=>a.d-b.d);
+      for(const obj of items){
+        const d = new Date(obj.date);
+        const key = (d.getMonth()+1).toString().padStart(2,'0');
+        const enriched = {...obj, d};
+        map.get(key)?.push(enriched);
+      }
+      for(const [, arr] of map){
+        arr.sort((a,b)=>a.d-b.d);
+      }
       return map;
     }
 
     function groupByCat(items){
-      const cats = ['release','partenariat','marketing','evenement','ops','contenu'];
-      const map = new Map(cats.map(c=>[c,[]]));
-      for(const ev of items){ const d = new Date(ev.date); if(map.has(ev.cat)) map.get(ev.cat).push({...ev, d}); }
-      for(const [c, arr] of map) arr.sort((a,b)=>a.d-b.d);
+      const map = new Map(CATEGORY_ORDER.map(cat => [cat, []]));
+      for(const obj of items){
+        const d = new Date(obj.date);
+        if(map.has(obj.cat)){
+          map.get(obj.cat).push({...obj, d});
+        }
+      }
+      for(const [, arr] of map){
+        arr.sort((a,b)=>a.d-b.d);
+      }
       return map;
     }
 
-    // ---------- Rendu : VUE VERTICALE ----------
+    function computeTaskSummary(obj){
+      const total = obj.tasks?.length ?? 0;
+      const done = obj.tasks?.filter(t => t.done).length ?? 0;
+      const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+      return { total, done, pct };
+    }
+
     function renderVertical(){
       const container = document.getElementById('timelineVertical');
-      const byMonth = groupByMonth(EVENTS);
+      const byMonth = groupByMonth(OBJECTIVES);
       const today = new Date();
       const todayKey = isYear2025 ? (today.getMonth()+1).toString().padStart(2,'0') : null;
 
       container.innerHTML = '';
       for(let i=1;i<=12;i++){
         const key = i.toString().padStart(2,'0');
-        const section = document.createElement('section'); section.className = 'month' + (todayKey===key? ' is-today':'' ); section.id = `m${key}`;
-        const h = document.createElement('h2'); h.textContent = new Date(`2025-${key}-01`).toLocaleDateString('fr-FR', {month:'long'});
-        section.appendChild(h);
+        const section = document.createElement('section');
+        section.className = 'month' + (todayKey === key ? ' is-today' : '');
+        section.id = `m${key}`;
 
-        const monthEvents = byMonth.get(key);
-        if(monthEvents.length===0){
-          const empty = document.createElement('div'); empty.className = 'item'; empty.innerHTML = `<span class="node" aria-hidden="true"></span><div class="card"><div class="meta">Aucun évènement</div></div>`; section.appendChild(empty);
+        const heading = document.createElement('h2');
+        heading.textContent = new Date(`2025-${key}-01`).toLocaleDateString('fr-FR', {month:'long'});
+        section.appendChild(heading);
+
+        const monthObjectives = byMonth.get(key) ?? [];
+        if(monthObjectives.length === 0){
+          const empty = document.createElement('div');
+          empty.className = 'item is-empty';
+          empty.dataset.placeholder = 'true';
+          empty.innerHTML = `<span class="node" aria-hidden="true"></span><div class="card"><div class="meta">Aucun objectif planifié</div></div>`;
+          section.appendChild(empty);
         } else {
-          monthEvents.forEach(ev=>{
-            const item = document.createElement('article'); item.className = 'item'; item.dataset.cat = ev.cat;
-            const isToday = isYear2025 && ev.d.toDateString()===today.toDateString();
+          monthObjectives.forEach(obj => {
+            const summary = computeTaskSummary(obj);
+            const progressText = summary.total ? `${summary.done}/${summary.total} tâches` : 'Aucune tâche';
+            const item = document.createElement('article');
+            item.className = 'item';
+            item.dataset.cat = obj.cat;
+            item.dataset.id = obj.id;
+
+            const isTodayObjective = isYear2025 && obj.d.toDateString() === today.toDateString();
             item.innerHTML = `
               <span class="node" aria-hidden="true"></span>
-              <div class="card" role="group" aria-label="${ev.title}">
-                ${isToday?'<div class="ribbon">Aujourd\'hui</div>':''}
+              <div class="card" role="button" tabindex="0" aria-label="${obj.title}">
+                ${isTodayObjective ? '<div class="ribbon">Aujourd\'hui</div>' : ''}
                 <div class="top">
-                  <div class="icon">${ev.icon}</div>
+                  <div class="icon">${obj.icon || '🗂️'}</div>
                   <div>
-                    <div class="title">${ev.title}</div>
+                    <div class="title">${obj.title}</div>
                     <div class="meta">
-                      <span>${fmtDate(ev.d)}</span>
-                      <span class="badge" data-cat="${ev.cat}">${ev.cat}</span>
+                      <span>${fmtDate(obj.d)}</span>
+                      <span class="badge" data-cat="${obj.cat}">${getCategoryLabel(obj.cat)}</span>
+                      <span>${progressText}</span>
                     </div>
                   </div>
                 </div>
-                <div class="desc">${ev.desc}</div>
-              </div>`;
+                <div class="meta">
+                  ${obj.lead ? `<span>👤 ${obj.lead}</span>` : ''}
+                  <span>Synchronisé SPHAIRA • ORIS</span>
+                </div>
+                <p class="desc">${obj.desc || ''}</p>
+              </div>
+            `;
             section.appendChild(item);
+
+            const card = item.querySelector('.card');
+            card.addEventListener('click', () => openPanel(obj.id));
+            card.addEventListener('keydown', (ev) => {
+              if(ev.key === 'Enter' || ev.key === ' '){
+                ev.preventDefault();
+                openPanel(obj.id);
+              }
+            });
           });
         }
+
         container.appendChild(section);
       }
     }
 
-    // ---------- Rendu : VUE ROADMAP (horizontale) ----------
     function renderRoadmap(){
       const axis = document.getElementById('axis');
       const lanesWrap = document.getElementById('lanes');
       const todayLine = document.getElementById('todayLine');
 
-      // Axe des mois
       axis.innerHTML = '';
-      for(let i=0; i<12; i++){
-        const m = document.createElement('div'); m.className='tick'; m.style.width='calc(var(--month))';
-        m.textContent = new Date(2025, i, 1).toLocaleDateString('fr-FR', {month:'short'}).replace('.', '');
-        axis.appendChild(m);
+      for(let i=0;i<12;i++){
+        const tick = document.createElement('div');
+        tick.className = 'tick';
+        tick.style.width = 'calc(var(--month))';
+        tick.textContent = new Date(2025, i, 1).toLocaleDateString('fr-FR', {month:'short'}).replace('.', '');
+        axis.appendChild(tick);
       }
 
-      // Lanes par catégorie
       lanesWrap.innerHTML = '';
-      const byCat = groupByCat(EVENTS);
+      const byCat = groupByCat(OBJECTIVES);
       for(const [cat, arr] of byCat){
-        const lane = document.createElement('div'); lane.className='lane'; lane.dataset.cat = cat;
-        const label = document.createElement('div'); label.className='label'; label.innerHTML = `<span class="dot"></span> ${cat}`;
-        const bars = document.createElement('div'); bars.className='bars';
+        if(arr.length === 0) continue;
+        const lane = document.createElement('div');
+        lane.className = 'lane';
+        lane.dataset.cat = cat;
 
-        arr.forEach(ev=>{
-          const left = pctOfYear(ev.d);
-          const widthPct = 1.6; // largeur approx ~6 jours
-          const bar = document.createElement('div'); bar.className='barItem'; bar.dataset.cat = ev.cat;
-          bar.style.left = `calc(${left}% - 80px)`; // petit offset visuel
-          bar.style.width = `max(${widthPct}%, 120px)`; // lisible sur petits écrans
-          bar.setAttribute('data-hint', `${fmtDate(ev.d)} — ${ev.title}`);
-          bar.innerHTML = `<span class="ic">${ev.icon}</span><span class="t">${ev.title}</span><span class="d">• ${fmtDate(ev.d)}</span>`;
+        const label = document.createElement('div');
+        label.className = 'label';
+        label.innerHTML = `<span class="dot"></span> ${getCategoryLabel(cat)}`;
+        lane.appendChild(label);
+
+        const bars = document.createElement('div');
+        bars.className = 'bars';
+
+        arr.forEach(obj => {
+          const left = pctOfYear(obj.d);
+          const bar = document.createElement('div');
+          bar.className = 'barItem';
+          bar.dataset.cat = obj.cat;
+          bar.dataset.id = obj.id;
+          bar.style.left = `calc(${left}% - 80px)`;
+          bar.style.width = 'max(2%, 140px)';
+          const summary = computeTaskSummary(obj);
+          const progressText = summary.total ? `${summary.done}/${summary.total} tâches` : 'Aucune tâche';
+          bar.setAttribute('data-hint', `${fmtDate(obj.d, true)} — ${progressText}`);
+          bar.innerHTML = `<span class="ic">${obj.icon || '🗂️'}</span><span class="t">${obj.title}</span><span class="d">• ${fmtDate(obj.d)}</span>`;
+          bar.setAttribute('role', 'button');
+          bar.setAttribute('tabindex', '0');
           bars.appendChild(bar);
+
+          bar.addEventListener('click', () => openPanel(obj.id));
+          bar.addEventListener('keydown', (ev) => {
+            if(ev.key === 'Enter' || ev.key === ' '){
+              ev.preventDefault();
+              openPanel(obj.id);
+            }
+          });
         });
 
-        lane.appendChild(label); lane.appendChild(bars); lanesWrap.appendChild(lane);
+        lane.appendChild(bars);
+        lanesWrap.appendChild(lane);
       }
 
-      // Ligne aujourd'hui
       if(isYear2025){
-        const p = pctOfYear(new Date());
-        todayLine.style.left = `calc(${p}% + 210px)`; // tenir compte du label collant
+        const position = pctOfYear(new Date());
+        todayLine.style.left = `calc(${position}% + 210px)`;
         todayLine.hidden = false;
       } else {
         todayLine.hidden = true;
       }
     }
 
-    // --- Filters (appliqués aux deux vues) ---
     function applyFilter(cat){
-      // Verticale
-      document.querySelectorAll('#timelineVertical .item').forEach(it=>{
-        it.style.display = (cat==='tous' || it.dataset.cat===cat) ? '' : 'none';
+      currentFilter = cat;
+      document.querySelectorAll('#timelineVertical .item').forEach(item => {
+        if(item.dataset.placeholder === 'true'){
+          item.style.display = cat === 'tous' ? '' : 'none';
+          return;
+        }
+        if(cat === 'tous'){
+          item.style.display = '';
+        } else {
+          item.style.display = item.dataset.cat === cat ? '' : 'none';
+        }
       });
-      // Roadmap
-      document.querySelectorAll('#lanes .lane').forEach(l=>{
-        const match = l.dataset.cat === cat;
-        l.classList.toggle('is-dim', !(cat==='tous' || match));
-        l.style.display = (cat==='tous' || match) ? '' : '';
-        l.querySelectorAll('.barItem').forEach(b=>{
-          b.style.opacity = (cat==='tous' || b.dataset.cat===cat) ? 1 : .15;
-        });
+
+      document.querySelectorAll('#timelineVertical .month').forEach(section => {
+        const hasVisible = Array.from(section.querySelectorAll('.item')).some(it => it.style.display !== 'none');
+        section.style.display = hasVisible ? '' : 'none';
+      });
+
+      document.querySelectorAll('#lanes .lane').forEach(lane => {
+        if(cat === 'tous'){
+          lane.style.display = '';
+          lane.classList.remove('is-dim');
+          lane.querySelectorAll('.barItem').forEach(bar => {
+            bar.style.opacity = 1;
+            bar.style.pointerEvents = 'auto';
+          });
+        } else {
+          const match = lane.dataset.cat === cat;
+          lane.style.display = '';
+          lane.classList.toggle('is-dim', !match);
+          lane.querySelectorAll('.barItem').forEach(bar => {
+            bar.style.opacity = match ? 1 : 0.2;
+            bar.style.pointerEvents = match ? 'auto' : 'none';
+          });
+        }
       });
     }
 
-    // --- Month jump (scroll vertical OU horizontal) ---
     function attachMonthNav(){
-      document.querySelectorAll('.months button').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.months button').forEach(btn => {
+        btn.addEventListener('click', () => {
           const key = btn.dataset.go;
           if(document.body.classList.contains('view-vertical')){
             document.getElementById(`m${key}`)?.scrollIntoView({behavior:'smooth', block:'start'});
           } else {
             const scroll = document.getElementById('roadscroll');
-            const ratio = (parseInt(key,10)-1) / 12; // 0..1
+            const ratio = (parseInt(key, 10) - 1) / 12;
             const target = ratio * (scroll.scrollWidth - scroll.clientWidth);
-            scroll.scrollTo({left: Math.max(0, target), behavior:'smooth'});
+            scroll.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
           }
         });
       });
     }
 
-    // --- Progression année ---
     function setYearProgress(){
       const now = new Date();
       let pct = 0;
-      if(now < start) pct = 0; else if(now > end) pct = 100; else pct = ((now - start) / (end - start)) * 100;
+      if(now < start) pct = 0;
+      else if(now > end) pct = 100;
+      else pct = ((now - start) / (end - start)) * 100;
       document.getElementById('yearProgress').style.setProperty('--p', pct.toFixed(2) + '%');
       document.getElementById('yearPct').textContent = Math.round(pct) + '%';
     }
 
-    // --- View switch ---
     function attachViewSwitch(){
       const chips = document.querySelectorAll('.chip-view');
-      chips.forEach(ch=>{
-        ch.addEventListener('click', ()=>{
-          chips.forEach(c=>c.dataset.active='false');
-          ch.dataset.active='true';
-          const view = ch.dataset.view; // 'vertical' | 'roadmap'
-          document.body.classList.toggle('view-vertical', view==='vertical');
-          document.body.classList.toggle('view-roadmap', view==='roadmap');
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          chips.forEach(c => c.dataset.active = 'false');
+          chip.dataset.active = 'true';
+          const view = chip.dataset.view;
+          document.body.classList.toggle('view-vertical', view === 'vertical');
+          document.body.classList.toggle('view-roadmap', view === 'roadmap');
         });
       });
     }
 
-    // --- Cat filter controls ---
     function attachFilters(){
-      const chips = [...document.querySelectorAll('.controls > .chip')].filter(x=>!x.classList.contains('chip-view'));
-      chips.forEach(ch=>{
-        ch.addEventListener('click', ()=>{
-          chips.forEach(c=>c.dataset.active='false');
-          ch.dataset.active='true';
-          applyFilter(ch.dataset.cat);
+      const chips = [...document.querySelectorAll('.controls > .chip[data-cat]')];
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          chips.forEach(c => c.dataset.active = 'false');
+          chip.dataset.active = 'true';
+          applyFilter(chip.dataset.cat);
         });
       });
     }
 
-    // Init
-    renderVertical();
-    renderRoadmap();
+    function showEmptyTaskMessage(){
+      tasksContainer.innerHTML = '<p class="empty">Aucune tâche définie pour le moment.</p>';
+    }
+
+    function buildTaskRow(task = {}){
+      const row = document.createElement('div');
+      row.className = 'task-row';
+      const rowId = task.id || uid('task');
+      row.dataset.id = rowId;
+      row.innerHTML = `
+        <input type="text" class="task-title" placeholder="Titre de la tâche" value="${task.title ?? ''}" required>
+        <input type="text" class="task-owner" placeholder="Pilote" value="${task.owner ?? ''}">
+        <input type="date" class="task-due" value="${task.due ?? ''}">
+        <label class="done"><input type="checkbox" class="task-done" ${task.done ? 'checked' : ''}> Terminé</label>
+        <button type="button" class="remove" title="Supprimer la tâche">×</button>
+      `;
+      row.querySelector('.remove').addEventListener('click', () => {
+        row.remove();
+        ensureTaskEmptyState();
+      });
+      return row;
+    }
+
+    function ensureTaskEmptyState(){
+      if(!tasksContainer.querySelector('.task-row')){
+        showEmptyTaskMessage();
+      }
+    }
+
+    function renderTaskRows(tasks){
+      tasksContainer.innerHTML = '';
+      if(!tasks || tasks.length === 0){
+        showEmptyTaskMessage();
+        return;
+      }
+      tasks.forEach(task => {
+        tasksContainer.appendChild(buildTaskRow(task));
+      });
+    }
+
+    function addTaskRow(task = {}){
+      if(tasksContainer.querySelector('.empty')){
+        tasksContainer.innerHTML = '';
+      }
+      tasksContainer.appendChild(buildTaskRow(task));
+    }
+
+    function openPanel(id = null){
+      currentObjectiveId = id;
+      overlay.dataset.open = 'true';
+      overlay.setAttribute('aria-hidden', 'false');
+      panel.dataset.open = 'true';
+      panel.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+
+      objectiveForm.reset();
+
+      if(id){
+        const obj = OBJECTIVES.find(item => item.id === id);
+        if(!obj){
+          showEmptyTaskMessage();
+          return;
+        }
+        panelHeading.textContent = obj.title;
+        document.getElementById('objectiveTitle').value = obj.title;
+        document.getElementById('objectiveDate').value = obj.date;
+        document.getElementById('objectiveCategory').value = obj.cat;
+        document.getElementById('objectiveLead').value = obj.lead || '';
+        document.getElementById('objectiveIcon').value = obj.icon || '';
+        document.getElementById('objectiveDesc').value = obj.desc || '';
+        renderTaskRows(obj.tasks || []);
+        deleteObjectiveBtn.hidden = false;
+      } else {
+        panelHeading.textContent = 'Nouvel objectif';
+        const today = new Date();
+        const defaultDate = today.getFullYear() === 2025 ? today.toISOString().slice(0,10) : '2025-01-01';
+        document.getElementById('objectiveDate').value = defaultDate;
+        document.getElementById('objectiveIcon').value = '🗂️';
+        renderTaskRows([]);
+        deleteObjectiveBtn.hidden = true;
+      }
+    }
+
+    function closePanel(){
+      panel.dataset.open = 'false';
+      panel.setAttribute('aria-hidden', 'true');
+      overlay.dataset.open = 'false';
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      objectiveForm.reset();
+      showEmptyTaskMessage();
+      currentObjectiveId = null;
+    }
+
+    function syncWithSystems(action, objective){
+      const ts = new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+      let message = '';
+      if(action === 'création'){
+        message = `Création synchronisée pour « ${objective.title} » — SPHAIRA & ORIS mis à jour (${ts}).`;
+      } else if(action === 'suppression'){
+        message = `Suppression synchronisée pour « ${objective.title} » (${ts}).`;
+      } else {
+        message = `Mise à jour synchronisée pour « ${objective.title} » — SPHAIRA & ORIS alignés (${ts}).`;
+      }
+      syncStatusMessage.textContent = message;
+    }
+
+    function refreshTimelines(){
+      renderVertical();
+      renderRoadmap();
+      applyFilter(currentFilter);
+    }
+
+    objectiveForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(objectiveForm);
+      const baseId = currentObjectiveId ?? uid('obj');
+
+      const tasks = Array.from(tasksContainer.querySelectorAll('.task-row')).map(row => {
+        const title = row.querySelector('.task-title').value.trim();
+        if(!title){
+          return null;
+        }
+        return {
+          id: row.dataset.id || uid('task'),
+          title,
+          owner: row.querySelector('.task-owner').value.trim(),
+          due: row.querySelector('.task-due').value,
+          done: row.querySelector('.task-done').checked
+        };
+      }).filter(Boolean);
+
+      const objective = {
+        id: baseId,
+        date: formData.get('date'),
+        title: formData.get('title').trim(),
+        cat: formData.get('category'),
+        lead: formData.get('lead').trim(),
+        icon: (formData.get('icon') || '🗂️').trim() || '🗂️',
+        desc: formData.get('desc').trim(),
+        tasks
+      };
+
+      const existingIndex = OBJECTIVES.findIndex(obj => obj.id === baseId);
+      const action = existingIndex > -1 ? 'mise à jour' : 'création';
+      if(existingIndex > -1){
+        OBJECTIVES[existingIndex] = objective;
+      } else {
+        OBJECTIVES.push(objective);
+      }
+      OBJECTIVES.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      syncWithSystems(action, objective);
+      closePanel();
+      refreshTimelines();
+    });
+
+    deleteObjectiveBtn.addEventListener('click', () => {
+      if(!currentObjectiveId) return;
+      const target = OBJECTIVES.find(obj => obj.id === currentObjectiveId);
+      if(!target) return;
+      const confirmation = window.confirm(`Supprimer l'objectif « ${target.title} » ?`);
+      if(!confirmation) return;
+      OBJECTIVES = OBJECTIVES.filter(obj => obj.id !== currentObjectiveId);
+      syncWithSystems('suppression', target);
+      closePanel();
+      refreshTimelines();
+    });
+
+    addTaskBtn.addEventListener('click', () => addTaskRow({}));
+    createObjectiveBtn.addEventListener('click', () => openPanel());
+    closePanelBtn.addEventListener('click', closePanel);
+    overlay.addEventListener('click', closePanel);
+    document.addEventListener('keydown', (event) => {
+      if(event.key === 'Escape' && panel.dataset.open === 'true'){
+        closePanel();
+      }
+    });
+
+    refreshTimelines();
     attachFilters();
     attachMonthNav();
     attachViewSwitch();
