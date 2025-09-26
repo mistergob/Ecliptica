@@ -161,6 +161,15 @@
     .badge[data-cat="lancement"]    {background:rgba(138,43,226,.12); border-color:rgba(138,43,226,.35)}
 
     .desc{margin-top:8px; color:var(--text); opacity:.85; line-height:1.5}
+    .card .tasks{list-style:none; margin:16px 0 0; padding:0; display:flex; flex-direction:column; gap:8px;}
+    .card .task{display:flex; align-items:flex-start; gap:12px; font-size:13px; color:var(--text); background:rgba(255,255,255,.02); border-radius:10px; padding:10px; border:1px solid rgba(255,255,255,.04);}
+    .card .task .check{width:18px; height:18px; border-radius:50%; border:1px solid rgba(255,255,255,.16); display:grid; place-items:center; font-size:12px; line-height:1; background:rgba(0,8,18,.6); color:var(--text); margin-top:2px;}
+    .card .task.is-done{background:rgba(0,234,255,.08); border-color:rgba(0,234,255,.25);}
+    .card .task.is-done .check{border-color:rgba(0,234,255,.5); background:rgba(0,234,255,.25); color:#001018; font-weight:700;}
+    .card .task .task-title{font-weight:600; display:block;}
+    .card .task.is-done .task-title{text-decoration:line-through; color:var(--muted);}
+    .card .task .task-meta{display:block; color:var(--muted); font-size:12px; margin-top:2px;}
+    .card .tasks.empty{margin:16px 0 0; padding:12px; border-radius:10px; border:1px dashed rgba(255,255,255,.12); color:var(--muted); text-align:center; font-size:12px; background:rgba(255,255,255,.02);}
     .ribbon{position:absolute; top:8px; right:-36px; transform:rotate(35deg); background:linear-gradient(90deg, var(--primary), var(--accent)); color:#001018;
       padding:4px 48px; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; box-shadow:0 0 18px rgba(0,234,255,.45)}
 
@@ -584,6 +593,59 @@
       return { total, done, pct };
     }
 
+    function buildTaskList(tasks){
+      if(!tasks || tasks.length === 0){
+        const empty = document.createElement('div');
+        empty.className = 'tasks empty';
+        empty.textContent = 'Aucune tâche renseignée';
+        return empty;
+      }
+
+      const list = document.createElement('ul');
+      list.className = 'tasks';
+      list.setAttribute('role', 'list');
+
+      tasks.forEach(task => {
+        const item = document.createElement('li');
+        item.className = 'task' + (task.done ? ' is-done' : '');
+
+        const check = document.createElement('span');
+        check.className = 'check';
+        check.textContent = task.done ? '✓' : '';
+        check.setAttribute('aria-hidden', 'true');
+        item.appendChild(check);
+
+        const details = document.createElement('div');
+
+        const title = document.createElement('span');
+        title.className = 'task-title';
+        title.textContent = task.title;
+        details.appendChild(title);
+
+        const metaBits = [];
+        if(task.owner){
+          metaBits.push(task.owner);
+        }
+        if(task.due){
+          const dueDate = new Date(task.due);
+          if(!Number.isNaN(dueDate.valueOf())){
+            metaBits.push(fmtDate(dueDate));
+          }
+        }
+        if(metaBits.length){
+          const meta = document.createElement('span');
+          meta.className = 'task-meta';
+          meta.textContent = metaBits.join(' • ');
+          details.appendChild(meta);
+        }
+
+        item.appendChild(details);
+        list.appendChild(item);
+      });
+
+      return list;
+    }
+
     function renderVertical(){
       const container = document.getElementById('timelineVertical');
       const byMonth = groupByMonth(OBJECTIVES);
@@ -643,6 +705,7 @@
             section.appendChild(item);
 
             const card = item.querySelector('.card');
+            card.appendChild(buildTaskList(obj.tasks));
             card.addEventListener('click', () => openPanel(obj.id));
             card.addEventListener('keydown', (ev) => {
               if(ev.key === 'Enter' || ev.key === ' '){
