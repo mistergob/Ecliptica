@@ -10,10 +10,9 @@
 
   <style>
     :root{
-      /* ATMOS design tokens */
-      --primary:#00eaff;       /* cyan néon */
-      --accent:#8a2be2;        /* violet néon */
-      --text:#e6f7ff;          
+      --primary:#00eaff;
+      --accent:#8a2be2;
+      --text:#e6f7ff;
       --muted:#9fb3c8;
       --bg-a:#05060d;
       --bg-b:#0b1430;
@@ -61,18 +60,18 @@
       border:1px solid rgba(255,255,255,.06); border-radius:16px; width:min(1100px, 92%);
       box-shadow:0 10px 30px rgba(0,0,0,.25);
     }
-    .chip{ --o:.35; display:inline-flex; align-items:center; gap:.5ch; cursor:pointer; user-select:none;
+    /* Chips dynamiques cercles */
+    .chips{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .chip{
+      --dot:#00eaff;
+      display:inline-flex; align-items:center; gap:.6ch; cursor:pointer; user-select:none;
       padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.08);
       background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
       color:var(--text); font-size:14px; transition:.2s ease; filter:var(--ring);
     }
     .chip[data-active="true"]{ border-color:rgba(0,234,255,.55); box-shadow:0 0 0 2px rgba(0,234,255,.12) inset }
-    .chip .dot{width:8px; height:8px; border-radius:50%; background:var(--primary); box-shadow:0 0 10px rgba(0,234,255,.7)}
-    .chip[data-cat="developpement"] .dot{background:#00eaff}
-    .chip[data-cat="experience"]    .dot{background:#ff6ec7}
-    .chip[data-cat="alignement"]    .dot{background:#ffd166}
-    .chip[data-cat="operations"]    .dot{background:#5bd3ff}
-    .chip[data-cat="lancement"]     .dot{background:#8a2be2}
+    .chip .dot{width:10px; height:10px; border-radius:50%; box-shadow:0 0 10px var(--dot); background:var(--dot)}
+    .chip .label{white-space:nowrap}
 
     .spacer{flex:1 1 12px}
 
@@ -149,11 +148,7 @@
     .meta{display:flex; flex-wrap:wrap; gap:8px; align-items:center; color:var(--muted); font-size:12px}
 
     .badge{font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.14); color:var(--text)}
-    .badge[data-cat="developpement"]{background:rgba(0,234,255,.12); border-color:rgba(0,234,255,.45)}
-    .badge[data-cat="experience"]   {background:rgba(255,110,199,.12); border-color:rgba(255,110,199,.35)}
-    .badge[data-cat="alignement"]   {background:rgba(255,209,102,.12); border-color:rgba(255,209,102,.35)}
-    .badge[data-cat="operations"]   {background:rgba(91,211,255,.12); border-color:rgba(91,211,255,.35)}
-    .badge[data-cat="lancement"]    {background:rgba(138,43,226,.12); border-color:rgba(138,43,226,.35)}
+    .badge .dot{display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; box-shadow:0 0 10px currentColor}
 
     .desc{margin-top:8px; color:var(--text); opacity:.85; line-height:1.5}
     .card .tasks{list-style:none; margin:16px 0 0; padding:0; display:flex; flex-direction:column; gap:8px;}
@@ -168,6 +163,7 @@
     .card .task.is-done .task-title{text-decoration:line-through; color:var(--muted);}
     .card .task .task-meta{display:flex; flex-wrap:wrap; gap:6px; color:var(--muted); font-size:11px; margin-top:4px; text-transform:uppercase; letter-spacing:.06em;}
     .card .tasks.empty{margin:16px 0 0; padding:12px; border-radius:10px; border:1px dashed rgba(255,255,255,.12); color:var(--muted); text-align:center; font-size:12px; background:rgba(255,255,255,.02);}
+
     .ribbon{position:absolute; top:8px; right:-36px; transform:rotate(35deg); background:linear-gradient(90deg, var(--primary), var(--accent)); color:#001018;
       padding:4px 48px; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; box-shadow:0 0 18px rgba(0,234,255,.45)}
 
@@ -200,14 +196,8 @@
     .lane.is-dim{ opacity:.35; filter:saturate(.6) }
     .lane .label{ position:sticky; left:0; z-index:1; height:100%; display:flex; align-items:center; gap:10px; padding:0 12px; width:210px;
       background:linear-gradient(90deg, rgba(5,6,13,.85), rgba(5,6,13,.0)); border-right:1px solid rgba(255,255,255,.08);
-      font-size:13px; text-transform:capitalize; color:var(--text); }
+      font-size:13px; color:var(--text); }
     .lane .label .dot{ width:10px; height:10px; border-radius:50%; box-shadow:0 0 10px currentColor }
-    .lane[data-cat="developpement"] .label .dot{ color:#00eaff }
-    .lane[data-cat="experience"] .label .dot{ color:#ff6ec7 }
-    .lane[data-cat="alignement"] .label .dot{ color:#ffd166 }
-    .lane[data-cat="operations"] .label .dot{ color:#5bd3ff }
-    .lane[data-cat="lancement"] .label .dot{ color:#8a2be2 }
-
     .lane .bars{ position:relative; height:100%; margin-left:210px; }
     .taskMarkers{ position:absolute; inset:0; pointer-events:none; z-index:2; }
     .taskMarker{ position:absolute; top:6px; width:14px; height:14px; border-radius:50%; border:1px solid rgba(255,255,255,.35); background:linear-gradient(130deg, rgba(0,234,255,.55), rgba(138,43,226,.45)); box-shadow:0 0 12px rgba(0,234,255,.45); pointer-events:auto; cursor:pointer; transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease; display:grid; place-items:center; color:#02121a; font-size:10px; font-weight:700; z-index:3; }
@@ -280,12 +270,7 @@
     <p class="lead">Visualisez, orchestrez et synchronisez la feuille de route de <strong>SPHAIRA</strong> avec <strong>ORIS</strong>. Les vues <strong>Verticale</strong> et <strong>Roadmap</strong> reflètent en temps réel les évolutions partagées entre les plateformes.</p>
 
     <div class="controls" role="region" aria-label="Filtres et navigation">
-      <button class="chip" data-cat="tous" data-active="true"><span class="dot"></span> Tous</button>
-      <button class="chip" data-cat="developpement"><span class="dot"></span> Développement</button>
-      <button class="chip" data-cat="experience"><span class="dot"></span> Expérience</button>
-      <button class="chip" data-cat="alignement"><span class="dot"></span> Alignement</button>
-      <button class="chip" data-cat="operations"><span class="dot"></span> Opérations</button>
-      <button class="chip" data-cat="lancement"><span class="dot"></span> Lancements</button>
+      <div id="chipsContainer" class="chips" aria-live="polite"></div>
 
       <span class="spacer"></span>
 
@@ -313,8 +298,8 @@
       </div>
 
       <div class="view" aria-label="Changer de vue">
-        <button class="chip chip-view" data-view="vertical"><span class="dot"></span> Vue verticale</button>
-        <button class="chip chip-view" data-view="roadmap" data-active="true"><span class="dot"></span> Vue roadmap</button>
+        <button class="chip chip-view" data-view="vertical"><span class="dot"></span> <span class="label">Vue verticale</span></button>
+        <button class="chip chip-view" data-view="roadmap" data-active="true"><span class="dot"></span> <span class="label">Vue roadmap</span></button>
       </div>
     </div>
     <div class="sync-status" id="syncStatus" role="status" aria-live="polite">
@@ -334,7 +319,7 @@
           <div class="todayLine" id="todayLine" hidden></div>
         </div>
       </div>
-      <p id="noWorkspaceHint" class="warn" style="display:none;margin:10px 6px 0 6px">⚠️ Aucun espace SPHAIRA détecté. Ouvrez d'abord <strong>SPHAIRA</strong> (l'onglet "SPHAIRA") pour créer le workspace, puis revenez ici.</p>
+      <p id="noWorkspaceHint" class="warn" style="display:none;margin:10px 6px 0 6px">⚠️ Aucun espace SPHAIRA détecté. Ouvrez d'abord <strong>SPHAIRA</strong> puis revenez ici.</p>
     </section>
   </main>
 
@@ -358,22 +343,8 @@
         <input id="objectiveDate" name="date" type="date" required>
       </div>
       <div class="field">
-        <label for="objectiveCategory">Piliers (cosmétique)</label>
-        <select id="objectiveCategory" name="category" required>
-          <option value="developpement">Développement</option>
-          <option value="experience">Expérience</option>
-          <option value="alignement">Alignement</option>
-          <option value="operations">Opérations</option>
-          <option value="lancement">Lancements</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="objectiveLead">Pilote (cosmétique)</label>
-        <input id="objectiveLead" name="lead" placeholder="Nom du pilote">
-      </div>
-      <div class="field">
         <label for="objectiveIcon">Icône (cosmétique)</label>
-        <input id="objectiveIcon" name="icon" maxlength="3" placeholder="🛠️">
+        <input id="objectiveIcon" name="icon" maxlength="3" placeholder="🎯">
       </div>
       <div class="field">
         <label for="objectiveDesc">Description</label>
@@ -396,94 +367,66 @@
   </footer>
 
   <script>
-  // ====== Catégories (UI) ======
-  const CATEGORY_META = {
-    developpement: { label: 'Développement', description: 'Livraisons produit SPHAIRA' },
-    experience: { label: 'Expérience', description: 'Confort des responsables et équipes' },
-    alignement: { label: 'Alignement', description: 'Synchronisation SPHAIRA ↔︎ ORIS' },
-    operations: { label: 'Opérations', description: 'Fiabilité et gouvernance' },
-    lancement: { label: 'Lancements', description: 'Adoption & diffusion' }
-  };
-  const CATEGORY_ORDER = Object.keys(CATEGORY_META);
-
-  // ====== SPHAIRA — lecture/écriture workspace ======
-  const STORAGE_KEYS = [
-    'sphaira:workspaceState:v2',
-    'sphaira:workspaceState:v1',
-    'workspaceState'
-  ];
-
+  /* ====== Accès workspace SPHAIRA (localStorage) ====== */
+  const STORAGE_KEYS = ['sphaira:workspaceState:v2','sphaira:workspaceState:v1','workspaceState'];
+  const FALLBACK_COLORS = ['#00eaff','#ff6ec7','#ffd166','#5bd3ff','#8a2be2','#8cffd2','#ffa3a3','#a3c4ff'];
   let sphairaWorkspace = { json:null, storageKey:null };
 
   function loadWorkspaceFromStorage(){
     for(const key of STORAGE_KEYS){
-      try{
-        const raw = localStorage.getItem(key);
-        if(raw){ sphairaWorkspace = { json: JSON.parse(raw), storageKey: key }; return sphairaWorkspace; }
-      }catch(_){/* ignore */}
+      try{ const raw = localStorage.getItem(key); if(raw){ sphairaWorkspace = { json: JSON.parse(raw), storageKey:key }; return sphairaWorkspace; } }catch(_){}
     }
-    sphairaWorkspace = { json:null, storageKey:null };
-    return sphairaWorkspace;
+    sphairaWorkspace = { json:null, storageKey:null }; return sphairaWorkspace;
   }
-
   function persistWorkspace(){
-    if(!sphairaWorkspace.json){ return false; }
+    if(!sphairaWorkspace.json) return false;
+    const str = JSON.stringify(sphairaWorkspace.json);
     try{
-      const str = JSON.stringify(sphairaWorkspace.json);
-      // 1) On réécrit sur la clé d'origine si connue
-      if(sphairaWorkspace.storageKey){ localStorage.setItem(sphairaWorkspace.storageKey, str); }
-      // 2) Compatibilité SPHAIRA/ORIS : miroirs (comme SPHAIRA)
-      try{ localStorage.setItem('workspaceState', str); }catch{}
-      try{ localStorage.setItem('sphaira:workspaceState:v1', str); }catch{}
-      // Hint pour déclencher des listeners génériques
+      if(sphairaWorkspace.storageKey) localStorage.setItem(sphairaWorkspace.storageKey, str);
+      try{ localStorage.setItem('workspaceState', str);}catch{}
+      try{ localStorage.setItem('sphaira:workspaceState:v1', str);}catch{}
       try{ localStorage.setItem('sphaira:lastWriteAt', Date.now().toString()); }catch{}
       return true;
     }catch(e){ console.error('[ECLIPTICA] Persist échouée', e); return false; }
   }
-
   function getAllNodes(){ return Array.isArray(sphairaWorkspace.json?.nodes) ? sphairaWorkspace.json.nodes : []; }
   function getNodeById(id){ return getAllNodes().find(n=>n.id===id); }
-
   function ensureArraysOnNode(node){
     if(!node) return;
-    if(!Array.isArray(node._tasks) && Array.isArray(node.tasks)) node._tasks = node.tasks; // compat si SPHAIRA n'a pas hydrater _tasks
+    if(!Array.isArray(node._tasks) && Array.isArray(node.tasks)) node._tasks = node.tasks;
     if(!Array.isArray(node._objectives) && Array.isArray(node.objectives)) node._objectives = node.objectives;
     if(!Array.isArray(node._tasks)) node._tasks = [];
     if(!Array.isArray(node._objectives)) node._objectives = [];
-    node._tasks.forEach(t=>{ if(!Array.isArray(t.objectiveIds)) t.objectiveIds = []; t.start = t.start||''; t.end = t.end||''; t.done = !!t.done; });
-    node._objectives.forEach(o=>{ if(!Array.isArray(o.taskIds)) o.taskIds = []; o.due = o.due||''; o.completed = !!o.completed; o.completedAt = o.completedAt||null; });
-    // keep mirrors in sync for SPHAIRA persistence
+    node._tasks.forEach(t=>{ if(!Array.isArray(t.objectiveIds)) t.objectiveIds = []; t.start=t.start||''; t.end=t.end||''; t.done=!!t.done; });
+    node._objectives.forEach(o=>{ if(!Array.isArray(o.taskIds)) o.taskIds = []; o.due=o.due||''; o.completed=!!o.completed; o.completedAt=o.completedAt||null; });
     node.tasks = node._tasks; node.objectives = node._objectives;
   }
 
+  /* ====== Références qualifiées ====== */
   function qualifyTaskRef(nodeId, taskId){ return `${nodeId}::${taskId}`; }
   function qualifyObjectiveRef(nodeId, objId){ return `${nodeId}::${objId}`; }
 
   function resolveTaskRef(ref){
     if(!ref) return null;
-    const hasQual = String(ref).includes('::');
-    let nodeId, taskId;
+    const hasQual = String(ref).includes('::'); let nodeId, taskId;
     if(hasQual){ [nodeId, taskId] = String(ref).split('::'); }
     const nodes = getAllNodes();
     if(nodeId){
-      const node = getNodeById(nodeId); if(!node){ return null; }
+      const node = getNodeById(nodeId); if(!node) return null;
       ensureArraysOnNode(node);
       const task = (node._tasks||[]).find(t=>t.id===taskId);
       return task ? { node, task } : null;
     }
-    // non qualifié : on cherche dans tous les nœuds
     for(const node of nodes){ ensureArraysOnNode(node); const t=(node._tasks||[]).find(x=>x.id===ref); if(t) return { node, task:t }; }
     return null;
   }
-
   function resolveObjectiveRef(ref){
     if(!ref) return null;
-    const hasQual = String(ref).includes('::');
-    let nodeId, objId;
+    const hasQual = String(ref).includes('::'); let nodeId, objId;
     if(hasQual){ [nodeId, objId] = String(ref).split('::'); }
     const nodes = getAllNodes();
     if(nodeId){
-      const node = getNodeById(nodeId); if(!node){ return null; }
+      const node = getNodeById(nodeId); if(!node) return null;
       ensureArraysOnNode(node);
       const objective = (node._objectives||[]).find(o=>o.id===objId);
       return objective ? { node, objective } : null;
@@ -492,58 +435,90 @@
     return null;
   }
 
-  function linkTaskToObjective(taskRes, objectiveRes){
-    if(!taskRes||!objectiveRes) return;
-    const t = taskRes.task; const o = objectiveRes.objective; const nT = taskRes.node; const nO = objectiveRes.node;
-    ensureArraysOnNode(nT); ensureArraysOnNode(nO);
-    const oRef = qualifyObjectiveRef(nO.id, o.id);
-    const tRef = qualifyTaskRef(nT.id, t.id);
-    if(!t.objectiveIds.includes(oRef)) t.objectiveIds.push(oRef);
-    if(!o.taskIds.includes(tRef)) o.taskIds.push(tRef);
+  /* ====== Cercles principaux (filtres dynamiques) ====== */
+  function computeRootNodes(){
+    const nodes = getAllNodes(); if(nodes.length===0) return [];
+    const childSet = new Set();
+    for(const n of nodes){
+      const children = Array.isArray(n.children) ? n.children
+                      : Array.isArray(n.childIds) ? n.childIds
+                      : [];
+      for(const c of children){
+        if(typeof c==='string') childSet.add(c);
+        else if(c && typeof c==='object' && c.id) childSet.add(c.id);
+      }
+      if(n.parentId) childSet.add(n.id); // si parentId présent, ce n’est pas une racine
+    }
+    // heuristique: racines = non présents dans childSet OU depth/level === 0
+    const roots = nodes.filter(n =>
+      !childSet.has(n.id) ||
+      n.depth === 0 || n.level === 0 || n.isMain === true || n.root === true
+    );
+    // Dédupliquer
+    const seen = new Set(); const out = [];
+    for(const r of roots){ if(!seen.has(r.id)){ seen.add(r.id); out.push(r); } }
+    // tri par nom pour stabilité
+    out.sort((a,b)=> (a.text||a.label||a.id).localeCompare(b.text||b.label||b.id,'fr'));
+    return out;
+  }
+  function nodeLabel(n){ return (n.text||n.label||'').trim() || n.id; }
+  function nodeColor(n, idx){
+    const c = (n.color||n.colour||n.col||'').trim();
+    if(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(c)) return c;
+    return FALLBACK_COLORS[idx % FALLBACK_COLORS.length];
   }
 
-  function unlinkTaskFromObjective(taskRes, objectiveRes){
-    if(!taskRes||!objectiveRes) return;
-    const t = taskRes.task; const o = objectiveRes.objective; const nT = taskRes.node; const nO = objectiveRes.node;
-    ensureArraysOnNode(nT); ensureArraysOnNode(nO);
-    const oRef = qualifyObjectiveRef(nO.id, o.id);
-    const tRef = qualifyTaskRef(nT.id, t.id);
-    t.objectiveIds = (t.objectiveIds||[]).filter(x=>x!==oRef);
-    o.taskIds = (o.taskIds||[]).filter(x=>x!==tRef);
-  }
+  /* ====== Projection SPHAIRA -> UI OBJECTIVES (avec union des tâches) ====== */
+  let OBJECTIVES = []; // {id, nodeId, nodeName, nodeColor, date, title, icon, desc, tasks:[{id,title,due,done}]}
+  let ROOTS = []; // cercles racines pour filtres
 
-  function recomputeObjectiveCompletion(objectiveRes){
-    if(!objectiveRes) return;
-    const { node, objective } = objectiveRes; ensureArraysOnNode(node);
-    const ids = objective.taskIds||[];
-    if(ids.length===0){ return; }
-    const linked = ids.map(ref=>resolveTaskRef(ref)).filter(Boolean).map(x=>x.task);
-    const allDone = linked.length>0 && linked.every(t=>t.done===true);
-    if(allDone && !objective.completed){ objective.completed = true; objective.completedAt = new Date().toISOString().slice(0,10); }
-    if(!allDone && objective.completed){ objective.completed = false; objective.completedAt = null; }
+  function tasksLinkedToObjectiveAcrossWorkspace(objectiveRef){
+    const nodes = getAllNodes(); const results = [];
+    for(const n of nodes){
+      ensureArraysOnNode(n);
+      for(const t of n._tasks){
+        if((t.objectiveIds||[]).includes(objectiveRef)){
+          results.push({ node:n, task:t });
+        }
+      }
+    }
+    return results;
   }
-
-  // ====== Projection SPHAIRA -> ECLIPTICA (OBJECTIVES array) ======
-  const CATEGORY_DEFAULT = 'developpement';
-  let OBJECTIVES = []; // {id: "nodeId::objId", date, title, cat, icon, lead, desc, tasks:[{id:qualified, title, due, done}]}
-  let objectivesLoadingPromise = null;
 
   function normalizeObjectiveForUI(node, obj){
     ensureArraysOnNode(node);
-    const tasks = (obj.taskIds||[]).map(ref=>resolveTaskRef(ref)).filter(Boolean).map(({node:tn, task})=>({
+    const objectiveRef = qualifyObjectiveRef(node.id, obj.id);
+
+    // A) via objective.taskIds (qualifiées ou non)
+    const viaObj = (obj.taskIds||[])
+      .map(ref => resolveTaskRef(ref))
+      .filter(Boolean);
+
+    // B) via toutes les tâches qui pointent sur objectiveRef
+    const viaTask = tasksLinkedToObjectiveAcrossWorkspace(objectiveRef);
+
+    // Union par clé qualifiée
+    const mergedMap = new Map();
+    [...viaObj, ...viaTask].forEach(({node:tn, task})=>{
+      const q = qualifyTaskRef(tn.id, task.id);
+      if(!mergedMap.has(q)) mergedMap.set(q, { node:tn, task });
+    });
+
+    const tasks = Array.from(mergedMap.values()).map(({node:tn, task})=>({
       id: qualifyTaskRef(tn.id, task.id),
-      title: task.title||'(Sans titre)',
-      owner: '',
-      due: task.end||task.start||'',
+      title: task.title || '(Sans titre)',
+      due: task.end || task.start || '',
       done: !!task.done
     }));
+
     return {
-      id: qualifyObjectiveRef(node.id, obj.id),
+      id: objectiveRef,
+      nodeId: node.id,
+      nodeName: nodeLabel(node),
+      nodeColor: nodeColor(node, 0),
       date: obj.due || '2025-01-01',
       title: obj.title || 'Objectif sans titre',
-      cat: CATEGORY_DEFAULT,
       icon: '🎯',
-      lead: '',
       desc: obj.desc || '',
       tasks
     };
@@ -554,119 +529,104 @@
     const out = [];
     nodes.forEach(n=>{
       ensureArraysOnNode(n);
-      (n._objectives||[]).forEach(o=>{ out.push(normalizeObjectiveForUI(n,o)); });
+      (n._objectives||[]).forEach(o=> out.push(normalizeObjectiveForUI(n,o)));
     });
     out.sort((a,b)=> new Date(a.date) - new Date(b.date));
     return out;
   }
 
-  async function loadObjectives(){
-    if(objectivesLoadingPromise){ return objectivesLoadingPromise; }
-    const syncStatus = document.getElementById('syncStatus');
-    const syncStatusMessage = syncStatus.querySelector('span:last-child');
-    syncStatusMessage.textContent = 'Chargement depuis SPHAIRA…';
-    objectivesLoadingPromise = (async()=>{
-      try{
-        const ws = loadWorkspaceFromStorage();
-        const hint = document.getElementById('noWorkspaceHint');
-        hint.style.display = ws.json ? 'none' : '';
-        OBJECTIVES = ws.json ? buildObjectivesFromWorkspace() : [];
-        refreshTimelines();
-        const ts = new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
-        syncStatusMessage.textContent = `Synchronisé avec SPHAIRA — ${ts}`;
-        populateNodeSelector();
-      }catch(e){
-        console.error(e);
-        syncStatusMessage.textContent = `Erreur de synchronisation SPHAIRA : ${e.message}`;
-      }finally{ objectivesLoadingPromise = null; }
-    })();
-    return objectivesLoadingPromise;
-  }
-
-  // ====== UI helpers ======
-  function fmtDate(d, withYear = false){
-    const opts = { day:'2-digit', month:'short' };
-    if(withYear) opts.year = 'numeric';
-    return new Intl.DateTimeFormat('fr-FR', opts).format(d).replace('.', '');
-  }
-  const start = new Date('2025-01-01T00:00:00');
-  const end   = new Date('2025-12-31T23:59:59');
-  const isYear2025 = new Date().getFullYear() === 2025;
+  /* ====== UI helpers ====== */
+  function fmtDate(d, withYear=false){ const opts={day:'2-digit',month:'short'}; if(withYear) opts.year='numeric'; return new Intl.DateTimeFormat('fr-FR',opts).format(d).replace('.',''); }
+  const start = new Date('2025-01-01T00:00:00'); const end = new Date('2025-12-31T23:59:59'); const isYear2025 = new Date().getFullYear()===2025;
   function pctOfYear(d){ return ((d - start) / (end - start)) * 100; }
-  function clamp(value, min, max){ return Math.min(max, Math.max(min, value)); }
+  function clamp(v,min,max){ return Math.min(max, Math.max(min, v)); }
   function groupByMonth(items){
-    const map = new Map(Array.from({length:12}, (_,i)=>[(i+1).toString().padStart(2,'0'), []]));
-    for(const obj of items){ const d = new Date(obj.date); const key = (d.getMonth()+1).toString().padStart(2,'0'); const enriched = {...obj, d}; map.get(key)?.push(enriched); }
-    for(const [, arr] of map){ arr.sort((a,b)=>a.d-b.d); }
+    const map = new Map(Array.from({length:12}, (_,i)=>[(i+1).toString().padStart(2,'0'),[]]));
+    for(const obj of items){ const d=new Date(obj.date); const key=(d.getMonth()+1).toString().padStart(2,'0'); map.get(key)?.push({...obj, d}); }
+    for(const [,arr] of map){ arr.sort((a,b)=>a.d-b.d); }
     return map;
   }
-  function groupByCat(items){
-    const map = new Map(CATEGORY_ORDER.map(cat => [cat, []]));
-    for(const obj of items){ const d = new Date(obj.date); if(map.has(obj.cat)){ map.get(obj.cat).push({...obj, d}); } }
-    for(const [, arr] of map){ arr.sort((a,b)=>a.d-b.d); }
+  function groupByCircle(items){
+    const map = new Map();
+    for(const root of ROOTS){ map.set(root.id, []); }
+    for(const obj of items){
+      const d = new Date(obj.date);
+      if(map.has(obj.nodeId)) map.get(obj.nodeId).push({...obj, d});
+      else { // si l'objectif est dans un cercle non racine, ranger par son cercle quand même
+        if(!map.has(obj.nodeId)) map.set(obj.nodeId, []);
+        map.get(obj.nodeId).push({...obj, d});
+      }
+    }
+    for(const [,arr] of map){ arr.sort((a,b)=>a.d-b.d); }
     return map;
   }
   function computeTaskSummary(obj){
     const total = obj.tasks?.length ?? 0;
-    const done = obj.tasks?.filter(t => t.done).length ?? 0;
-    const pct = total === 0 ? 0 : Math.round((done / total) * 100);
-    return { total, done, pct };
+    const done = obj.tasks?.filter(t=>t.done).length ?? 0;
+    return { total, done, pct: total?Math.round(done/total*100):0 };
   }
   function buildTaskList(tasks){
-    if(!tasks || tasks.length === 0){ const empty = document.createElement('div'); empty.className = 'tasks empty'; empty.textContent = 'Aucune tâche renseignée'; return empty; }
-    const list = document.createElement('ul'); list.className = 'tasks'; list.setAttribute('role', 'list');
-    tasks.forEach(task => {
-      const item = document.createElement('li'); item.className = 'task' + (task.done ? ' is-done' : '');
-      const check = document.createElement('span'); check.className = 'check'; check.textContent = task.done ? '✓' : ''; check.setAttribute('aria-hidden', 'true'); item.appendChild(check);
-      const details = document.createElement('div');
-      const title = document.createElement('span'); title.className = 'task-title'; title.textContent = task.title; const rawDue = task.due ? new Date(task.due) : null; const hasValidDue = rawDue && !Number.isNaN(rawDue.valueOf()); const badge = document.createElement('small'); badge.textContent = hasValidDue ? fmtDate(rawDue, true) : 'Sans échéance'; title.appendChild(badge); details.appendChild(title);
-      const metaBits = []; metaBits.push(task.done ? '✓ Terminé' : '• À suivre'); if(metaBits.length){ const meta = document.createElement('span'); meta.className = 'task-meta'; meta.textContent = metaBits.join(' • '); details.appendChild(meta); }
+    if(!tasks || tasks.length===0){ const empty=document.createElement('div'); empty.className='tasks empty'; empty.textContent='Aucune tâche renseignée'; return empty; }
+    const list=document.createElement('ul'); list.className='tasks'; list.setAttribute('role','list');
+    tasks.forEach(task=>{
+      const item=document.createElement('li'); item.className='task'+(task.done?' is-done':'');
+      const check=document.createElement('span'); check.className='check'; check.textContent=task.done?'✓':''; check.setAttribute('aria-hidden','true'); item.appendChild(check);
+      const details=document.createElement('div');
+      const title=document.createElement('span'); title.className='task-title'; title.textContent=task.title;
+      const rawDue=task.due?new Date(task.due):null; const ok=rawDue && !Number.isNaN(rawDue.valueOf());
+      const badge=document.createElement('small'); badge.textContent=ok?fmtDate(rawDue,true):'Sans échéance'; title.appendChild(badge); details.appendChild(title);
+      const meta=document.createElement('span'); meta.className='task-meta'; meta.textContent = task.done?'✓ Terminé':'• À suivre'; details.appendChild(meta);
       item.appendChild(details); list.appendChild(item);
     });
     return list;
   }
 
-  // ====== RENDERERS ======
+  /* ====== RENDERERS ====== */
   function renderVertical(){
     const container = document.getElementById('timelineVertical');
     const byMonth = groupByMonth(OBJECTIVES);
     const today = new Date(); const todayKey = isYear2025 ? (today.getMonth()+1).toString().padStart(2,'0') : null;
+
     container.innerHTML = '';
     for(let i=1;i<=12;i++){
       const key = i.toString().padStart(2,'0');
       const section = document.createElement('section'); section.className = 'month' + (todayKey === key ? ' is-today' : ''); section.id = `m${key}`;
       const heading = document.createElement('h2'); heading.textContent = new Date(`2025-${key}-01`).toLocaleDateString('fr-FR', {month:'long'}); section.appendChild(heading);
+
       const monthObjectives = byMonth.get(key) ?? [];
-      if(monthObjectives.length === 0){ const empty = document.createElement('div'); empty.className = 'item is-empty'; empty.dataset.placeholder = 'true'; empty.innerHTML = `<span class="node" aria-hidden="true"></span><div class="card"><div class="meta">Aucun objectif planifié</div></div>`; section.appendChild(empty); }
-      else {
-        monthObjectives.forEach(obj => {
+      if(monthObjectives.length === 0){
+        const empty = document.createElement('div');
+        empty.className = 'item is-empty'; empty.dataset.placeholder = 'true';
+        empty.innerHTML = `<span class="node" aria-hidden="true"></span><div class="card"><div class="meta">Aucun objectif planifié</div></div>`;
+        section.appendChild(empty);
+      } else {
+        monthObjectives.forEach(obj=>{
           const summary = computeTaskSummary(obj);
           const progressText = summary.total ? `${summary.done}/${summary.total} tâches` : 'Aucune tâche';
-          const item = document.createElement('article'); item.className = 'item'; item.dataset.cat = obj.cat; item.dataset.id = obj.id;
-          const isTodayObjective = isYear2025 && obj.d.toDateString() === today.toDateString();
+          const item = document.createElement('article'); item.className='item'; item.dataset.cat=obj.nodeId; item.dataset.id=obj.id;
+          const isTodayObjective = isYear2025 && obj.d.toDateString()===today.toDateString();
           item.innerHTML = `
             <span class="node" aria-hidden="true"></span>
             <div class="card" role="button" tabindex="0" aria-label="${obj.title}">
               ${isTodayObjective ? '<div class="ribbon">Aujourd\'hui</div>' : ''}
               <div class="top">
-                <div class="icon">${obj.icon || '🗂️'}</div>
+                <div class="icon">${obj.icon||'🗂️'}</div>
                 <div>
                   <div class="title">${obj.title}</div>
                   <div class="meta">
                     <span>${fmtDate(obj.d)}</span>
-                    <span class="badge" data-cat="${obj.cat}">${CATEGORY_META[obj.cat]?.label||obj.cat}</span>
+                    <span class="badge" style="color:${obj.nodeColor}"><span class="dot"></span>${obj.nodeName}</span>
                     <span>${progressText}</span>
                   </div>
                 </div>
               </div>
-              <div class="meta">
-                ${obj.lead ? `<span>👤 ${obj.lead}</span>` : ''}
-                <span>Synchronisé SPHAIRA • ORIS</span>
-              </div>
+              <div class="meta"><span>Synchronisé SPHAIRA • ORIS</span></div>
               <p class="desc">${obj.desc || ''}</p>
             </div>`;
           section.appendChild(item);
-          const card = item.querySelector('.card'); card.appendChild(buildTaskList(obj.tasks)); card.addEventListener('click', () => openPanel(obj.id)); card.addEventListener('keydown', (ev) => { if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); openPanel(obj.id); } });
+          const card=item.querySelector('.card'); card.appendChild(buildTaskList(obj.tasks));
+          card.addEventListener('click', ()=>openPanel(obj.id));
+          card.addEventListener('keydown', (ev)=>{ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); openPanel(obj.id); }});
         });
       }
       container.appendChild(section);
@@ -677,48 +637,121 @@
     const axis = document.getElementById('axis');
     const lanesWrap = document.getElementById('lanes');
     const todayLine = document.getElementById('todayLine');
-    axis.innerHTML = '';
-    for(let i=0;i<12;i++){ const tick = document.createElement('div'); tick.className = 'tick'; tick.style.width = 'calc(var(--month))'; tick.textContent = new Date(2025, i, 1).toLocaleDateString('fr-FR', {month:'short'}).replace('.', ''); axis.appendChild(tick); }
-    lanesWrap.innerHTML = '';
-    const byCat = groupByCat(OBJECTIVES);
-    for(const [cat, arr] of byCat){ if(arr.length === 0) continue; const lane = document.createElement('div'); lane.className = 'lane'; lane.dataset.cat = cat; const label = document.createElement('div'); label.className = 'label'; label.innerHTML = `<span class="dot"></span> ${CATEGORY_META[cat]?.label||cat}`; lane.appendChild(label); const bars = document.createElement('div'); bars.className = 'bars'; const markers = document.createElement('div'); markers.className = 'taskMarkers'; bars.appendChild(markers);
-      arr.forEach(obj => {
-        const left = pctOfYear(obj.d);
-        const bar = document.createElement('div'); bar.className = 'barItem'; bar.dataset.cat = obj.cat; bar.dataset.id = obj.id; bar.style.left = `calc(${left}% - 80px)`; bar.style.width = 'max(2%, 140px)'; const summary = computeTaskSummary(obj); const progressText = summary.total ? `${summary.done}/${summary.total} tâches` : 'Aucune tâche'; bar.setAttribute('data-hint', `${fmtDate(obj.d, true)} — ${progressText}`); bar.innerHTML = `<span class="ic">${obj.icon || '🗂️'}</span><span class="t">${obj.title}</span><span class="d">• ${fmtDate(obj.d)}</span>`; bar.setAttribute('role', 'button'); bar.setAttribute('tabindex', '0'); bars.appendChild(bar);
-        if(Array.isArray(obj.tasks)){
-          obj.tasks.forEach(task => { const rawDue = task.due ? new Date(task.due) : null; const hasValidDue = rawDue && !Number.isNaN(rawDue.valueOf()); const dueDate = hasValidDue ? rawDue : obj.d; if(!dueDate || Number.isNaN(dueDate.valueOf())) return; const marker = document.createElement('span'); marker.className = 'taskMarker' + (task.done ? ' is-done' : ''); marker.dataset.cat = obj.cat; marker.dataset.taskId = task.id || ''; marker.dataset.objectiveId = obj.id; const pct = clamp(pctOfYear(dueDate), 0, 100); marker.style.left = `calc(${pct}% - 7px)`; const statusLabel = task.done ? 'Terminé' : 'À suivre'; marker.setAttribute('data-hint', `${task.title} — ${statusLabel} • ${fmtDate(dueDate, true)}`); marker.setAttribute('role', 'button'); marker.setAttribute('tabindex', '0'); marker.addEventListener('click', () => openPanel(obj.id)); marker.addEventListener('keydown', (ev) => { if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); openPanel(obj.id); } }); markers.appendChild(marker); });
-        }
-        bar.addEventListener('click', () => openPanel(obj.id)); bar.addEventListener('keydown', (ev) => { if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); openPanel(obj.id); } });
+
+    axis.innerHTML=''; for(let i=0;i<12;i++){ const t=document.createElement('div'); t.className='tick'; t.style.width='calc(var(--month))'; t.textContent=new Date(2025,i,1).toLocaleDateString('fr-FR',{month:'short'}).replace('.',''); axis.appendChild(t); }
+
+    lanesWrap.innerHTML='';
+    const byCircle = groupByCircle(OBJECTIVES);
+    for(const root of ROOTS){
+      const arr = byCircle.get(root.id) || [];
+      if(arr.length===0) continue;
+      const lane=document.createElement('div'); lane.className='lane'; lane.dataset.cat=root.id;
+      const label=document.createElement('div'); label.className='label'; label.style.color=nodeColor(root,0); label.innerHTML=`<span class="dot"></span>${nodeLabel(root)}`;
+      lane.appendChild(label);
+
+      const bars=document.createElement('div'); bars.className='bars';
+      const markers=document.createElement('div'); markers.className='taskMarkers'; bars.appendChild(markers);
+
+      arr.forEach(obj=>{
+        const left=pctOfYear(obj.d);
+        const bar=document.createElement('div'); bar.className='barItem'; bar.dataset.cat=obj.nodeId; bar.dataset.id=obj.id;
+        bar.style.left=`calc(${left}% - 80px)`; bar.style.width='max(2%, 140px)';
+        const summary=computeTaskSummary(obj); const progressText=summary.total?`${summary.done}/${summary.total} tâches`:'Aucune tâche';
+        bar.setAttribute('data-hint', `${fmtDate(obj.d,true)} — ${progressText}`);
+        bar.innerHTML=`<span class="ic">${obj.icon||'🗂️'}</span><span class="t">${obj.title}</span><span class="d">• ${fmtDate(obj.d)}</span>`;
+        bar.setAttribute('role','button'); bar.setAttribute('tabindex','0');
+        bars.appendChild(bar);
+
+        (obj.tasks||[]).forEach(task=>{
+          const rawDue = task.due?new Date(task.due):null; const dueDate = rawDue && !Number.isNaN(rawDue.valueOf()) ? rawDue : obj.d;
+          if(!dueDate || Number.isNaN(dueDate.valueOf())) return;
+          const m=document.createElement('span'); m.className='taskMarker'+(task.done?' is-done':'');
+          m.dataset.cat=obj.nodeId; m.dataset.taskId=task.id||''; m.dataset.objectiveId=obj.id;
+          m.style.left=`calc(${clamp(pctOfYear(dueDate),0,100)}% - 7px)`;
+          m.setAttribute('data-hint', `${task.title} — ${task.done?'Terminé':'À suivre'} • ${fmtDate(dueDate,true)}`);
+          m.setAttribute('role','button'); m.setAttribute('tabindex','0');
+          m.addEventListener('click', ()=>openPanel(obj.id));
+          m.addEventListener('keydown', ev=>{ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); openPanel(obj.id);} });
+          markers.appendChild(m);
+        });
+
+        bar.addEventListener('click', ()=>openPanel(obj.id));
+        bar.addEventListener('keydown', ev=>{ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); openPanel(obj.id);} });
       });
+
       lane.appendChild(bars); lanesWrap.appendChild(lane);
     }
-    if(isYear2025){ const position = pctOfYear(new Date()); todayLine.style.left = `calc(${position}% + 210px)`; todayLine.hidden = false; } else { todayLine.hidden = true; }
+
+    if(isYear2025){ const position=pctOfYear(new Date()); todayLine.style.left=`calc(${position}% + 210px)`; todayLine.hidden=false; } else { todayLine.hidden=true; }
   }
 
-  // ====== Filters & controls ======
+  function refreshTimelines(){ renderVertical(); renderRoadmap(); applyFilter(currentFilter); }
+
+  /* ====== Chips filtres cercles ====== */
+  const chipsContainer = document.getElementById('chipsContainer');
   let currentFilter = 'tous';
+  function renderCircleChips(){
+    chipsContainer.innerHTML='';
+    const makeChip = (id, label, color, active=false)=>{
+      const b=document.createElement('button');
+      b.className='chip'; b.dataset.active=active?'true':'false';
+      if(id!=='tous'){ b.dataset.cat=id; b.style.setProperty('--dot', color||'#00eaff'); }
+      b.innerHTML=`<span class="dot"></span> <span class="label">${label}</span>`;
+      b.addEventListener('click', ()=>{
+        chipsContainer.querySelectorAll('.chip').forEach(c=>c.dataset.active='false');
+        b.dataset.active='true'; applyFilter(id);
+      });
+      return b;
+    };
+    chipsContainer.appendChild(makeChip('tous','Tous','#00eaff', true));
+    ROOTS.forEach((r,idx)=> chipsContainer.appendChild(makeChip(r.id, nodeLabel(r), nodeColor(r,idx), false)));
+  }
   function applyFilter(cat){
     currentFilter = cat;
-    document.querySelectorAll('#timelineVertical .item').forEach(item => {
-      if(item.dataset.placeholder === 'true'){ item.style.display = cat === 'tous' ? '' : 'none'; return; }
-      if(cat === 'tous'){ item.style.display = ''; } else { item.style.display = item.dataset.cat === cat ? '' : 'none'; }
+    // Vue verticale
+    document.querySelectorAll('#timelineVertical .item').forEach(item=>{
+      if(item.dataset.placeholder==='true'){ item.style.display = cat==='tous' ? '' : 'none'; return; }
+      if(cat==='tous'){ item.style.display=''; } else { item.style.display = item.dataset.cat===cat ? '' : 'none'; }
     });
-    document.querySelectorAll('#timelineVertical .month').forEach(section => { const hasVisible = Array.from(section.querySelectorAll('.item')).some(it => it.style.display !== 'none'); section.style.display = hasVisible ? '' : 'none'; });
-    document.querySelectorAll('#lanes .lane').forEach(lane => {
-      if(cat === 'tous'){
-        lane.style.display = ''; lane.classList.remove('is-dim'); lane.querySelectorAll('.barItem').forEach(bar => { bar.style.opacity = 1; bar.style.pointerEvents = 'auto'; }); lane.querySelectorAll('.taskMarker').forEach(marker => { marker.style.opacity = 1; marker.style.pointerEvents = 'auto'; marker.setAttribute('tabindex', '0'); });
+    document.querySelectorAll('#timelineVertical .month').forEach(section=>{
+      const hasVisible = Array.from(section.querySelectorAll('.item')).some(it=>it.style.display!=='none');
+      section.style.display = hasVisible ? '' : 'none';
+    });
+    // Roadmap
+    document.querySelectorAll('#lanes .lane').forEach(lane=>{
+      if(cat==='tous'){
+        lane.style.display=''; lane.classList.remove('is-dim');
+        lane.querySelectorAll('.barItem').forEach(b=>{ b.style.opacity=1; b.style.pointerEvents='auto';});
+        lane.querySelectorAll('.taskMarker').forEach(m=>{ m.style.opacity=1; m.style.pointerEvents='auto'; m.setAttribute('tabindex','0');});
       } else {
-        const match = lane.dataset.cat === cat; lane.style.display = ''; lane.classList.toggle('is-dim', !match); lane.querySelectorAll('.barItem').forEach(bar => { bar.style.opacity = match ? 1 : 0.2; bar.style.pointerEvents = match ? 'auto' : 'none'; }); lane.querySelectorAll('.taskMarker').forEach(marker => { marker.style.opacity = match ? 1 : 0.2; marker.style.pointerEvents = match ? 'auto' : 'none'; marker.setAttribute('tabindex', match ? '0' : '-1'); });
+        const match = lane.dataset.cat===cat; lane.style.display=''; lane.classList.toggle('is-dim', !match);
+        lane.querySelectorAll('.barItem').forEach(b=>{ b.style.opacity=match?1:0.2; b.style.pointerEvents=match?'auto':'none';});
+        lane.querySelectorAll('.taskMarker').forEach(m=>{ m.style.opacity=match?1:0.2; m.style.pointerEvents=match?'auto':'none'; m.setAttribute('tabindex', match?'0':'-1');});
       }
     });
   }
 
-  function attachMonthNav(){ document.querySelectorAll('.months button').forEach(btn => { btn.addEventListener('click', () => { const key = btn.dataset.go; if(document.body.classList.contains('view-vertical')){ document.getElementById(`m${key}`)?.scrollIntoView({behavior:'smooth', block:'start'}); } else { const scroll = document.getElementById('roadscroll'); const ratio = (parseInt(key, 10) - 1) / 12; const target = ratio * (scroll.scrollWidth - scroll.clientWidth); scroll.scrollTo({ left: Math.max(0, target), behavior: 'smooth' }); } }); }); }
-  function setYearProgress(){ const now = new Date(); let pct = 0; if(now < start) pct = 0; else if(now > end) pct = 100; else pct = ((now - start) / (end - start)) * 100; document.getElementById('yearProgress').style.setProperty('--p', pct.toFixed(2) + '%'); document.getElementById('yearPct').textContent = Math.round(pct) + '%'; }
-  function attachViewSwitch(){ const chips = document.querySelectorAll('.chip-view'); chips.forEach(chip => { chip.addEventListener('click', () => { chips.forEach(c => c.dataset.active = 'false'); chip.dataset.active = 'true'; const view = chip.dataset.view; document.body.classList.toggle('view-vertical', view === 'vertical'); document.body.classList.toggle('view-roadmap', view === 'roadmap'); }); }); }
-  function attachFilters(){ const chips = [...document.querySelectorAll('.controls > .chip[data-cat]')]; chips.forEach(chip => { chip.addEventListener('click', () => { chips.forEach(c => c.dataset.active = 'false'); chip.dataset.active = 'true'; applyFilter(chip.dataset.cat); }); }); }
+  /* ====== Navigation / vue ====== */
+  function attachMonthNav(){ document.querySelectorAll('.months button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const key=btn.dataset.go;
+      if(document.body.classList.contains('view-vertical')){
+        document.getElementById(`m${key}`)?.scrollIntoView({behavior:'smooth', block:'start'});
+      } else {
+        const scroll=document.getElementById('roadscroll');
+        const ratio=(parseInt(key,10)-1)/12; const target=ratio*(scroll.scrollWidth - scroll.clientWidth);
+        scroll.scrollTo({ left: Math.max(0,target), behavior:'smooth' });
+      }
+    });
+  });}
+  function setYearProgress(){ const now=new Date(); let pct=0; if(now<start)pct=0; else if(now>end)pct=100; else pct=((now-start)/(end-start))*100;
+    document.getElementById('yearProgress').style.setProperty('--p', pct.toFixed(2)+'%'); document.getElementById('yearPct').textContent=Math.round(pct)+'%'; }
+  function attachViewSwitch(){ const chips=document.querySelectorAll('.chip-view'); chips.forEach(chip=>{
+    chip.addEventListener('click', ()=>{ chips.forEach(c=>c.dataset.active='false'); chip.dataset.active='true';
+      const view=chip.dataset.view; document.body.classList.toggle('view-vertical', view==='vertical'); document.body.classList.toggle('view-roadmap', view==='roadmap'); });
+  });}
 
-  // ====== Panel (CRUD) ======
+  /* ====== Panel / CRUD ====== */
   const overlay = document.getElementById('panelOverlay');
   const panel = document.getElementById('detailPanel');
   const panelHeading = document.getElementById('panelHeading');
@@ -732,192 +765,226 @@
   const syncStatusMessage = syncStatus.querySelector('span:last-child');
   const objectiveNodeSelect = document.getElementById('objectiveNode');
 
-  let currentObjectiveId = null; // qualified "nodeId::objId" ou null
-
-  function showEmptyTaskMessage(){ tasksContainer.innerHTML = '<p class="empty">Aucune tâche définie pour le moment.</p>'; }
-  function buildTaskRow(task = {}){
-    const row = document.createElement('div'); row.className = 'task-row'; const rowId = task.id || `t${Date.now()}${Math.random().toString(36).slice(2,5)}`; row.dataset.id = rowId;
-    row.innerHTML = `
-      <input type="text" class="task-title" placeholder="Titre de la tâche" value="${task.title ?? ''}" required>
-      <input type="text" class="task-owner" placeholder="Pilote (non lié SPHAIRA)" value="${task.owner ?? ''}">
-      <input type="date" class="task-due" value="${task.due ?? ''}">
-      <label class="done"><input type="checkbox" class="task-done" ${task.done ? 'checked' : ''}> Terminé</label>
+  function showEmptyTaskMessage(){ tasksContainer.innerHTML='<p class="empty">Aucune tâche définie pour le moment.</p>'; }
+  function buildTaskRow(task={}){
+    const row=document.createElement('div'); row.className='task-row';
+    const rowId=task.id || `t${Date.now()}${Math.random().toString(36).slice(2,5)}`; row.dataset.id=rowId;
+    row.innerHTML=`
+      <input type="text" class="task-title" placeholder="Titre de la tâche" value="${task.title??''}" required>
+      <input type="text" class="task-owner" placeholder="Pilote (cosmétique)" value="${task.owner??''}">
+      <input type="date" class="task-due" value="${task.due??''}">
+      <label class="done"><input type="checkbox" class="task-done" ${task.done?'checked':''}> Terminé</label>
       <button type="button" class="remove" title="Supprimer la tâche">×</button>`;
-    row.querySelector('.remove').addEventListener('click', () => { row.remove(); ensureTaskEmptyState(); });
+    row.querySelector('.remove').addEventListener('click', ()=>{ row.remove(); ensureTaskEmptyState(); });
     return row;
   }
-  function ensureTaskEmptyState(){ if(!tasksContainer.querySelector('.task-row')){ showEmptyTaskMessage(); } }
-  function renderTaskRows(tasks){ tasksContainer.innerHTML=''; if(!tasks || tasks.length===0){ showEmptyTaskMessage(); return; } tasks.forEach(task => tasksContainer.appendChild(buildTaskRow(task))); }
-  function addTaskRow(task = {}){ if(tasksContainer.querySelector('.empty')) tasksContainer.innerHTML=''; tasksContainer.appendChild(buildTaskRow(task)); }
+  function ensureTaskEmptyState(){ if(!tasksContainer.querySelector('.task-row')) showEmptyTaskMessage(); }
+  function renderTaskRows(tasks){ tasksContainer.innerHTML=''; if(!tasks || tasks.length===0){ showEmptyTaskMessage(); return; } tasks.forEach(t=>tasksContainer.appendChild(buildTaskRow(t))); }
+  function addTaskRow(task={}){ if(tasksContainer.querySelector('.empty')) tasksContainer.innerHTML=''; tasksContainer.appendChild(buildTaskRow(task)); }
 
   function populateNodeSelector(){
-    const ws = sphairaWorkspace.json; if(!ws){ objectiveNodeSelect.innerHTML = '<option value="">—</option>'; return; }
+    const ws = sphairaWorkspace.json;
+    if(!ws){ objectiveNodeSelect.innerHTML='<option value="">—</option>'; return; }
     const nodes = getAllNodes();
-    const items = nodes.map(n=>({ id:n.id, name: (n.text||n.label||'').trim() || n.id }));
+    const items = nodes.map(n=>({ id:n.id, name: nodeLabel(n)}));
     objectiveNodeSelect.innerHTML = items.map(it=>`<option value="${it.id}">${it.name}</option>`).join('');
   }
 
-  function openPanel(id = null){
+  let currentObjectiveId = null; // qualified
+
+  function openPanel(id=null){
     currentObjectiveId = id;
-    overlay.dataset.open = 'true'; overlay.setAttribute('aria-hidden', 'false'); panel.dataset.open = 'true'; panel.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; objectiveForm.reset();
+    overlay.dataset.open='true'; overlay.setAttribute('aria-hidden','false');
+    panel.dataset.open='true'; panel.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden'; objectiveForm.reset();
+
     if(id){
-      const res = resolveObjectiveRef(id); if(!res){ showEmptyTaskMessage(); deleteObjectiveBtn.hidden = true; return; }
+      const res = resolveObjectiveRef(id); if(!res){ showEmptyTaskMessage(); deleteObjectiveBtn.hidden=true; return; }
       const { node, objective } = res; ensureArraysOnNode(node);
       panelHeading.textContent = objective.title||'Objectif';
-      objectiveNodeSelect.value = node.id; // verrouille dans ce cercle
+      objectiveNodeSelect.value = node.id;
       document.getElementById('objectiveTitle').value = objective.title||'';
       document.getElementById('objectiveDate').value = objective.due||'';
-      document.getElementById('objectiveCategory').value = CATEGORY_DEFAULT;
-      document.getElementById('objectiveLead').value = '';
       document.getElementById('objectiveIcon').value = '🎯';
       document.getElementById('objectiveDesc').value = objective.desc||'';
       const uiObj = normalizeObjectiveForUI(node, objective);
       renderTaskRows(uiObj.tasks||[]);
       deleteObjectiveBtn.hidden = false;
     } else {
-      panelHeading.textContent = 'Nouvel objectif';
+      panelHeading.textContent='Nouvel objectif';
       const today = new Date();
-      const defaultDate = today.getFullYear() === 2025 ? today.toISOString().slice(0,10) : '2025-01-01';
+      const defaultDate = today.getFullYear()===2025 ? today.toISOString().slice(0,10) : '2025-01-01';
       document.getElementById('objectiveDate').value = defaultDate;
       document.getElementById('objectiveIcon').value = '🎯';
       renderTaskRows([]);
       deleteObjectiveBtn.hidden = true;
     }
   }
+  function closePanel(){ panel.dataset.open='false'; panel.setAttribute('aria-hidden','true'); overlay.dataset.open='false'; overlay.setAttribute('aria-hidden','true'); document.body.style.overflow=''; objectiveForm.reset(); showEmptyTaskMessage(); currentObjectiveId=null; }
+  function syncWithSystems(action, title){ const ts=new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); syncStatusMessage.textContent = (action==='suppression' ? `Suppression synchronisée pour « ${title} » (${ts}).` : `${action==='création'?'Création':'Mise à jour'} synchronisée pour « ${title} » — SPHAIRA & ORIS alignés (${ts}).`); }
 
-  function closePanel(){ panel.dataset.open = 'false'; panel.setAttribute('aria-hidden', 'true'); overlay.dataset.open = 'false'; overlay.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; objectiveForm.reset(); showEmptyTaskMessage(); currentObjectiveId = null; }
+  /* ====== LOAD / REFRESH ====== */
+  async function loadAll(){
+    const syncMsg = document.getElementById('syncStatus').querySelector('span:last-child');
+    syncMsg.textContent='Chargement depuis SPHAIRA…';
+    const ws = loadWorkspaceFromStorage();
+    const hint = document.getElementById('noWorkspaceHint');
+    hint.style.display = ws.json ? 'none' : '';
+    ROOTS = ws.json ? computeRootNodes() : [];
+    OBJECTIVES = ws.json ? buildObjectivesFromWorkspace() : [];
+    renderCircleChips();
+    populateNodeSelector();
+    refreshTimelines();
+    const ts=new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    syncMsg.textContent = `Synchronisé avec SPHAIRA — ${ts}`;
+  }
 
-  function syncWithSystems(action, title){ const ts = new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' }); const msg = action==='suppression' ? `Suppression synchronisée pour « ${title} » (${ts}).` : `${action==='création'?'Création':'Mise à jour'} synchronisée pour « ${title} » — SPHAIRA & ORIS alignés (${ts}).`; syncStatusMessage.textContent = msg; }
-
-  function refreshTimelines(){ renderVertical(); renderRoadmap(); applyFilter(currentFilter); }
-
-  // ====== SAVE objective (create/update) ======
-  objectiveForm.addEventListener('submit', (event) => {
+  /* ====== SAVE (create/update) ====== */
+  objectiveForm.addEventListener('submit', (event)=>{
     event.preventDefault();
     if(!sphairaWorkspace.json){ alert('Workspace SPHAIRA introuvable. Ouvrez SPHAIRA d\'abord.'); return; }
-    const formData = new FormData(objectiveForm);
     const nodeId = String(document.getElementById('objectiveNode').value||'');
-    const node = getNodeById(nodeId);
-    if(!node){ alert('Sélectionnez un cercle SPHAIRA.'); return; }
+    const node = getNodeById(nodeId); if(!node){ alert('Sélectionnez un cercle SPHAIRA.'); return; }
     ensureArraysOnNode(node);
 
+    const formData = new FormData(objectiveForm);
     const title = (formData.get('title')||'').toString().trim();
-    const due = (formData.get('date')||'').toString();
-    const desc = (formData.get('desc')||'').toString();
+    const due   = (formData.get('date')||'').toString();
+    const desc  = (formData.get('desc')||'').toString();
 
-    // Lire les lignes de tâches (UI)
-    const rows = Array.from(tasksContainer.querySelectorAll('.task-row'));
+    const rows = Array.from(document.querySelectorAll('#tasksContainer .task-row'));
     const uiTasks = rows.map(row=>({
-      id: row.dataset.id, // peut être qualifié (nodeId::taskId) ou juste un id temporaire
+      id: row.dataset.id,
       title: row.querySelector('.task-title').value.trim(),
       due: row.querySelector('.task-due').value,
       done: row.querySelector('.task-done').checked
     })).filter(t=>t.title);
 
-    let action = 'création';
+    let action='création';
 
     if(currentObjectiveId){
-      // UPDATE
       const res = resolveObjectiveRef(currentObjectiveId); if(!res){ alert('Objectif introuvable.'); return; }
-      const { node: curNode, objective } = res; ensureArraysOnNode(curNode);
-      // Si l'utilisateur a changé de cercle on migre l'objectif (rare)
+      const { node:curNode, objective } = res; ensureArraysOnNode(curNode);
+
+      // migration de cercle si nécessaire
       let targetNode = curNode;
       if(curNode.id !== node.id){
-        // retirer de l'ancien
         curNode._objectives = curNode._objectives.filter(o=>o.id!==objective.id);
         targetNode = node; ensureArraysOnNode(targetNode);
         targetNode._objectives.push(objective);
       }
       objective.title = title; objective.due = due; objective.desc = desc;
-
-      // Synchroniser les liens tâche <-> objectif à partir de la liste UI
       const objectiveRef = qualifyObjectiveRef(targetNode.id, objective.id);
 
-      // Ensemble actuel des tâches liées (résolues)
-      const beforeSet = new Set((objective.taskIds||[]));
+      // Ensemble "avant" = toutes les tâches liées (de n'importe quel cercle)
+      const before = tasksLinkedToObjectiveAcrossWorkspace(objectiveRef).map(({node:n,task})=>qualifyTaskRef(n.id, task.id));
+      const beforeSet = new Set(before);
 
-      // 1) pour chaque ligne UI : créer/mettre à jour la tâche et lier
+      // pour chaque ligne UI : créer/mettre à jour + lier
+      const nowSet = new Set();
       uiTasks.forEach(tu=>{
         let resTask = resolveTaskRef(tu.id);
         if(!resTask){
-          // nouvelle tâche : on la crée dans le node cible de l'objectif
+          // crée dans le cercle de l'objectif
           const newId = 't'+Date.now()+Math.random().toString(36).slice(2,5);
-          const task = { id:newId, title: tu.title, desc:'', start:'', end: tu.due||'', done: !!tu.done, objectiveIds:[] };
+          const task = { id:newId, title:tu.title, desc:'', start:'', end: tu.due||'', done: !!tu.done, objectiveIds:[] };
           targetNode._tasks.push(task); resTask = { node: targetNode, task };
         }else{
-          // mise à jour
+          // met à jour la tâche où qu'elle soit
           resTask.task.title = tu.title; resTask.task.end = tu.due||''; resTask.task.done = !!tu.done;
         }
-        // Lier
-        linkTaskToObjective(resTask, { node: targetNode, objective });
+        // lier bidirectionnellement
+        const oRef = objectiveRef; const tRef = qualifyTaskRef(resTask.node.id, resTask.task.id);
+        if(!(resTask.task.objectiveIds||[]).includes(oRef)) resTask.task.objectiveIds.push(oRef);
+        if(!(objective.taskIds||[]).includes(tRef)) objective.taskIds.push(tRef);
+        nowSet.add(tRef);
       });
 
-      // 2) Délier ce qui a été retiré dans l'UI
-      const nowIds = new Set(uiTasks.map(t=>{ const r = resolveTaskRef(t.id); if(r) return qualifyTaskRef(r.node.id, r.task.id); return null; }).filter(Boolean));
-      for(const ref of beforeSet){ if(!nowIds.has(ref)){ const resT = resolveTaskRef(ref); if(resT){ unlinkTaskFromObjective(resT, { node: targetNode, objective }); } } }
+      // délier ce qui a été supprimé côté UI
+      for(const ref of beforeSet){
+        if(!nowSet.has(ref)){
+          const r = resolveTaskRef(ref);
+          if(r){
+            const oRef = objectiveRef;
+            r.task.objectiveIds = (r.task.objectiveIds||[]).filter(x=>x!==oRef);
+          }
+          objective.taskIds = (objective.taskIds||[]).filter(x=>x!==ref);
+        }
+      }
 
-      recomputeObjectiveCompletion({ node: targetNode, objective });
-      action = 'mise à jour';
+      // statut complétion
+      const linkedNow = tasksLinkedToObjectiveAcrossWorkspace(objectiveRef).map(x=>x.task);
+      const allDone = linkedNow.length>0 && linkedNow.every(t=>t.done===true);
+      objective.completed = allDone; objective.completedAt = allDone ? new Date().toISOString().slice(0,10) : null;
+
+      action='mise à jour';
     } else {
       // CREATE
       const newObjId = 'o'+Date.now()+Math.random().toString(36).slice(2,5);
       const objective = { id:newObjId, title, desc, due, taskIds:[], completed:false, completedAt:null };
       node._objectives.push(objective);
-      // Créer/lier les tâches
+      const objectiveRef = qualifyObjectiveRef(node.id, newObjId);
+
       uiTasks.forEach(tu=>{
         const newId = 't'+Date.now()+Math.random().toString(36).slice(2,5);
-        const task = { id:newId, title: tu.title, desc:'', start:'', end: tu.due||'', done: !!tu.done, objectiveIds:[] };
+        const task = { id:newId, title:tu.title, desc:'', start:'', end: tu.due||'', done: !!tu.done, objectiveIds:[objectiveRef] };
         node._tasks.push(task);
-        linkTaskToObjective({ node, task }, { node, objective });
+        objective.taskIds.push(qualifyTaskRef(node.id, newId));
       });
-      recomputeObjectiveCompletion({ node, objective });
-      currentObjectiveId = qualifyObjectiveRef(node.id, newObjId);
+
+      const linkedNow = tasksLinkedToObjectiveAcrossWorkspace(objectiveRef).map(x=>x.task);
+      const allDone = linkedNow.length>0 && linkedNow.every(t=>t.done===true);
+      objective.completed = allDone; objective.completedAt = allDone ? new Date().toISOString().slice(0,10) : null;
+
+      currentObjectiveId = objectiveRef;
     }
 
     if(!persistWorkspace()){ alert('Impossible d\'enregistrer SPHAIRA.'); return; }
     syncWithSystems(action, title);
     closePanel();
-    loadObjectives();
+    loadAll();
   });
 
-  // ====== DELETE objective ======
-  deleteObjectiveBtn.addEventListener('click', () => {
+  /* ====== DELETE objective ====== */
+  document.getElementById('deleteObjective').addEventListener('click', ()=>{
     if(!currentObjectiveId) return;
     const res = resolveObjectiveRef(currentObjectiveId); if(!res) return;
     const { node, objective } = res; ensureArraysOnNode(node);
     if(!confirm(`Supprimer l'objectif « ${objective.title} » ?`)) return;
-    // Délier toutes les tâches
-    (objective.taskIds||[]).forEach(ref=>{ const r = resolveTaskRef(ref); if(r){ unlinkTaskFromObjective(r, res); } });
-    // Supprimer l'objectif
+
+    const objectiveRef = qualifyObjectiveRef(node.id, objective.id);
+    // délier toutes les tâches, où qu'elles soient
+    tasksLinkedToObjectiveAcrossWorkspace(objectiveRef).forEach(({node:n, task})=>{
+      task.objectiveIds = (task.objectiveIds||[]).filter(x=>x!==objectiveRef);
+    });
+    // retirer les refs de l’objectif
+    objective.taskIds = [];
+    // supprimer l’objectif
     node._objectives = node._objectives.filter(o=>o.id!==objective.id);
+
     if(!persistWorkspace()){ alert('Impossible d\'enregistrer SPHAIRA.'); return; }
     syncWithSystems('suppression', objective.title||'Objectif');
     closePanel();
-    loadObjectives();
+    loadAll();
   });
 
-  addTaskBtn.addEventListener('click', () => addTaskRow({}));
-  createObjectiveBtn.addEventListener('click', () => openPanel());
-  closePanelBtn.addEventListener('click', closePanel);
-  overlay.addEventListener('click', closePanel);
-  document.addEventListener('keydown', (event) => { if(event.key === 'Escape' && panel.dataset.open === 'true'){ closePanel(); } });
+  /* ====== Boutons & listeners ====== */
+  document.getElementById('addTaskBtn').addEventListener('click', ()=>addTaskRow({}));
+  document.getElementById('createObjective').addEventListener('click', ()=>openPanel());
+  document.getElementById('closePanel').addEventListener('click', closePanel);
+  document.getElementById('panelOverlay').addEventListener('click', closePanel);
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && panel.dataset.open==='true') closePanel(); });
 
-  // ====== Storage sync ======
-  window.addEventListener('storage', (event) => {
-    if(STORAGE_KEYS.includes(event.key) || event.key==='sphaira:lastWriteAt'){
-      loadObjectives();
-    }
-  });
+  // Storage sync (multi-onglets)
+  window.addEventListener('storage', (event)=>{ if(STORAGE_KEYS.includes(event.key) || event.key==='sphaira:lastWriteAt'){ loadAll(); } });
 
-  // ====== Startup ======
+  // Démarrage
   function attachMonthNavInit(){ attachMonthNav(); }
-  loadObjectives();
-  attachFilters();
+  loadAll();
   attachMonthNavInit();
   attachViewSwitch();
   setYearProgress();
   setInterval(setYearProgress, 60*60*1000);
-
   </script>
 </body>
 </html>
