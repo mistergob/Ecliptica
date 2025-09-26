@@ -1,239 +1,515 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ATMOS</title>
-  <meta name="color-scheme" content="dark light">
+  <title>ATMOS — Timeline 2025</title>
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+
   <style>
     :root{
-      --primary:#00eaff; --primary-2:#8a2be2; --text:#e6f7ff; --muted:#9fb3c8;
-      --space-img:url("https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=1920&auto=format&fit=crop");
-      --bg-a:#05060d; --bg-b:#0b1430; --bg-c:#00182a;
-      --glow: drop-shadow(0 0 8px rgba(0,234,255,.55)) drop-shadow(0 0 18px rgba(138,43,226,.35));
-      --ring: 0 0 0 3px rgba(0,234,255,.35), 0 0 24px rgba(0,234,255,.25);
+      /* ATMOS design tokens */
+      --primary:#00eaff;       /* cyan néon */
+      --accent:#8a2be2;        /* violet néon */
+      --text:#e6f7ff;          
+      --muted:#9fb3c8;
+      --bg-a:#05060d;
+      --bg-b:#0b1430;
+      --bg-c:#00182a;
+      --ring: drop-shadow(0 0 8px rgba(0,234,255,.55)) drop-shadow(0 0 18px rgba(138,43,226,.35));
+      --month: 8.333333%;
     }
+
+    /* --- Page reset --- */
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0; color:var(--text);
-      font-family:Outfit, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      margin:0;
+      font-family:"Outfit", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--text);
+      background: radial-gradient(1200px 800px at 80% -10%, rgba(0,234,255,.08), transparent 60%),
+                  radial-gradient(900px 700px at -10% 30%, rgba(138,43,226,.08), transparent 50%),
+                  linear-gradient(180deg, var(--bg-a), var(--bg-b) 40%, var(--bg-c));
+      background-attachment: fixed;
+      overflow-x:hidden;
+    }
+
+    /* --- Subtle starfield --- */
+    .stars, .stars::before, .stars::after{
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image: radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.7) 40%, transparent 42%),
+                        radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,.5) 40%, transparent 42%),
+                        radial-gradient(1.5px 1.5px at 80% 20%, rgba(255,255,255,.5) 40%, transparent 42%),
+                        radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,.5) 40%, transparent 42%);
+      opacity:.3; filter:blur(.2px);
+    }
+    .stars::before{content:""; animation: twinkle 8s linear infinite; opacity:.25}
+    .stars::after {content:""; animation: twinkle 13s linear infinite reverse; opacity:.25}
+    @keyframes twinkle{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
+
+    /* --- Header / hero --- */
+    header.hero{ position:relative; z-index:1; padding:48px 20px 24px; text-align:center; }
+    .brand{font-family:"Orbitron", sans-serif; letter-spacing:.06em; font-weight:800; font-size:14px; color:var(--muted); text-transform:uppercase}
+    h1{ margin:.25rem auto .5rem; max-width:900px; font-family:"Orbitron", sans-serif; font-size:clamp(28px, 4.6vw, 54px); font-weight:900; line-height:1.02; text-shadow:0 0 6px rgba(0,234,255,.35), 0 0 18px rgba(138,43,226,.25); }
+    h1 .grad{background:linear-gradient(92deg, var(--primary), var(--accent)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+    .lead{max-width:840px; margin:0 auto; color:var(--muted)}
+
+    /* --- Controls --- */
+    .controls{
+      position:sticky; top:0; z-index:3;
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center;
+      padding:12px 16px; margin:20px auto 0; backdrop-filter:blur(8px);
+      background:linear-gradient(180deg, rgba(5,6,13,.72), rgba(5,6,13,.35));
+      border:1px solid rgba(255,255,255,.06); border-radius:16px; width:min(1100px, 92%);
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+    .chip{ --o:.35; display:inline-flex; align-items:center; gap:.5ch; cursor:pointer; user-select:none;
+      padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      color:var(--text); font-size:14px; transition:.2s ease; filter:var(--ring);
+    }
+    .chip[data-active="true"]{ border-color:rgba(0,234,255,.55); box-shadow:0 0 0 2px rgba(0,234,255,.12) inset }
+    .chip .dot{width:8px; height:8px; border-radius:50%; background:var(--primary); box-shadow:0 0 10px rgba(0,234,255,.7)}
+    .chip[data-cat="partenariat"] .dot{background:#00ff9c}
+    .chip[data-cat="marketing"]   .dot{background:#ffd166}
+    .chip[data-cat="release"]      .dot{background:#ff6b6b}
+    .chip[data-cat="evenement"]    .dot{background:#8a2be2}
+    .chip[data-cat="ops"]          .dot{background:#5bd3ff}
+    .chip[data-cat="contenu"]      .dot{background:#c5ff61}
+
+    .spacer{flex:1 1 12px}
+    .months{display:flex; gap:6px; flex-wrap:wrap}
+    .months button{all:unset; cursor:pointer; padding:8px 10px; font-size:12px; color:var(--muted); border-radius:10px; border:1px solid rgba(255,255,255,.08)}
+    .months button:hover{color:var(--text); border-color:rgba(255,255,255,.16)}
+
+    .meter{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12px}
+    .bar{position:relative; width:160px; height:7px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden}
+    .bar>i{position:absolute; inset:0; width:var(--p,0%); background:linear-gradient(90deg, var(--primary), var(--accent)); box-shadow:0 0 18px rgba(0,234,255,.35)}
+
+    .view{display:flex; gap:10px; border-left:1px solid rgba(255,255,255,.08); padding-left:10px}
+
+    /* --- Shell --- */
+    .wrap{position:relative; z-index:1; width:min(1200px, 92%); margin:28px auto 80px}
+
+    /* ---------- VUE 1 : Timeline verticale (existante) ---------- */
+    body.view-vertical #timelineVertical{display:block}
+    body.view-vertical #roadmapHoriz{display:none}
+    body.view-roadmap #timelineVertical{display:none}
+    body.view-roadmap #roadmapHoriz{display:block}
+
+    .timeline{ position:relative; padding:40px 0; margin:0 auto; }
+    .timeline::before{ content:""; position:absolute; left:50%; top:0; bottom:0; width:4px; transform:translateX(-50%);
+      background:linear-gradient(180deg, rgba(0,234,255,.0), rgba(0,234,255,.7) 15%, rgba(138,43,226,.7) 85%, rgba(138,43,226,.0));
+      filter:drop-shadow(0 0 10px rgba(0,234,255,.35)); }
+
+    .month{ position:relative; margin:36px 0 16px; scroll-margin-top:90px; }
+    .month h2{ display:inline-flex; align-items:center; gap:10px; font-family:"Orbitron", sans-serif; font-weight:800;
+      font-size:18px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted);
+      background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:999px; padding:6px 12px; }
+    .month.is-today h2{color:var(--text); border-color:rgba(0,234,255,.35); box-shadow:0 0 0 2px rgba(0,234,255,.15) inset}
+
+    .item{position:relative; display:grid; grid-template-columns: 1fr 1fr; gap:28px; margin:18px 0}
+    .item:nth-child(odd) .card{grid-column:1}
+    .item:nth-child(odd) .node{left:calc(50% - 10px)}
+    .item:nth-child(even) .card{grid-column:2}
+    .item:nth-child(even) .node{left:calc(50% - 10px)}
+
+    .node{position:absolute; top:18px; width:20px; height:20px; border-radius:50%; background:var(--bg-c);
+      border:2px solid var(--primary); box-shadow:0 0 18px rgba(0,234,255,.55), inset 0 0 18px rgba(0,234,255,.25); filter:var(--ring)}
+
+    .card{ position:relative; padding:16px 18px 16px 16px; border-radius:16px; overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 10px 30px rgba(0,0,0,.25); transition:transform .2s ease, border-color .2s ease; }
+    .card::before{content:""; position:absolute; inset:-1px; border-radius:16px; padding:1px;
+      background:linear-gradient(140deg, rgba(0,234,255,.5), rgba(138,43,226,.35)); -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; opacity:.25}
+    .card:hover{transform:translateY(-2px); border-color:rgba(0,234,255,.2)}
+
+    .card .top{display:flex; align-items:center; gap:12px; margin-bottom:8px}
+    .icon{width:28px; height:28px; border-radius:8px; display:grid; place-items:center; font-size:16px; filter:var(--ring);
+      background:linear-gradient(120deg, rgba(0,234,255,.14), rgba(138,43,226,.14)); border:1px solid rgba(255,255,255,.12)}
+    .title{font-weight:700; color:var(--text)}
+    .meta{display:flex; flex-wrap:wrap; gap:8px; align-items:center; color:var(--muted); font-size:12px}
+
+    .badge{font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.14); color:var(--text)}
+    .badge[data-cat="partenariat"]{background:rgba(0,255,156,.12); border-color:rgba(0,255,156,.35)}
+    .badge[data-cat="marketing"]  {background:rgba(255,209,102,.12); border-color:rgba(255,209,102,.35)}
+    .badge[data-cat="release"]     {background:rgba(255,107,107,.12); border-color:rgba(255,107,107,.35)}
+    .badge[data-cat="evenement"]   {background:rgba(138,43,226,.12); border-color:rgba(138,43,226,.35)}
+    .badge[data-cat="ops"]         {background:rgba(91,211,255,.12); border-color:rgba(91,211,255,.35)}
+    .badge[data-cat="contenu"]     {background:rgba(197,255,97,.12); border-color:rgba(197,255,97,.35)}
+
+    .desc{margin-top:8px; color:var(--text); opacity:.85; line-height:1.5}
+    .ribbon{position:absolute; top:8px; right:-36px; transform:rotate(35deg); background:linear-gradient(90deg, var(--primary), var(--accent)); color:#001018;
+      padding:4px 48px; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; box-shadow:0 0 18px rgba(0,234,255,.45)}
+
+    /* Responsive for vertical */
+    @media (max-width:900px){
+      .item{grid-template-columns:1fr;}
+      .timeline::before{left:24px; transform:none}
+      .node{left:14px}
+      .card{margin-left:52px}
+    }
+
+    /* ---------- VUE 2 : Roadmap horizontale en swimlanes ---------- */
+    .roadwrap{ width:min(1400px, 95%); margin:0 auto; }
+    .roadscroll{ position:relative; overflow-x:auto; overflow-y:hidden; border:1px solid rgba(255,255,255,.08); border-radius:16px; backdrop-filter:blur(6px);
       background:
-        radial-gradient(1200px 800px at 75% 10%, rgba(138,43,226,.18), transparent 60%),
-        radial-gradient(900px 700px at 15% 85%, rgba(0,234,255,.12), transparent 55%),
-        radial-gradient(700px 500px at 80% 80%, rgba(0,40,80,.35), transparent 60%),
-        linear-gradient(120deg, var(--bg-a), var(--bg-b) 40%, var(--bg-c));
-      overflow:hidden;
+        repeating-linear-gradient(to right, rgba(255,255,255,.08) 0 1px, transparent 1px calc(var(--month)), transparent calc(var(--month)) calc(2*var(--month))),
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
     }
-    body::before{
-      content:""; position:fixed; inset:0; pointer-events:none; mix-blend-mode:screen; opacity:.15;
-      background:
-        var(--space-img) center/cover no-repeat,
-        radial-gradient(1px 1px at 10% 20%, #fff 40%, transparent 41%),
-        radial-gradient(1px 1px at 30% 80%, #fff 40%, transparent 41%),
-        radial-gradient(1px 1px at 70% 30%, #fff 40%, transparent 41%),
-        radial-gradient(1px 1px at 90% 60%, #fff 40%, transparent 41%);
-      animation: twinkle 14s linear infinite;
+    .roadmap{ position:relative; min-width:1200px; height:auto; padding-top:48px; }
+
+    /* Axe des mois (sticky) */
+    .axis{ position:sticky; top:0; z-index:2; height:36px; display:flex; align-items:center; gap:0; background:linear-gradient(180deg, rgba(5,6,13,.75), rgba(5,6,13,.35));
+      border-bottom:1px solid rgba(255,255,255,.08); }
+    .axis .tick{ position:relative; width:calc(var(--month)); text-align:center; font-size:12px; color:var(--muted); padding:6px 0; }
+    .axis .tick::after{ content:""; position:absolute; right:0; top:0; bottom:0; width:1px; background:rgba(255,255,255,.08) }
+
+    /* Lignes (swimlanes) */
+    .lanes{ position:relative; }
+    .lane{ position:relative; height:74px; border-bottom:1px dashed rgba(255,255,255,.08); }
+    .lane.is-dim{ opacity:.35; filter:saturate(.6) }
+
+    /* Libellé de ligne (collant à gauche dans la zone scroll) */
+    .lane .label{ position:sticky; left:0; z-index:1; height:100%; display:flex; align-items:center; gap:10px; padding:0 12px; width:210px;
+      background:linear-gradient(90deg, rgba(5,6,13,.85), rgba(5,6,13,.0)); border-right:1px solid rgba(255,255,255,.08);
+      font-size:13px; text-transform:capitalize; color:var(--text); }
+    .lane .label .dot{ width:10px; height:10px; border-radius:50%; box-shadow:0 0 10px currentColor }
+    .lane[data-cat="partenariat"] .label .dot{ color:#00ff9c }
+    .lane[data-cat="marketing"] .label .dot{ color:#ffd166 }
+    .lane[data-cat="release"] .label .dot{ color:#ff6b6b }
+    .lane[data-cat="evenement"] .label .dot{ color:#8a2be2 }
+    .lane[data-cat="ops"] .label .dot{ color:#5bd3ff }
+    .lane[data-cat="contenu"] .label .dot{ color:#c5ff61 }
+
+    /* Zone des events (bars) */
+    .lane .bars{ position:relative; height:100%; margin-left:210px; }
+    .barItem{ position:absolute; top:16px; height:42px; min-width:32px; padding:8px 10px; border-radius:10px; display:flex; align-items:center; gap:8px;
+      background:linear-gradient(120deg, rgba(0,234,255,.12), rgba(138,43,226,.12)); border:1px solid rgba(255,255,255,.18);
+      box-shadow:0 8px 20px rgba(0,0,0,.25), 0 0 14px rgba(0,234,255,.15); backdrop-filter:blur(3px); white-space:nowrap; transform:translateZ(0);
+      will-change:transform; }
+    .barItem .ic{ font-size:14px }
+    .barItem .t{ font-weight:700; font-size:13px }
+    .barItem .d{ font-size:12px; color:var(--muted) }
+
+    /* Ligne verticale "Aujourd'hui" */
+    .todayLine{ position:absolute; top:36px; bottom:0; width:2px; background:linear-gradient(180deg, var(--primary), var(--accent)); box-shadow:0 0 14px rgba(0,234,255,.35); }
+
+    /* Tooltip simple */
+    .barItem[data-hint]:hover::after{
+      content:attr(data-hint); position:absolute; left:0; bottom:calc(100% + 8px); max-width:320px;
+      background:rgba(0,8,14,.95); border:1px solid rgba(255,255,255,.15); padding:8px 10px; border-radius:8px; font-size:12px; color:var(--text);
+      box-shadow:0 6px 18px rgba(0,0,0,.35);
     }
-    @keyframes twinkle{0%,100%{opacity:.12}50%{opacity:.22}}
-    .wrap{position:relative; height:100dvh; display:grid; place-items:center; padding:32px; isolation:isolate}
-    .aura{position:absolute; inset:0; filter:blur(24px); pointer-events:none; z-index:0;
-      background:
-        radial-gradient(600px 320px at 50% 35%, rgba(0,234,255,.18), transparent 60%),
-        radial-gradient(900px 420px at 50% 70%, rgba(138,43,226,.18), transparent 65%);
-      animation: float 18s ease-in-out infinite alternate;
-    }
-    @keyframes float{from{transform:translateY(-1.5%)}to{transform:translateY(1.5%)}}
-    main{z-index:1; width:min(960px,92vw); text-align:center}
-    .title{font-family:Orbitron, sans-serif; font-weight:900; letter-spacing:.12em;
-      font-size:clamp(36px,6vw,84px); line-height:1; margin:0 0 18px; text-transform:uppercase; color:#eaffff;
-      text-shadow:0 0 10px rgba(0,234,255,.45), 0 0 28px rgba(138,43,226,.35), 0 0 64px rgba(0,234,255,.25);
-    }
-    .subtitle{margin:0 0 24px; color:var(--muted); font-size:clamp(16px,2.2vw,18px)}
-    .panel{
-      display:inline-flex; flex-direction:column; align-items:center; gap:18px;
-      padding:28px; border-radius:20px;
-      border:1px solid rgba(255,255,255,.06);
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      backdrop-filter: blur(8px);
-      box-shadow:0 12px 40px rgba(0,0,0,.35);
-      max-width:min(680px,95vw); margin-inline:auto;
-    }
-    .cta{
-      display:inline-flex; align-items:center; gap:12px; padding:14px 22px; border-radius:14px;
-      font-weight:600; letter-spacing:.04em; text-decoration:none; color:var(--text);
-      background: linear-gradient(#0c1327,#0b1120) padding-box,
-                 conic-gradient(from 180deg, rgba(0,234,255,.8), rgba(138,43,226,.8), rgba(0,234,255,.8)) border-box;
-      border:1px solid transparent; box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 8px 24px rgba(0,0,0,.45);
-      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
-    }
-    .cta .dot{width:10px; height:10px; border-radius:9999px; background:radial-gradient(circle at 30% 30%, #fff, var(--primary) 60%, transparent 65%); box-shadow:0 0 10px var(--primary), 0 0 18px var(--primary)}
-    .cta:hover{ transform:translateY(-2px); filter:var(--glow) }
-    .cta:focus-visible{ outline:none; box-shadow:var(--ring) }
-    .row{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px}
-    .small{font-size:12px; opacity:.85}
-    @media (prefers-reduced-motion: reduce){ *{animation:none!important; transition:none!important} }
+
+    /* Footer */
+    footer{color:var(--muted); text-align:center; margin:60px 0 50px}
   </style>
 </head>
-<body>
-  <div class="wrap">
-    <div class="aura" aria-hidden="true"></div>
-    <main>
-      <h1 class="title">ATMOS</h1>
-      <p class="subtitle">Tableau de bord — Portail principal de votre espace de travail.</p>
+<body class="view-roadmap">
+  <div class="stars"></div>
 
-      <div class="panel" role="group" aria-label="Navigation principale">
-        <!-- Auth -->
-        <div class="row">
-          <button class="cta" id="loginGoogle">Se connecter avec Google</button>
-          <button class="cta" id="loginMicrosoft">Se connecter avec Microsoft</button>
-          <button class="cta" id="logout" style="display:none">Se déconnecter</button>
-        </div>
-        <div class="small" id="who">Non connecté</div>
+  <header class="hero">
+    <div class="brand">ATMOS — Demo UI</div>
+    <h1>Timeline <span class="grad">2025</span></h1>
+    <p class="lead">Deux présentations complémentaires : <strong>Verticale</strong> (classique) et <strong>Roadmap horizontale en swimlanes</strong>. Année du <strong>1er janvier 2025</strong> au <strong>31 décembre 2025</strong>.</p>
 
-        <!-- Liens modules (même origin => session partagée via localStorage) -->
-        <a class="cta" href="https://mistergob.github.io/sphaira/" target="_blank" rel="noopener noreferrer">
-          <span class="dot" aria-hidden="true"></span><span>Entrer dans SPHAIRA</span>
-        </a>
-        <a class="cta" href="https://mistergob.github.io/Oris/" target="_blank" rel="noopener noreferrer">
-          <span class="dot" aria-hidden="true"></span><span>Ouvrir ORIS — Agenda</span>
-        </a>
-        <a class="cta" href="https://mistergob.github.io/Nexus/" target="_blank" rel="noopener noreferrer">
-          <span class="dot" aria-hidden="true"></span><span>Ouvrir NEXUS — Mails</span>
-        </a>
+    <div class="controls" role="region" aria-label="Filtres et navigation">
+      <button class="chip" data-cat="tous" data-active="true"><span class="dot"></span> Tous</button>
+      <button class="chip" data-cat="release"><span class="dot"></span> Releases</button>
+      <button class="chip" data-cat="partenariat"><span class="dot"></span> Partenariats</button>
+      <button class="chip" data-cat="marketing"><span class="dot"></span> Marketing</button>
+      <button class="chip" data-cat="evenement"><span class="dot"></span> Événements</button>
+      <button class="chip" data-cat="ops"><span class="dot"></span> Ops</button>
+      <button class="chip" data-cat="contenu"><span class="dot"></span> Contenu</button>
+
+      <span class="spacer"></span>
+
+      <div class="months" aria-label="Aller au mois">
+        <button data-go="01">Jan</button>
+        <button data-go="02">Fév</button>
+        <button data-go="03">Mar</button>
+        <button data-go="04">Avr</button>
+        <button data-go="05">Mai</button>
+        <button data-go="06">Juin</button>
+        <button data-go="07">Juil</button>
+        <button data-go="08">Août</button>
+        <button data-go="09">Sep</button>
+        <button data-go="10">Oct</button>
+        <button data-go="11">Nov</button>
+        <button data-go="12">Déc</button>
       </div>
-    </main>
-  </div>
 
-  <!-- Supabase JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+      <div class="meter" title="Progression de l'année 2025">
+        <span>Progression</span>
+        <div class="bar"><i id="yearProgress"></i></div>
+        <span id="yearPct">0%</span>
+      </div>
+
+      <div class="view" aria-label="Changer de vue">
+        <button class="chip chip-view" data-view="vertical"><span class="dot"></span> Vue verticale</button>
+        <button class="chip chip-view" data-view="roadmap" data-active="true"><span class="dot"></span> Vue roadmap</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- Vue 1: verticale -->
+    <section id="timelineVertical" class="timeline" aria-label="Timeline 2025 (vertical)"></section>
+
+    <!-- Vue 2: roadmap horizontale -->
+    <section id="roadmapHoriz" class="roadwrap" aria-label="Timeline 2025 (roadmap)">
+      <div class="roadscroll" id="roadscroll">
+        <div class="axis" id="axis"></div>
+        <div class="roadmap" id="roadmap">
+          <div class="lanes" id="lanes"></div>
+          <!-- Ligne "Aujourd'hui" -->
+          <div class="todayLine" id="todayLine" hidden></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Démonstration visuelle • Style inspiré d'<strong>ATMOS</strong> (typographie Orbitron/Outfit, néons cyan/violet, fond spatial). Deux vues performantes et complémentaires.
+  </footer>
+
   <script>
-    /* ========= SSO ATMOS (Supabase) =========
-       - Même storageKey partout -> même session sur le même origin
-       - Retour automatique vers ?r=... après connexion
-    ========================================= */
+    // --- Data (fictive) ---
+    const EVENTS = [
+      {date:'2025-01-05', title:'Lancement ORIS v2', cat:'release', icon:'🗓️', desc:"Nouvelle architecture d'agenda avec synchronisation et vues rapides."},
+      {date:'2025-01-20', title:'Partenariat Abby Connect', cat:'partenariat', icon:'🤝', desc:"Accord de distribution réciproque et offre bienvenue pour les pros."},
 
-    // Même REF/clé que dans NEXUS/ORIS/SPHAIRA
-    const PROJECT_REF = "jlfvbggzdkkwrmpsamvz";
-    const SUPABASE_URL = `https://${PROJECT_REF}.supabase.co`;
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsZnZiZ2d6ZGtrd3JtcHNhbXZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyNjUyNjMsImV4cCI6MjA3Mjg0MTI2M30.kDbtNVQfHEVxRbA8jsAfLu7-6kDioTCG-nWVQ91gJIs";
+      {date:'2025-02-10', title:'Campagne Google Ads pilote', cat:'marketing', icon:'🎯', desc:"Tests A/B sur mots-clés SAP et optimisation des conversions."},
+      {date:'2025-02-27', title:'SPHAIRA v1.1', cat:'release', icon:'🌀', desc:"Noeuds reliés + menu contextuel revu + meilleure performance."},
 
-    // IMPORTANT : storageKey identique dans tous les modules
-    const STORAGE_KEY = `sb-${PROJECT_REF}-auth-token`;
+      {date:'2025-03-12', title:'Série d’articles SEO', cat:'contenu', icon:'✍️', desc:"Guide complet: déclaration SAP, agrément, avance immédiate."},
+      {date:'2025-03-28', title:'Démo publique ATMOS', cat:'evenement', icon:'🚀', desc:"Présentation live du hub et des modules, session Q&R."},
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        storage: window.localStorage,
-        storageKey: STORAGE_KEY
-      }
-    });
+      {date:'2025-04-04', title:'Partenariat Déclic+', cat:'partenariat', icon:'🤝', desc:"Offre spéciale d’adhésion simplifiée pour les nouveaux pros."},
+      {date:'2025-04-18', title:'Support CESU Préfinancé', cat:'ops', icon:'💳', desc:"Ajout de l’acceptation CESU pour plusieurs partenaires."},
 
-    // UI
-    const loginGoogleBtn = document.getElementById('loginGoogle');
-    const loginMsBtn     = document.getElementById('loginMicrosoft');
-    const logoutBtn      = document.getElementById('logout');
-    const whoSpan        = document.getElementById('who');
+      {date:'2025-05-09', title:'Salon Tech Grenoble', cat:'evenement', icon:'🎪', desc:"Petit stand, démonstrations et retours terrain utilisateurs."},
+      {date:'2025-05-26', title:'Capsule vidéo “Avance immédiate”', cat:'marketing', icon:'🎬', desc:"Vidéo courte d’information à diffuser sur TikTok/LinkedIn."},
 
-    function setAuthBusy(busy){ [loginGoogleBtn, loginMsBtn, logoutBtn].forEach(b=> b.disabled = !!busy); }
+      {date:'2025-06-07', title:'Refonte du comparatif', cat:'ops', icon:'📊', desc:"Mise à jour des frais et services + nouveau tri intelligent."},
+      {date:'2025-06-24', title:'Intégration Google Calendar', cat:'release', icon:'🔗', desc:"Connexion fluide dans ORIS, synchro bidirectionnelle."},
 
-    function show(session){
-      const user = session?.user || null;
-      if(user){
-        const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email || 'Connecté';
-        whoSpan.textContent = `Connecté : ${name}`;
-        loginGoogleBtn.style.display = 'none';
-        loginMsBtn.style.display     = 'none';
-        logoutBtn.style.display      = '';
-      }else{
-        whoSpan.textContent = 'Non connecté';
-        loginGoogleBtn.style.display = '';
-        loginMsBtn.style.display     = '';
-        logoutBtn.style.display      = 'none';
+      {date:'2025-07-01', title:'NEXUS — affichage vertical', cat:'release', icon:'📧', desc:"Lecture mails pleine largeur, pièces jointes, actions rapides."},
+      {date:'2025-07-22', title:'Audit RGPD interne', cat:'ops', icon:'🛡️', desc:"Cartographie des traitements et registre à jour."},
+
+      {date:'2025-08-05', title:'Étude de marché Suisse', cat:'contenu', icon:'🧭', desc:"Analyse prix, TVA et attentes clients pour services à domicile."},
+      {date:'2025-08-22', title:'Partenariat France SAP', cat:'partenariat', icon:'🤝', desc:"Synergies contenus + offres croisées pour les pros."},
+
+      {date:'2025-09-10', title:'SPHAIRA Node Editor v2', cat:'release', icon:'🧩', desc:"Objectifs liés aux tâches + liaisons conditionnelles."},
+      {date:'2025-09-25', title:'Beta assistants vocaux', cat:'evenement', icon:'🗣️', desc:"Prototype robot-enceinte répondant via API et TTS."},
+
+      {date:'2025-10-08', title:'Webinaire “SAP 101”', cat:'evenement', icon:'📡', desc:"Crédit d’impôt, déclaration, avance immédiate — session live."},
+      {date:'2025-10-21', title:'Campagne emailing pro', cat:'marketing', icon:'✉️', desc:"Relance des leads inactifs et nurturing par secteur."},
+
+      {date:'2025-11-04', title:'Diagnostic Pro‑SAP (lancement)', cat:'release', icon:'🧪', desc:"Assistant d’auto‑évaluation avec recommandations actionnables."},
+      {date:'2025-11-18', title:'Migration hébergement', cat:'ops', icon:'🗄️', desc:"Amélioration de la résilience et CDN multi‑région."},
+
+      {date:'2025-12-05', title:'Bilan & KPI 2025', cat:'contenu', icon:'📈', desc:"Synthèse CA, trafic, acquisitions, satisfaction partenaires."},
+      {date:'2025-12-20', title:'Soirée partenaires', cat:'evenement', icon:'🎉', desc:"Rétrospective, prix symboliques et feuille de route 2026."}
+    ];
+
+    // --- Helpers & constants ---
+    const start = new Date('2025-01-01T00:00:00');
+    const end   = new Date('2025-12-31T23:59:59');
+    const isYear2025 = new Date().getFullYear() === 2025;
+
+    function fmtDate(d){
+      return new Intl.DateTimeFormat('fr-FR', { day:'2-digit', month:'short' }).format(d).replace('.', '');
+    }
+    function pctOfYear(d){ return ((d - start) / (end - start)) * 100 }
+
+    function groupByMonth(items){
+      const map = new Map(Array.from({length:12}, (_,i)=>[(i+1).toString().padStart(2,'0'), []]));
+      for(const ev of items){ const d = new Date(ev.date); const m = (d.getMonth()+1).toString().padStart(2,'0'); map.get(m).push({...ev, d}); }
+      for(const [m, arr] of map) arr.sort((a,b)=>a.d-b.d);
+      return map;
+    }
+
+    function groupByCat(items){
+      const cats = ['release','partenariat','marketing','evenement','ops','contenu'];
+      const map = new Map(cats.map(c=>[c,[]]));
+      for(const ev of items){ const d = new Date(ev.date); if(map.has(ev.cat)) map.get(ev.cat).push({...ev, d}); }
+      for(const [c, arr] of map) arr.sort((a,b)=>a.d-b.d);
+      return map;
+    }
+
+    // ---------- Rendu : VUE VERTICALE ----------
+    function renderVertical(){
+      const container = document.getElementById('timelineVertical');
+      const byMonth = groupByMonth(EVENTS);
+      const today = new Date();
+      const todayKey = isYear2025 ? (today.getMonth()+1).toString().padStart(2,'0') : null;
+
+      container.innerHTML = '';
+      for(let i=1;i<=12;i++){
+        const key = i.toString().padStart(2,'0');
+        const section = document.createElement('section'); section.className = 'month' + (todayKey===key? ' is-today':'' ); section.id = `m${key}`;
+        const h = document.createElement('h2'); h.textContent = new Date(`2025-${key}-01`).toLocaleDateString('fr-FR', {month:'long'});
+        section.appendChild(h);
+
+        const monthEvents = byMonth.get(key);
+        if(monthEvents.length===0){
+          const empty = document.createElement('div'); empty.className = 'item'; empty.innerHTML = `<span class="node" aria-hidden="true"></span><div class="card"><div class="meta">Aucun évènement</div></div>`; section.appendChild(empty);
+        } else {
+          monthEvents.forEach(ev=>{
+            const item = document.createElement('article'); item.className = 'item'; item.dataset.cat = ev.cat;
+            const isToday = isYear2025 && ev.d.toDateString()===today.toDateString();
+            item.innerHTML = `
+              <span class="node" aria-hidden="true"></span>
+              <div class="card" role="group" aria-label="${ev.title}">
+                ${isToday?'<div class="ribbon">Aujourd\'hui</div>':''}
+                <div class="top">
+                  <div class="icon">${ev.icon}</div>
+                  <div>
+                    <div class="title">${ev.title}</div>
+                    <div class="meta">
+                      <span>${fmtDate(ev.d)}</span>
+                      <span class="badge" data-cat="${ev.cat}">${ev.cat}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="desc">${ev.desc}</div>
+              </div>`;
+            section.appendChild(item);
+          });
+        }
+        container.appendChild(section);
       }
     }
 
-    // URL de retour (si ATMOS appelé par un module avec ?r=...)
-    const SITE_URL = location.origin + location.pathname;
-    const RETURN_KEY = 'atmos:returnUrl';
+    // ---------- Rendu : VUE ROADMAP (horizontale) ----------
+    function renderRoadmap(){
+      const axis = document.getElementById('axis');
+      const lanesWrap = document.getElementById('lanes');
+      const todayLine = document.getElementById('todayLine');
 
-    // Capture ?r= au chargement (et garde la cible à travers la redirection OAuth)
-    (function storeReturnUrlFromQuery(){
-      const q = new URLSearchParams(location.search);
-      const r = q.get('r');
-      if(r){
-        try{ localStorage.setItem(RETURN_KEY, decodeURIComponent(r)); }catch{}
+      // Axe des mois
+      axis.innerHTML = '';
+      for(let i=0; i<12; i++){
+        const m = document.createElement('div'); m.className='tick'; m.style.width='calc(var(--month))';
+        m.textContent = new Date(2025, i, 1).toLocaleDateString('fr-FR', {month:'short'}).replace('.', '');
+        axis.appendChild(m);
       }
-    })();
 
-    async function signIn(provider, scopes){
-      try{
-        setAuthBusy(true);
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider,
-          options: {
-            redirectTo: SITE_URL,            // revient ici après OAuth
-            scopes: scopes || 'openid email profile'
-            // (facultatif) queryParams: { prompt:'consent' }
+      // Lanes par catégorie
+      lanesWrap.innerHTML = '';
+      const byCat = groupByCat(EVENTS);
+      for(const [cat, arr] of byCat){
+        const lane = document.createElement('div'); lane.className='lane'; lane.dataset.cat = cat;
+        const label = document.createElement('div'); label.className='label'; label.innerHTML = `<span class="dot"></span> ${cat}`;
+        const bars = document.createElement('div'); bars.className='bars';
+
+        arr.forEach(ev=>{
+          const left = pctOfYear(ev.d);
+          const widthPct = 1.6; // largeur approx ~6 jours
+          const bar = document.createElement('div'); bar.className='barItem'; bar.dataset.cat = ev.cat;
+          bar.style.left = `calc(${left}% - 80px)`; // petit offset visuel
+          bar.style.width = `max(${widthPct}%, 120px)`; // lisible sur petits écrans
+          bar.setAttribute('data-hint', `${fmtDate(ev.d)} — ${ev.title}`);
+          bar.innerHTML = `<span class="ic">${ev.icon}</span><span class="t">${ev.title}</span><span class="d">• ${fmtDate(ev.d)}</span>`;
+          bars.appendChild(bar);
+        });
+
+        lane.appendChild(label); lane.appendChild(bars); lanesWrap.appendChild(lane);
+      }
+
+      // Ligne aujourd'hui
+      if(isYear2025){
+        const p = pctOfYear(new Date());
+        todayLine.style.left = `calc(${p}% + 210px)`; // tenir compte du label collant
+        todayLine.hidden = false;
+      } else {
+        todayLine.hidden = true;
+      }
+    }
+
+    // --- Filters (appliqués aux deux vues) ---
+    function applyFilter(cat){
+      // Verticale
+      document.querySelectorAll('#timelineVertical .item').forEach(it=>{
+        it.style.display = (cat==='tous' || it.dataset.cat===cat) ? '' : 'none';
+      });
+      // Roadmap
+      document.querySelectorAll('#lanes .lane').forEach(l=>{
+        const match = l.dataset.cat === cat;
+        l.classList.toggle('is-dim', !(cat==='tous' || match));
+        l.style.display = (cat==='tous' || match) ? '' : '';
+        l.querySelectorAll('.barItem').forEach(b=>{
+          b.style.opacity = (cat==='tous' || b.dataset.cat===cat) ? 1 : .15;
+        });
+      });
+    }
+
+    // --- Month jump (scroll vertical OU horizontal) ---
+    function attachMonthNav(){
+      document.querySelectorAll('.months button').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const key = btn.dataset.go;
+          if(document.body.classList.contains('view-vertical')){
+            document.getElementById(`m${key}`)?.scrollIntoView({behavior:'smooth', block:'start'});
+          } else {
+            const scroll = document.getElementById('roadscroll');
+            const ratio = (parseInt(key,10)-1) / 12; // 0..1
+            const target = ratio * (scroll.scrollWidth - scroll.clientWidth);
+            scroll.scrollTo({left: Math.max(0, target), behavior:'smooth'});
           }
         });
-        if(error){
-          alert('Connexion impossible : ' + error.message);
-          setAuthBusy(false);
-        }
-      }catch(err){
-        alert('Erreur inattendue : ' + (err?.message || err));
-        setAuthBusy(false);
-      }
+      });
     }
 
-    loginGoogleBtn.onclick = ()=> signIn('google', 'openid email profile');
-    // Provider Microsoft côté Supabase = "azure"
-    loginMsBtn.onclick     = ()=> signIn('azure',  'openid email profile');
-
-    logoutBtn.onclick = async ()=>{
-      await supabase.auth.signOut();
-      show(null);
-    };
-
-    // Nettoie les paramètres OAuth (?code=...&state=...) une fois la session récupérée
-    function cleanOAuthParams(){
-      const q = new URLSearchParams(location.search);
-      if(q.has('code') || q.has('state') || q.has('error_description')){
-        history.replaceState({}, document.title, SITE_URL);
-      }
+    // --- Progression année ---
+    function setYearProgress(){
+      const now = new Date();
+      let pct = 0;
+      if(now < start) pct = 0; else if(now > end) pct = 100; else pct = ((now - start) / (end - start)) * 100;
+      document.getElementById('yearProgress').style.setProperty('--p', pct.toFixed(2) + '%');
+      document.getElementById('yearPct').textContent = Math.round(pct) + '%';
     }
 
-    // Redirection automatique vers la cible demandée (?r=...) dès qu'on a une session
-    async function maybeRedirectToReturn(session){
-      if(!session) return;
-      const target = localStorage.getItem(RETURN_KEY);
-      if(target){
-        localStorage.removeItem(RETURN_KEY);
-        location.href = target;
-      }
+    // --- View switch ---
+    function attachViewSwitch(){
+      const chips = document.querySelectorAll('.chip-view');
+      chips.forEach(ch=>{
+        ch.addEventListener('click', ()=>{
+          chips.forEach(c=>c.dataset.active='false');
+          ch.dataset.active='true';
+          const view = ch.dataset.view; // 'vertical' | 'roadmap'
+          document.body.classList.toggle('view-vertical', view==='vertical');
+          document.body.classList.toggle('view-roadmap', view==='roadmap');
+        });
+      });
     }
 
-    // État initial + abonnement
-    supabase.auth.getSession().then(({ data }) => {
-      show(data.session);
-      cleanOAuthParams();
-      maybeRedirectToReturn(data.session);
-    });
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      show(session);
-      setAuthBusy(false);
-      cleanOAuthParams();
-      maybeRedirectToReturn(session);
-    });
-
-    if(location.protocol === 'file:'){
-      whoSpan.textContent = 'Ouvre via HTTPS (GitHub Pages, Netlify…) pour que la connexion fonctionne.';
+    // --- Cat filter controls ---
+    function attachFilters(){
+      const chips = [...document.querySelectorAll('.controls > .chip')].filter(x=>!x.classList.contains('chip-view'));
+      chips.forEach(ch=>{
+        ch.addEventListener('click', ()=>{
+          chips.forEach(c=>c.dataset.active='false');
+          ch.dataset.active='true';
+          applyFilter(ch.dataset.cat);
+        });
+      });
     }
+
+    // Init
+    renderVertical();
+    renderRoadmap();
+    attachFilters();
+    attachMonthNav();
+    attachViewSwitch();
+    setYearProgress();
+    setInterval(setYearProgress, 60*60*1000);
   </script>
 </body>
 </html>
