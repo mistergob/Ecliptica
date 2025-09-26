@@ -162,13 +162,16 @@
 
     .desc{margin-top:8px; color:var(--text); opacity:.85; line-height:1.5}
     .card .tasks{list-style:none; margin:16px 0 0; padding:0; display:flex; flex-direction:column; gap:8px;}
-    .card .task{display:flex; align-items:flex-start; gap:12px; font-size:13px; color:var(--text); background:rgba(255,255,255,.02); border-radius:10px; padding:10px; border:1px solid rgba(255,255,255,.04);}
+    .card .task{display:flex; align-items:flex-start; gap:12px; font-size:13px; color:var(--text); background:rgba(255,255,255,.02); border-radius:10px; padding:10px; border:1px solid rgba(255,255,255,.04); position:relative; overflow:hidden;}
+    .card .task::after{content:"Synchronisé SPHAIRA"; position:absolute; right:12px; bottom:8px; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:rgba(230,247,255,.55); opacity:0; transition:.2s ease;}
+    .card .task:hover::after{opacity:1;}
     .card .task .check{width:18px; height:18px; border-radius:50%; border:1px solid rgba(255,255,255,.16); display:grid; place-items:center; font-size:12px; line-height:1; background:rgba(0,8,18,.6); color:var(--text); margin-top:2px;}
     .card .task.is-done{background:rgba(0,234,255,.08); border-color:rgba(0,234,255,.25);}
     .card .task.is-done .check{border-color:rgba(0,234,255,.5); background:rgba(0,234,255,.25); color:#001018; font-weight:700;}
     .card .task .task-title{font-weight:600; display:block;}
+    .card .task .task-title small{font-size:11px; font-weight:500; color:var(--muted); margin-left:6px; text-transform:uppercase; letter-spacing:.05em;}
     .card .task.is-done .task-title{text-decoration:line-through; color:var(--muted);}
-    .card .task .task-meta{display:block; color:var(--muted); font-size:12px; margin-top:2px;}
+    .card .task .task-meta{display:flex; flex-wrap:wrap; gap:6px; color:var(--muted); font-size:11px; margin-top:4px; text-transform:uppercase; letter-spacing:.06em;}
     .card .tasks.empty{margin:16px 0 0; padding:12px; border-radius:10px; border:1px dashed rgba(255,255,255,.12); color:var(--muted); text-align:center; font-size:12px; background:rgba(255,255,255,.02);}
     .ribbon{position:absolute; top:8px; right:-36px; transform:rotate(35deg); background:linear-gradient(90deg, var(--primary), var(--accent)); color:#001018;
       padding:4px 48px; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; box-shadow:0 0 18px rgba(0,234,255,.45)}
@@ -217,6 +220,12 @@
 
     /* Zone des events (bars) */
     .lane .bars{ position:relative; height:100%; margin-left:210px; }
+    .taskMarkers{ position:absolute; inset:0; pointer-events:none; z-index:2; }
+    .taskMarker{ position:absolute; top:6px; width:14px; height:14px; border-radius:50%; border:1px solid rgba(255,255,255,.35); background:linear-gradient(130deg, rgba(0,234,255,.55), rgba(138,43,226,.45)); box-shadow:0 0 12px rgba(0,234,255,.45); pointer-events:auto; cursor:pointer; transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease; display:grid; place-items:center; color:#02121a; font-size:10px; font-weight:700; z-index:3; }
+    .taskMarker::before{content:'•'; line-height:1;}
+    .taskMarker.is-done{background:linear-gradient(130deg, rgba(143,255,210,.85), rgba(0,234,255,.7)); border-color:rgba(143,255,210,.8); color:#012018; box-shadow:0 0 12px rgba(143,255,210,.55);}
+    .taskMarker:focus-visible{outline:2px solid rgba(255,255,255,.8); outline-offset:2px; transform:scale(1.15);}
+    .taskMarker:hover{transform:scale(1.1); box-shadow:0 0 16px rgba(0,234,255,.65);}
     .barItem{ position:absolute; top:16px; height:42px; min-width:32px; padding:8px 10px; border-radius:10px; display:flex; align-items:center; gap:8px;
       background:linear-gradient(120deg, rgba(0,234,255,.12), rgba(138,43,226,.12)); border:1px solid rgba(255,255,255,.18);
       box-shadow:0 8px 20px rgba(0,0,0,.25), 0 0 14px rgba(0,234,255,.15); backdrop-filter:blur(3px); white-space:nowrap; transform:translateZ(0);
@@ -229,7 +238,9 @@
     .todayLine{ position:absolute; top:36px; bottom:0; width:2px; background:linear-gradient(180deg, var(--primary), var(--accent)); box-shadow:0 0 14px rgba(0,234,255,.35); }
 
     /* Tooltip simple */
-    .barItem[data-hint]:hover::after{
+    .barItem[data-hint]:hover::after,
+    .taskMarker[data-hint]:hover::after,
+    .taskMarker[data-hint]:focus-visible::after{
       content:attr(data-hint); position:absolute; left:0; bottom:calc(100% + 8px); max-width:320px;
       background:rgba(0,8,14,.95); border:1px solid rgba(255,255,255,.15); padding:8px 10px; border-radius:8px; font-size:12px; color:var(--text);
       box-shadow:0 6px 18px rgba(0,0,0,.35);
@@ -550,6 +561,10 @@
       return ((d - start) / (end - start)) * 100;
     }
 
+    function clamp(value, min, max){
+      return Math.min(max, Math.max(min, value));
+    }
+
     function groupByMonth(items){
       const map = new Map(Array.from({length:12}, (_,i)=>[(i+1).toString().padStart(2,'0'), []]));
       for(const obj of items){
@@ -612,18 +627,18 @@
         const title = document.createElement('span');
         title.className = 'task-title';
         title.textContent = task.title;
+        const rawDue = task.due ? new Date(task.due) : null;
+        const hasValidDue = rawDue && !Number.isNaN(rawDue.valueOf());
+        const badge = document.createElement('small');
+        badge.textContent = hasValidDue ? fmtDate(rawDue, true) : 'Sans échéance';
+        title.appendChild(badge);
         details.appendChild(title);
 
         const metaBits = [];
         if(task.owner){
-          metaBits.push(task.owner);
+          metaBits.push(`👤 ${task.owner}`);
         }
-        if(task.due){
-          const dueDate = new Date(task.due);
-          if(!Number.isNaN(dueDate.valueOf())){
-            metaBits.push(fmtDate(dueDate));
-          }
-        }
+        metaBits.push(task.done ? '✓ Terminé' : '• À suivre');
         if(metaBits.length){
           const meta = document.createElement('span');
           meta.className = 'task-meta';
@@ -741,6 +756,9 @@
 
         const bars = document.createElement('div');
         bars.className = 'bars';
+        const markers = document.createElement('div');
+        markers.className = 'taskMarkers';
+        bars.appendChild(markers);
 
         arr.forEach(obj => {
           const left = pctOfYear(obj.d);
@@ -757,6 +775,37 @@
           bar.setAttribute('role', 'button');
           bar.setAttribute('tabindex', '0');
           bars.appendChild(bar);
+
+          if(Array.isArray(obj.tasks)){
+            obj.tasks.forEach(task => {
+              const rawDue = task.due ? new Date(task.due) : null;
+              const hasValidDue = rawDue && !Number.isNaN(rawDue.valueOf());
+              const dueDate = hasValidDue ? rawDue : obj.d;
+              if(!dueDate || Number.isNaN(dueDate.valueOf())){
+                return;
+              }
+              const marker = document.createElement('span');
+              marker.className = 'taskMarker' + (task.done ? ' is-done' : '');
+              marker.dataset.cat = obj.cat;
+              marker.dataset.taskId = task.id || '';
+              marker.dataset.objectiveId = obj.id;
+              const pct = clamp(pctOfYear(dueDate), 0, 100);
+              marker.style.left = `calc(${pct}% - 7px)`;
+              const statusLabel = task.done ? 'Terminé' : 'À suivre';
+              const ownerLabel = task.owner ? ` • ${task.owner}` : '';
+              marker.setAttribute('data-hint', `${task.title} — ${statusLabel}${ownerLabel} • ${fmtDate(dueDate, true)}`);
+              marker.setAttribute('role', 'button');
+              marker.setAttribute('tabindex', '0');
+              marker.addEventListener('click', () => openPanel(obj.id));
+              marker.addEventListener('keydown', (ev) => {
+                if(ev.key === 'Enter' || ev.key === ' '){
+                  ev.preventDefault();
+                  openPanel(obj.id);
+                }
+              });
+              markers.appendChild(marker);
+            });
+          }
 
           bar.addEventListener('click', () => openPanel(obj.id));
           bar.addEventListener('keydown', (ev) => {
@@ -807,6 +856,11 @@
             bar.style.opacity = 1;
             bar.style.pointerEvents = 'auto';
           });
+          lane.querySelectorAll('.taskMarker').forEach(marker => {
+            marker.style.opacity = 1;
+            marker.style.pointerEvents = 'auto';
+            marker.setAttribute('tabindex', '0');
+          });
         } else {
           const match = lane.dataset.cat === cat;
           lane.style.display = '';
@@ -814,6 +868,11 @@
           lane.querySelectorAll('.barItem').forEach(bar => {
             bar.style.opacity = match ? 1 : 0.2;
             bar.style.pointerEvents = match ? 'auto' : 'none';
+          });
+          lane.querySelectorAll('.taskMarker').forEach(marker => {
+            marker.style.opacity = match ? 1 : 0.2;
+            marker.style.pointerEvents = match ? 'auto' : 'none';
+            marker.setAttribute('tabindex', match ? '0' : '-1');
           });
         }
       });
