@@ -396,7 +396,8 @@
     ECLIPTICA assure la cohérence des plans d'action : toute mise à jour est envoyée instantanément dans <strong>SPHAIRA</strong> et <strong>ORIS</strong> pour maintenir un pilotage unifié.
   </footer>
 
-    <script>
+  <script src="shared/sphaira-data.js"></script>
+  <script>
     const CATEGORY_META = {
       developpement: { label: 'Développement', description: 'Livraisons produit SPHAIRA' },
       experience: { label: 'Expérience', description: 'Confort des responsables et équipes' },
@@ -406,120 +407,11 @@
     };
     const CATEGORY_ORDER = Object.keys(CATEGORY_META);
 
-    let OBJECTIVES = [
-      {
-        id: 'obj-2025-01',
-        date: '2025-01-18',
-        title: 'Stabiliser le noyau SPHAIRA',
-        cat: 'developpement',
-        icon: '🛠️',
-        lead: 'Équipe Produit',
-        desc: "Migration du moteur temps réel vers l'architecture Orion pour sécuriser les synchronisations entre nœuds.",
-        tasks: [
-          { id: 'task-1', title: 'Refonte du graphe des objectifs', owner: 'Core SPHAIRA', due: '2025-01-12', done: true },
-          { id: 'task-2', title: 'Diagnostics de performance', owner: 'Qualité', due: '2025-01-18', done: false },
-          { id: 'task-3', title: 'Plan de rollback automatisé', owner: 'Ops', due: '2025-01-20', done: false }
-        ]
-      },
-      {
-        id: 'obj-2025-03',
-        date: '2025-03-05',
-        title: 'Aligner les parcours ORIS ↔︎ SPHAIRA',
-        cat: 'alignement',
-        icon: '🔄',
-        lead: 'Ops Produit',
-        desc: "Unification des points de contact et mise à jour des webhooks pour une remontée instantanée des objectifs.",
-        tasks: [
-          { id: 'task-4', title: 'Audit des webhooks existants', owner: 'ORIS', due: '2025-02-20', done: true },
-          { id: 'task-5', title: 'Mapping des statuts partagés', owner: 'SPHAIRA', due: '2025-03-05', done: false },
-          { id: 'task-6', title: 'Tests bout en bout ORIS', owner: 'Qualité', due: '2025-03-12', done: false }
-        ]
-      },
-      {
-        id: 'obj-2025-04',
-        date: '2025-04-22',
-        title: "Expérience responsable d'objectif",
-        cat: 'experience',
-        icon: '🎯',
-        lead: 'Design Ops',
-        desc: "Création d'une vue dédiée pour clarifier la progression des tâches assignées et faciliter les décisions.",
-        tasks: [
-          { id: 'task-7', title: 'Interviews responsables pilotes', owner: 'Design', due: '2025-04-05', done: true },
-          { id: 'task-8', title: 'Prototype interactif', owner: 'Design Ops', due: '2025-04-12', done: true },
-          { id: 'task-9', title: 'Déploiement contrôlé', owner: 'Produit', due: '2025-04-22', done: false }
-        ]
-      },
-      {
-        id: 'obj-2025-06',
-        date: '2025-06-17',
-        title: 'Automatiser la gouvernance des droits',
-        cat: 'operations',
-        icon: '🛡️',
-        lead: 'Sécurité & Conformité',
-        desc: "Mise en place de profils dynamiques et d'un audit trail partagé entre SPHAIRA et ORIS.",
-        tasks: [
-          { id: 'task-10', title: 'Catalogue des rôles', owner: 'Sécurité', due: '2025-05-30', done: true },
-          { id: 'task-11', title: "Développement du moteur d'habilitations", owner: 'Back-end', due: '2025-06-14', done: false },
-          { id: 'task-12', title: 'Recette RGPD conjointe', owner: 'Legal', due: '2025-06-25', done: false }
-        ]
-      },
-      {
-        id: 'obj-2025-07',
-        date: '2025-07-29',
-        title: "Campagne d'adoption multi-canale",
-        cat: 'lancement',
-        icon: '📣',
-        lead: 'Marketing Produit',
-        desc: 'Activation progressive des comptes clés avec contenus ciblés et webinaires synchronisés.',
-        tasks: [
-          { id: 'task-13', title: 'Sélection des segments prioritaires', owner: 'Marketing', due: '2025-07-05', done: true },
-          { id: 'task-14', title: 'Kit de communication co-marquée', owner: 'Brand', due: '2025-07-18', done: false },
-          { id: 'task-15', title: 'Webinaire lancement', owner: 'ORIS', due: '2025-07-29', done: false }
-        ]
-      },
-      {
-        id: 'obj-2025-09',
-        date: '2025-09-14',
-        title: 'Connecteur données de pilotage',
-        cat: 'operations',
-        icon: '📊',
-        lead: 'Data Intelligence',
-        desc: "Centralisation des indicateurs d'usage SPHAIRA & ORIS pour piloter les OKR en continu.",
-        tasks: [
-          { id: 'task-16', title: 'Spécifications API métriques', owner: 'Data', due: '2025-08-20', done: true },
-          { id: 'task-17', title: 'Pipelines vers le data lake', owner: 'Engineering', due: '2025-09-10', done: false },
-          { id: 'task-18', title: 'Tableaux de bord ECLIPTICA', owner: 'Ops Produit', due: '2025-09-25', done: false }
-        ]
-      },
-      {
-        id: 'obj-2025-10',
-        date: '2025-10-21',
-        title: 'Portail partenaires ORIS',
-        cat: 'lancement',
-        icon: '🌐',
-        lead: 'Alliances',
-        desc: "Ouverture d'un espace partagé pour suivre la contribution des partenaires et les objectifs associés.",
-        tasks: [
-          { id: 'task-19', title: 'Architecture du portail', owner: 'Front-end', due: '2025-10-05', done: true },
-          { id: 'task-20', title: 'Catalogue des offres partenaires', owner: 'Alliances', due: '2025-10-18', done: false },
-          { id: 'task-21', title: 'Synchronisation des rôles partenaires', owner: 'Sécurité', due: '2025-10-21', done: false }
-        ]
-      },
-      {
-        id: 'obj-2025-12',
-        date: '2025-12-09',
-        title: 'Clôture feuille de route 2025',
-        cat: 'alignement',
-        icon: '🌀',
-        lead: 'Direction Produit',
-        desc: "Consolidation des enseignements 2025 et cadrage des objectifs 2026 partagés entre SPHAIRA et ORIS.",
-        tasks: [
-          { id: 'task-22', title: 'Analyse des OKR', owner: 'Direction Produit', due: '2025-11-30', done: false },
-          { id: 'task-23', title: 'Atelier vision 2026', owner: 'Leadership', due: '2025-12-05', done: false },
-          { id: 'task-24', title: 'Publication récapitulatif', owner: 'Communication', due: '2025-12-12', done: false }
-        ]
-      }
-    ];
+    const SPHAIRA_API_BASE_URL = window.SPHAIRA_API_BASE || 'memory://sphaira';
+    const SPHAIRA_STORAGE_KEY = window.SPHAIRA_STORAGE_KEY || 'sphaira:objectives';
+
+    let OBJECTIVES = [];
+    let objectivesLoadingPromise = null;
 
     const start = new Date('2025-01-01T00:00:00');
     const end   = new Date('2025-12-31T23:59:59');
@@ -542,6 +434,106 @@
 
     function uid(prefix){
       return `${prefix}-${Math.random().toString(36).slice(2,8)}${Date.now().toString(36).slice(-2)}`;
+    }
+
+    function normalizeObjective(obj){
+      if(!obj || typeof obj !== 'object') return null;
+      const tasks = Array.isArray(obj.tasks) ? obj.tasks.map(task => {
+        if(!task || typeof task !== 'object') return null;
+        return {
+          id: task.id || uid('task'),
+          title: String(task.title ?? '').trim(),
+          owner: String(task.owner ?? '').trim(),
+          due: task.due ? String(task.due) : '',
+          done: Boolean(task.done)
+        };
+      }).filter(Boolean) : [];
+      return {
+        id: obj.id || uid('obj'),
+        date: obj.date ? String(obj.date) : new Date().toISOString().slice(0,10),
+        title: String(obj.title ?? '').trim() || 'Objectif sans titre',
+        cat: String(obj.cat ?? 'developpement'),
+        icon: obj.icon ? String(obj.icon) : '🗂️',
+        lead: obj.lead ? String(obj.lead) : '',
+        desc: obj.desc ? String(obj.desc) : '',
+        tasks
+      };
+    }
+
+    async function loadObjectivesFromSphaira(){
+      if(objectivesLoadingPromise){
+        return objectivesLoadingPromise;
+      }
+
+      syncStatusMessage.textContent = 'Chargement depuis SPHAIRA…';
+      objectivesLoadingPromise = (async () => {
+        try {
+          const response = await fetch(`${SPHAIRA_API_BASE_URL}/objectives`);
+          let payload;
+          if(response.ok){
+            payload = await response.json();
+          } else {
+            let message = response.statusText || `Code ${response.status}`;
+            try {
+              const errorPayload = await response.json();
+              if(errorPayload && errorPayload.error){
+                message = errorPayload.error;
+              }
+            } catch(_){}
+            throw new Error(message);
+          }
+
+          const normalized = Array.isArray(payload) ? payload.map(normalizeObjective).filter(Boolean) : [];
+          normalized.sort((a, b) => new Date(a.date) - new Date(b.date));
+          OBJECTIVES = normalized;
+          refreshTimelines();
+          const ts = new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+          syncStatusMessage.textContent = `Synchronisé avec SPHAIRA — ${ts}`;
+        } catch(error){
+          console.error('Erreur lors du chargement des objectifs SPHAIRA', error);
+          syncStatusMessage.textContent = `Erreur de synchronisation SPHAIRA : ${error.message}`;
+        } finally {
+          objectivesLoadingPromise = null;
+        }
+      })();
+
+      return objectivesLoadingPromise;
+    }
+
+    async function persistObjectiveToSphaira(objective, isUpdate){
+      const url = isUpdate
+        ? `${SPHAIRA_API_BASE_URL}/objectives/${encodeURIComponent(objective.id)}`
+        : `${SPHAIRA_API_BASE_URL}/objectives`;
+      const response = await fetch(url, {
+        method: isUpdate ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(objective)
+      });
+      if(!response.ok){
+        let message = response.statusText || `Code ${response.status}`;
+        try {
+          const errorPayload = await response.json();
+          if(errorPayload && errorPayload.error){
+            message = errorPayload.error;
+          }
+        } catch(_){}
+        throw new Error(message);
+      }
+      return response.json();
+    }
+
+    async function deleteObjectiveFromSphaira(id){
+      const response = await fetch(`${SPHAIRA_API_BASE_URL}/objectives/${encodeURIComponent(id)}`, { method: 'DELETE' });
+      if(!response.ok){
+        let message = response.statusText || `Code ${response.status}`;
+        try {
+          const errorPayload = await response.json();
+          if(errorPayload && errorPayload.error){
+            message = errorPayload.error;
+          }
+        } catch(_){}
+        throw new Error(message);
+      }
     }
 
     function fmtDate(d, withYear = false){
@@ -990,7 +982,7 @@
       applyFilter(currentFilter);
     }
 
-    objectiveForm.addEventListener('submit', (event) => {
+    objectiveForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       const formData = new FormData(objectiveForm);
       const baseId = currentObjectiveId ?? uid('obj');
@@ -1022,28 +1014,32 @@
 
       const existingIndex = OBJECTIVES.findIndex(obj => obj.id === baseId);
       const action = existingIndex > -1 ? 'mise à jour' : 'création';
-      if(existingIndex > -1){
-        OBJECTIVES[existingIndex] = objective;
-      } else {
-        OBJECTIVES.push(objective);
+      try {
+        await persistObjectiveToSphaira(objective, existingIndex > -1);
+        syncWithSystems(action, objective);
+        closePanel();
+        await loadObjectivesFromSphaira();
+      } catch(error){
+        console.error('Impossible de synchroniser l\'objectif avec SPHAIRA', error);
+        syncStatusMessage.textContent = `Erreur de synchronisation SPHAIRA : ${error.message}`;
       }
-      OBJECTIVES.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-      syncWithSystems(action, objective);
-      closePanel();
-      refreshTimelines();
     });
 
-    deleteObjectiveBtn.addEventListener('click', () => {
+    deleteObjectiveBtn.addEventListener('click', async () => {
       if(!currentObjectiveId) return;
       const target = OBJECTIVES.find(obj => obj.id === currentObjectiveId);
       if(!target) return;
       const confirmation = window.confirm(`Supprimer l'objectif « ${target.title} » ?`);
       if(!confirmation) return;
-      OBJECTIVES = OBJECTIVES.filter(obj => obj.id !== currentObjectiveId);
-      syncWithSystems('suppression', target);
-      closePanel();
-      refreshTimelines();
+      try {
+        await deleteObjectiveFromSphaira(currentObjectiveId);
+        syncWithSystems('suppression', target);
+        closePanel();
+        await loadObjectivesFromSphaira();
+      } catch(error){
+        console.error('Impossible de supprimer l\'objectif dans SPHAIRA', error);
+        syncStatusMessage.textContent = `Erreur de synchronisation SPHAIRA : ${error.message}`;
+      }
     });
 
     addTaskBtn.addEventListener('click', () => addTaskRow({}));
@@ -1056,7 +1052,17 @@
       }
     });
 
-    refreshTimelines();
+    window.addEventListener('sphaira:objectives', () => {
+      loadObjectivesFromSphaira();
+    });
+
+    window.addEventListener('storage', (event) => {
+      if(event.key === SPHAIRA_STORAGE_KEY){
+        loadObjectivesFromSphaira();
+      }
+    });
+
+    loadObjectivesFromSphaira();
     attachFilters();
     attachMonthNav();
     attachViewSwitch();
